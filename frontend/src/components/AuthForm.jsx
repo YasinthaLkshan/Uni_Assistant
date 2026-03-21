@@ -5,6 +5,7 @@ const AuthForm = ({ mode = "login", onSubmit, loading = false, error = "" }) => 
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const isRegister = mode === "register";
@@ -63,10 +64,35 @@ const AuthForm = ({ mode = "login", onSubmit, loading = false, error = "" }) => 
         />
       </label>
 
+      {isRegister && (
+        <label>
+          Confirm Password
+          <input
+            type="password"
+            name="confirmPassword"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            placeholder="Re-enter your password"
+            autoComplete="new-password"
+            minLength={6}
+            required
+          />
+        </label>
+      )}
+
       {error ? <p className="form-error">{error}</p> : null}
 
       <button type="submit" disabled={loading} className="primary-btn">
-        {loading ? "Please wait..." : isRegister ? "Create Account" : "Login"}
+        {loading ? (
+          <>
+            <span className="btn-spinner" aria-hidden="true" />
+            <span>Please wait...</span>
+          </>
+        ) : isRegister ? (
+          "Create Account"
+        ) : (
+          "Login"
+        )}
       </button>
     </form>
   );

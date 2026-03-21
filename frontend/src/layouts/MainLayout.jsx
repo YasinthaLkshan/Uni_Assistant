@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
+import { NotificationBadge } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 
@@ -104,6 +105,7 @@ const MainLayout = () => {
           <section className="user-panel" aria-label="User information">
             <p className="user-name">{user?.name || "Student"}</p>
             <p className="user-meta">{user?.email || "No email"}</p>
+            <NotificationBadge unreadCount={0} className="header-notification-badge" />
           </section>
         </header>
 

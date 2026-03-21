@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import AuthLayout from "../layouts/AuthLayout";
 import MainLayout from "../layouts/MainLayout";
@@ -11,23 +11,27 @@ import ProtectedRoute from "./ProtectedRoute";
 import { ROUTE_PATHS } from "./routePaths";
 
 const AppRoutes = () => {
+  const location = useLocation();
+
   return (
-    <Routes>
-      <Route element={<AuthLayout />}>
-        <Route path={ROUTE_PATHS.home} element={<HomePage />} />
-        <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
-        <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
-      </Route>
-
-      <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
-          <Route path={ROUTE_PATHS.dashboard} element={<DashboardPage />} />
-          <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
+    <div key={location.pathname} className="route-transition">
+      <Routes location={location}>
+        <Route element={<AuthLayout />}>
+          <Route path={ROUTE_PATHS.home} element={<HomePage />} />
+          <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
         </Route>
-      </Route>
 
-      <Route path="*" element={<Navigate to={ROUTE_PATHS.home} replace />} />
-    </Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route element={<MainLayout />}>
+            <Route path={ROUTE_PATHS.dashboard} element={<DashboardPage />} />
+            <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
+          </Route>
+        </Route>
+
+        <Route path="*" element={<Navigate to={ROUTE_PATHS.home} replace />} />
+      </Routes>
+    </div>
   );
 };
 

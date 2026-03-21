@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "./routePaths";
 
-const ProtectedRoute = () => {
+const ProtectedRoute = ({ children, redirectTo = ROUTE_PATHS.login }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
@@ -15,7 +15,11 @@ const ProtectedRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to={ROUTE_PATHS.login} replace />;
+  if (!isAuthenticated) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  return children || <Outlet />;
 };
 
 export default ProtectedRoute;

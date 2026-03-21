@@ -1,12 +1,411 @@
+import { useEffect, useMemo, useState } from "react";
+
+import {
+  EmptyStateCard,
+  GlassCard,
+  LoadingSpinner,
+  PrimaryButton,
+  SectionTitle,
+  SecondaryButton,
+  StatusBadge,
+} from "../components";
+import {
+  createTask,
+  deleteTask,
+  getTasks,
+  updateTask,
+} from "../services/taskService";
+import { extractApiErrorMessage } from "../utils/error";
+
+const INITIAL_FORM = {
+  title: "",
+  type: "assignment",
+  deadline: "",
+  priority: "medium",
+  status: "Not Started",
+  description: "",
+};
+
+const STATUS_OPTIONS = ["Not Started", "In Progress", "Completed"];
+
+const toDateTimeLocal = (value) => {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+  const pad = (num) => `${num}`.padStart(2, "0");
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
+
+const getUrgencyBadgeClass = (urgency) => {
+  if (urgency === "High") {
+    return "danger";
+  }
+
+  if (urgency === "Medium") {
+    return "warning";
+  }
+
+  return "success";
+};
+
 const TasksPage = () => {
+  const [tasks, setTasks] = useState([]);
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [activeTaskId, setActiveTaskId] = useState(null);
+  const [apiError, setApiError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({
+    title: "",
+    type: "",
+    deadline: "",
+    status: "",
+  });
+
+  const isEditMode = Boolean(activeTaskId);
+
+  const sortedTasks = useMemo(
+    () => [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)),
+    [tasks]
+  );
+
+  const loadTasks = async () => {
+    try {
+      setApiError("");
+      setLoading(true);
+      const response = await getTasks();
+      setTasks(response.data || []);
+    } catch (err) {
+      setApiError(extractApiErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  const handleInputChange = (event) => {
+    const { name, value } = event.target;
+    setApiError("");
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name in fieldErrors) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const resetForm = () => {
+    setForm(INITIAL_FORM);
+    setActiveTaskId(null);
+    setApiError("");
+    setFieldErrors({
+      title: "",
+      type: "",
+      deadline: "",
+      status: "",
+    });
+  };
+
+  const validateForm = () => {
+    const nextErrors = {
+      title: "",
+      type: "",
+      deadline: "",
+      status: "",
+    };
+
+    if (!form.title.trim()) {
+      nextErrors.title = "Please enter a task title.";
+    }
+
+    if (!form.type) {
+      nextErrors.type = "Please select a task type.";
+    }
+
+    if (!form.deadline) {
+      nextErrors.deadline = "Please choose a deadline.";
+    }
+
+    if (isEditMode && !form.status) {
+      nextErrors.status = "Please select a status when editing a task.";
+    }
+
+    if (form.deadline) {
+      const parsedDeadline = new Date(form.deadline);
+      if (Number.isNaN(parsedDeadline.getTime())) {
+        nextErrors.deadline = "Please provide a valid deadline date and time.";
+      } else if (parsedDeadline.getTime() < Date.now()) {
+        nextErrors.deadline = "Deadline cannot be in the past.";
+      }
+    }
+
+    setFieldErrors(nextErrors);
+
+    const hasErrors = Object.values(nextErrors).some(Boolean);
+    if (hasErrors) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    const payload = {
+      title: form.title.trim(),
+      type: form.type,
+      deadline: form.deadline,
+      priority: form.priority,
+      status: form.status,
+      description: form.description.trim(),
+    };
+
+    try {
+      setApiError("");
+      setIsSaving(true);
+
+      if (isEditMode) {
+        await updateTask(activeTaskId, payload);
+      } else {
+        await createTask(payload);
+      }
+
+      await loadTasks();
+      resetForm();
+    } catch (err) {
+      setApiError(extractApiErrorMessage(err));
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEdit = (task) => {
+    setApiError("");
+    setFieldErrors({
+      title: "",
+      type: "",
+      deadline: "",
+      status: "",
+    });
+    setActiveTaskId(task._id);
+    setForm({
+      title: task.title || "",
+      type: task.type || "assignment",
+      deadline: toDateTimeLocal(task.deadline),
+      priority: task.priority || "medium",
+      status: task.status || "Not Started",
+      description: task.description || "",
+    });
+  };
+
+  const handleDelete = async (taskId) => {
+    try {
+      setApiError("");
+      await deleteTask(taskId);
+      if (activeTaskId === taskId) {
+        resetForm();
+      }
+      await loadTasks();
+    } catch (err) {
+      setApiError(extractApiErrorMessage(err));
+    }
+  };
+
+  const handleStatusUpdate = async (taskId, nextStatus) => {
+    try {
+      setApiError("");
+      await updateTask(taskId, { status: nextStatus });
+      setTasks((prev) => prev.map((task) => (task._id === taskId ? { ...task, status: nextStatus } : task)));
+    } catch (err) {
+      setApiError(extractApiErrorMessage(err));
+    }
+  };
+
   return (
-    <section className="dashboard">
-      <div className="dashboard-head">
-        <div>
-          <p className="eyebrow">Task Planner</p>
-          <h1>Your Tasks</h1>
-          <p>Track assignments, exams, and presentations from one place.</p>
-        </div>
+    <section className="dashboard tasks-page">
+      <GlassCard className="section-entrance">
+        <p className="eyebrow">Task Management</p>
+        <h1 className="dashboard-title">Plan and Track Your Workload</h1>
+        <p>Add, update, and organize tasks with clear urgency signals and clean focus.</p>
+      </GlassCard>
+
+      {apiError ? <p className="form-error section-entrance">{apiError}</p> : null}
+
+      <div className="tm-grid">
+        <GlassCard as="section" className="section-entrance tm-form-panel" style={{ animationDelay: "80ms" }}>
+          <SectionTitle
+            eyebrow={isEditMode ? "Edit Task" : "Add Task"}
+            rightContent={<StatusBadge label={`${tasks.length} Total`} level="low" />}
+          />
+
+          <form className="tm-form" onSubmit={handleSubmit}>
+            <label>
+              Title
+              <input
+                className="ui-input"
+                type="text"
+                name="title"
+                value={form.title}
+                onChange={handleInputChange}
+                placeholder="Database assignment"
+                required
+              />
+              {fieldErrors.title ? <p className="tm-field-error">{fieldErrors.title}</p> : null}
+            </label>
+
+            <div className="tm-form-row">
+              <label>
+                Type
+                <select className="ui-input" name="type" value={form.type} onChange={handleInputChange}>
+                  <option value="assignment">Assignment</option>
+                  <option value="exam">Exam</option>
+                  <option value="presentation">Presentation</option>
+                </select>
+                {fieldErrors.type ? <p className="tm-field-error">{fieldErrors.type}</p> : null}
+              </label>
+
+              <label>
+                Priority
+                <select className="ui-input" name="priority" value={form.priority} onChange={handleInputChange}>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </label>
+            </div>
+
+            <div className="tm-form-row">
+              <label>
+                Deadline
+                <input
+                  className="ui-input"
+                  type="datetime-local"
+                  name="deadline"
+                  value={form.deadline}
+                  onChange={handleInputChange}
+                  required
+                />
+                {fieldErrors.deadline ? <p className="tm-field-error">{fieldErrors.deadline}</p> : null}
+              </label>
+
+              <label>
+                Status
+                <select className="ui-input" name="status" value={form.status} onChange={handleInputChange}>
+                  {STATUS_OPTIONS.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+                {fieldErrors.status ? <p className="tm-field-error">{fieldErrors.status}</p> : null}
+              </label>
+            </div>
+
+            <label>
+              Description
+              <textarea
+                className="ui-input tm-textarea"
+                name="description"
+                value={form.description}
+                onChange={handleInputChange}
+                rows={4}
+                placeholder="Add context, notes, or preparation checklist"
+              />
+            </label>
+
+            <div className="tm-actions">
+              <PrimaryButton type="submit" isLoading={isSaving}>
+                {isSaving ? "Saving..." : isEditMode ? "Update Task" : "Add Task"}
+              </PrimaryButton>
+              {isEditMode ? (
+                <SecondaryButton type="button" onClick={resetForm}>
+                  Cancel Edit
+                </SecondaryButton>
+              ) : null}
+            </div>
+          </form>
+        </GlassCard>
+
+        <GlassCard as="section" className="ui-section section-entrance tm-list-panel" style={{ animationDelay: "140ms" }}>
+          <SectionTitle
+            eyebrow="Task List"
+            rightContent={<StatusBadge level="low" label="Sorted by deadline" />}
+          />
+
+          {loading ? (
+            <LoadingSpinner className="tm-list-loading" label="Loading tasks..." />
+          ) : sortedTasks.length ? (
+            <div className="tm-card-list">
+              {sortedTasks.map((task) => (
+                <article key={task._id} className="tm-card">
+                  <div className="tm-card-top">
+                    <div>
+                      <h3>{task.title}</h3>
+                      <p>{task.type}</p>
+                    </div>
+                    <StatusBadge
+                      level={getUrgencyBadgeClass(task.urgencyLevel)}
+                      label={task.urgencyLevel || "Low"}
+                    />
+                  </div>
+
+                  <p className="tm-meta">
+                    Deadline: {new Date(task.deadline).toLocaleString()} | Priority: {task.priority}
+                  </p>
+                  {task.description ? <p className="tm-desc">{task.description}</p> : null}
+
+                  <div className="tm-card-controls">
+                    <select
+                      className="ui-input tm-status-select"
+                      value={task.status}
+                      onChange={(event) => handleStatusUpdate(task._id, event.target.value)}
+                    >
+                      {STATUS_OPTIONS.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+
+                    <div className="tm-inline-actions">
+                      <SecondaryButton type="button" onClick={() => handleEdit(task)}>
+                        Edit
+                      </SecondaryButton>
+                      <SecondaryButton
+                        className="tm-delete-btn"
+                        type="button"
+                        onClick={() => handleDelete(task._id)}
+                      >
+                        Delete
+                      </SecondaryButton>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <EmptyStateCard
+              title="No tasks yet"
+              description="Add your first task to start tracking assignments and deadlines."
+            />
+          )}
+        </GlassCard>
       </div>
     </section>
   );

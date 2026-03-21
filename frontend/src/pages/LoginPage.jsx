@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import AuthForm from "../components/AuthForm";
@@ -10,10 +10,16 @@ const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(ROUTE_PATHS.home, { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async (credentials) => {
     const email = credentials.email?.trim() || "";
@@ -38,7 +44,7 @@ const LoginPage = () => {
       setError("");
       setLoading(true);
       await login({ email, password });
-      navigate(ROUTE_PATHS.dashboard);
+      navigate(ROUTE_PATHS.home, { replace: true });
     } catch (err) {
       setError(extractApiErrorMessage(err));
     } finally {
