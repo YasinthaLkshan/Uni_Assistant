@@ -10,16 +10,21 @@ const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, role } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(ROUTE_PATHS.home, { replace: true });
+      if (role === "admin") {
+        navigate(ROUTE_PATHS.adminDashboard, { replace: true });
+        return;
+      }
+
+      navigate(ROUTE_PATHS.dashboard, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, role, navigate]);
 
   const handleLogin = async (credentials) => {
     const email = credentials.email?.trim() || "";
@@ -43,8 +48,14 @@ const LoginPage = () => {
     try {
       setError("");
       setLoading(true);
-      await login({ email, password });
-      navigate(ROUTE_PATHS.home, { replace: true });
+      const authUser = await login({ email, password });
+
+      if (authUser?.role === "admin") {
+        navigate(ROUTE_PATHS.adminDashboard, { replace: true });
+        return;
+      }
+
+      navigate(ROUTE_PATHS.dashboard, { replace: true });
     } catch (err) {
       setError(extractApiErrorMessage(err));
     } finally {
@@ -62,6 +73,11 @@ const LoginPage = () => {
         <p className="switch-auth">
           Need an account? <Link to={ROUTE_PATHS.register}>Register here</Link>
         </p>
+        <div className="switch-auth">
+          <Link to={ROUTE_PATHS.adminLogin} className="ui-btn is-ghost">
+            Go to Admin Login
+          </Link>
+        </div>
       </div>
     </section>
   );

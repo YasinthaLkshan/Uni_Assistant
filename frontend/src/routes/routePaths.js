@@ -1,7 +1,16 @@
 export const ROUTE_PATHS = {
   home: "/",
   login: "/login",
+  adminLogin: "/admin/login",
   register: "/register",
+  adminDashboard: "/admin/dashboard",
+  adminTimetable: "/admin/timetable",
+  adminStudentGroups: "/admin/student-groups",
+  adminAssignments: "/admin/assignments",
+  adminPresentations: "/admin/presentations",
+  adminViva: "/admin/viva",
+  adminLabTests: "/admin/lab-tests",
+  adminExams: "/admin/exams",
   dashboard: "/dashboard",
   tasks: "/tasks",
 };
