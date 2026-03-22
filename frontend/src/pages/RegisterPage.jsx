@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { Logo } from "../components";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
@@ -56,10 +57,13 @@ const RegisterPage = () => {
   return (
     <section className="auth-page register-page page-fade-in">
       <div className="auth-panel register-card glass-card">
-        <p className="eyebrow">Get Started</p>
-        <h2>Create your account</h2>
-        <p>Set up your Uni Assistant workspace in under one minute and stay in control of your semester.</p>
+        <div className="login-header">
+          <Logo variant="center" />
+          <p className="login-subtitle">Create your account and take control of your semester</p>
+        </div>
+
         <AuthForm mode="register" onSubmit={handleRegister} loading={loading} error={error} />
+
         <p className="switch-auth">
           Already have an account? <Link to={ROUTE_PATHS.login}>Login</Link>
         </p>

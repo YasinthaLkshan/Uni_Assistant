@@ -3,6 +3,7 @@ export { default as EmptyStateCard } from "./EmptyStateCard";
 export { default as GlassCard } from "./GlassCard";
 export { default as InfoCard } from "./InfoCard";
 export { default as LoadingSpinner } from "./LoadingSpinner";
+export { default as Logo } from "./Logo";
 export { default as NotificationBadge } from "./NotificationBadge";
 export { default as PageHeader } from "./PageHeader";
 export { default as PrimaryButton } from "./PrimaryButton";

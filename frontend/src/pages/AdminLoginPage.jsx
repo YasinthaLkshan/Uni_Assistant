@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { Logo } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 import { extractApiErrorMessage } from "../utils/error";
@@ -67,9 +68,10 @@ const AdminLoginPage = () => {
   return (
     <section className="auth-page admin-login-page page-fade-in">
       <article className="auth-panel admin-login-card glass-card section-entrance">
-        <p className="eyebrow">Administrative Access</p>
-        <h2>Admin Login</h2>
-        <p>Sign in with your admin username to access Uni Assistant administration tools.</p>
+        <div className="login-header">
+          <Logo variant="center" />
+          <p className="admin-login-subtitle">Administrative access to manage academic operations</p>
+        </div>
 
         <form className="auth-form" onSubmit={handleSubmit}>
           <label>

@@ -22,7 +22,6 @@ const INITIAL_FORM = {
   type: "assignment",
   deadline: "",
   priority: "medium",
-  status: "Not Started",
   description: "",
 };
 
@@ -62,7 +61,6 @@ const TasksPage = () => {
     title: "",
     type: "",
     deadline: "",
-    status: "",
   });
 
   const isEditMode = Boolean(activeTaskId);
@@ -113,7 +111,6 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
-      status: "",
     });
   };
 
@@ -122,7 +119,6 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
-      status: "",
     };
 
     if (!form.title.trim()) {
@@ -135,10 +131,6 @@ const TasksPage = () => {
 
     if (!form.deadline) {
       nextErrors.deadline = "Please choose a deadline.";
-    }
-
-    if (isEditMode && !form.status) {
-      nextErrors.status = "Please select a status when editing a task.";
     }
 
     if (form.deadline) {
@@ -172,7 +164,6 @@ const TasksPage = () => {
       type: form.type,
       deadline: form.deadline,
       priority: form.priority,
-      status: form.status,
       description: form.description.trim(),
     };
 
@@ -201,7 +192,6 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
-      status: "",
     });
     setActiveTaskId(task._id);
     setForm({
@@ -209,7 +199,6 @@ const TasksPage = () => {
       type: task.type || "assignment",
       deadline: toDateTimeLocal(task.deadline),
       priority: task.priority || "medium",
-      status: task.status || "Not Started",
       description: task.description || "",
     });
   };
@@ -302,18 +291,6 @@ const TasksPage = () => {
                   required
                 />
                 {fieldErrors.deadline ? <p className="tm-field-error">{fieldErrors.deadline}</p> : null}
-              </label>
-
-              <label>
-                Status
-                <select className="ui-input" name="status" value={form.status} onChange={handleInputChange}>
-                  {STATUS_OPTIONS.map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-                {fieldErrors.status ? <p className="tm-field-error">{fieldErrors.status}</p> : null}
               </label>
             </div>
 

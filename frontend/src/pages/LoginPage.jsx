@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { Logo } from "../components";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
@@ -66,10 +67,13 @@ const LoginPage = () => {
   return (
     <section className="auth-page login-page page-fade-in">
       <div className="auth-panel login-card glass-card">
-        <p className="eyebrow">Secure Access</p>
-        <h2>Welcome back</h2>
-        <p>Sign in to continue planning tasks, tracking deadlines, and improving your study rhythm.</p>
+        <div className="login-header">
+          <Logo variant="center" />
+          <p className="login-subtitle">Sign in to continue to your academic workspace</p>
+        </div>
+
         <AuthForm mode="login" onSubmit={handleLogin} loading={loading} error={error} />
+
         <p className="switch-auth">
           Need an account? <Link to={ROUTE_PATHS.register}>Register here</Link>
         </p>
