@@ -23,7 +23,7 @@ const LoginPage = () => {
         return;
       }
 
-      navigate(ROUTE_PATHS.dashboard, { replace: true });
+      navigate(ROUTE_PATHS.home, { replace: true });
     }
   }, [isAuthenticated, role, navigate]);
 
@@ -56,7 +56,7 @@ const LoginPage = () => {
         return;
       }
 
-      navigate(ROUTE_PATHS.dashboard, { replace: true });
+      navigate(ROUTE_PATHS.home, { replace: true });
     } catch (err) {
       setError(extractApiErrorMessage(err));
     } finally {
@@ -66,22 +66,38 @@ const LoginPage = () => {
 
   return (
     <section className="auth-page login-page page-fade-in">
-      <div className="auth-panel login-card glass-card">
-        <div className="login-header">
-          <Logo variant="center" />
-          <p className="login-subtitle">Sign in to continue to your academic workspace</p>
+      <div className="login-bg-container">
+        <div className="login-bg-overlay" />
+      </div>
+
+      <div className="login-content-wrapper">
+        <div className="auth-panel login-card glass-card">
+          <div className="login-header">
+            <Logo variant="center" />
+            <h1 className="login-title">Uni Assistant</h1>
+            <p className="login-subtitle">Log in to your academic workspace</p>
+          </div>
+
+          <AuthForm 
+            mode="login" 
+            onSubmit={handleLogin} 
+            loading={loading} 
+            error={error}
+          />
+
+          <div className="login-footer">
+            <p className="switch-auth">
+              Need an account? <Link to={ROUTE_PATHS.register}>Create one here</Link>
+            </p>
+            <Link to={ROUTE_PATHS.adminLogin} className="admin-login-link">
+              → Admin Portal
+            </Link>
+          </div>
         </div>
 
-        <AuthForm mode="login" onSubmit={handleLogin} loading={loading} error={error} />
-
-        <p className="switch-auth">
-          Need an account? <Link to={ROUTE_PATHS.register}>Register here</Link>
-        </p>
-        <div className="switch-auth">
-          <Link to={ROUTE_PATHS.adminLogin} className="ui-btn is-ghost">
-            Go to Admin Login
-          </Link>
-        </div>
+        <footer className="login-footer-text">
+          <p>© 2024 Uni Assistant. Educational technology for modern universities.</p>
+        </footer>
       </div>
     </section>
   );
