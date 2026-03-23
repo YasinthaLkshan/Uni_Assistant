@@ -15,15 +15,6 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
-    label: "Students",
-    path: ROUTE_PATHS.adminStudentProfiles,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-4.42 0-8 1.79-8 4v2h16v-2c0-2.21-3.58-4-8-4z" />
-      </svg>
-    ),
-  },
-  {
     label: "Modules",
     path: ROUTE_PATHS.adminModules,
     icon: (
@@ -67,6 +58,7 @@ const AdminLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Admin Panel", [pathname]);
+  const isDashboard = pathname === ROUTE_PATHS.adminDashboard;
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -115,27 +107,29 @@ const AdminLayout = () => {
       </aside>
 
       <div className="admin-content-wrap">
-        <header className="admin-header">
-          <div className="title-area">
-            <button
-              type="button"
-              className="icon-btn admin-mobile-trigger"
-              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              aria-label="Open admin navigation"
-            >
-              ≡
-            </button>
-            <div>
-              <p className="eyebrow">Administration Panel</p>
-              <h2 className="page-title">{pageTitle}</h2>
+        {isDashboard && (
+          <header className="admin-header">
+            <div className="title-area">
+              <button
+                type="button"
+                className="icon-btn admin-mobile-trigger"
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                aria-label="Open admin navigation"
+              >
+                ≡
+              </button>
+              <div>
+                <p className="eyebrow">Administration Panel</p>
+                <h2 className="page-title">{pageTitle}</h2>
+              </div>
             </div>
-          </div>
 
-          <section className="admin-profile-chip" aria-label="Admin profile">
-            <p className="admin-chip-name">Admin</p>
-            <p className="admin-chip-meta">{user?.username || user?.name || "admin"}</p>
-          </section>
-        </header>
+            <section className="admin-profile-chip" aria-label="Admin profile">
+              <p className="admin-chip-name">Admin</p>
+              <p className="admin-chip-meta">{user?.username || user?.name || "admin"}</p>
+            </section>
+          </header>
+        )}
 
         <main className="admin-main-content">
           <Outlet />
