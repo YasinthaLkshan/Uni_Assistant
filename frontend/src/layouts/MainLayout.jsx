@@ -24,11 +24,21 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "GPA Calculator",
+    path: ROUTE_PATHS.gpaCalculator,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 2v4h14V5H5zm3 6h2v2H8v-2zm0 4h2v2H8v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
   [ROUTE_PATHS.dashboard]: "Dashboard Overview",
   [ROUTE_PATHS.tasks]: "Task Management",
+  [ROUTE_PATHS.gpaCalculator]: "GPA Calculator",
 };
 
 const MainLayout = () => {

@@ -4,4 +4,5 @@ export const ROUTE_PATHS = {
   register: "/register",
   dashboard: "/dashboard",
   tasks: "/tasks",
+  gpaCalculator: "/gpa-calculator",
 };

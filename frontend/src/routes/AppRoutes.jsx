@@ -7,6 +7,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import TasksPage from "../pages/TasksPage";
+import GpaCalculatorPage from "../pages/GpaCalculatorPage";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTE_PATHS } from "./routePaths";
 
@@ -26,6 +27,7 @@ const AppRoutes = () => {
           <Route element={<MainLayout />}>
             <Route path={ROUTE_PATHS.dashboard} element={<DashboardPage />} />
             <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
+            <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
           </Route>
         </Route>
 

@@ -84,6 +84,13 @@ p {
   margin: clamp(1.1rem, 2vw, var(--space-5)) auto;
 }
 
+/* Full-width layout for authenticated app (sidebar + main content) */
+.main-layout {
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+}
+
 .auth-home-layout {
   width: 100%;
 }
