@@ -54,11 +54,11 @@ const AuthForm = ({
               name="studentId"
               value={form.studentId}
               onChange={handleChange}
-              placeholder="IT123456"
+              placeholder="IT12345678"
               autoComplete="off"
               className="form-input"
-              pattern="^IT\d{6}$"
-              title="Student ID must be in format IT followed by 6 numbers (e.g., IT123456)"
+              pattern="^IT\d{8}$"
+              title="Student ID must be in format IT followed by 8 numbers (e.g., IT12345678)"
               required
             />
           </div>
@@ -91,7 +91,7 @@ const AuthForm = ({
 
       <div className="form-group">
         <label htmlFor="email" className="form-label">
-          Email Address
+          {isRegister ? "Email Address" : "Email or Student ID"}
         </label>
         <div className="form-input-wrapper">
           <svg className="form-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -99,12 +99,12 @@ const AuthForm = ({
           </svg>
           <input
             id="email"
-            type="email"
+            type={isRegister ? "email" : "text"}
             name="email"
             value={form.email}
             onChange={handleChange}
-            placeholder="student@university.edu"
-            autoComplete="email"
+            placeholder={isRegister ? "student@university.edu" : "student@university.edu or IT12345678"}
+            autoComplete={isRegister ? "email" : "username"}
             className="form-input"
             required
           />

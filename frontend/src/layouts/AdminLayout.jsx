@@ -15,7 +15,25 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
-    label: "Timetable Management",
+    label: "Students",
+    path: ROUTE_PATHS.adminStudentProfiles,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-4.42 0-8 1.79-8 4v2h16v-2c0-2.21-3.58-4-8-4z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Modules",
+    path: ROUTE_PATHS.adminModules,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 3h16v4H4V3zm0 7h16v11H4V10zm3 2v2h4v-2H7zm0 4v2h7v-2H7z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Timetable",
     path: ROUTE_PATHS.adminTimetable,
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -24,56 +42,11 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
-    label: "Student Groups",
-    path: ROUTE_PATHS.adminStudentGroups,
+    label: "Academic Events",
+    path: ROUTE_PATHS.adminAcademicEvents,
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M16 11a4 4 0 1 0-3.999-4A4 4 0 0 0 16 11zM8 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm8 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4zM8 14c-.33 0-.69.02-1.08.06C4.43 14.35 0 15.53 0 18v2h6v-2c0-1.48.81-2.87 2.2-3.99A9.8 9.8 0 0 0 8 14z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Assignments",
-    path: ROUTE_PATHS.adminAssignments,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm2 4v2h10V7H7zm0 4v2h10v-2H7zm0 4v2h6v-2H7z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Presentations",
-    path: ROUTE_PATHS.adminPresentations,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M3 4h18v10H3V4zm8 12h2v2h3v2H8v-2h3v-2z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Viva",
-    path: ROUTE_PATHS.adminViva,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 3a7 7 0 0 0-7 7v4a4 4 0 0 0 3 3.87V20h8v-2.13A4 4 0 0 0 19 14v-4a7 7 0 0 0-7-7z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Lab Tests",
-    path: ROUTE_PATHS.adminLabTests,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M9 2h6v2h-1v5.59l4.7 8.14A3 3 0 0 1 16.1 22H7.9a3 3 0 0 1-2.6-4.27L10 9.59V4H9V2z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Exams",
-    path: ROUTE_PATHS.adminExams,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 4v2h10V7H7zm0 4v2h6v-2H7z" />
+        <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10z" />
       </svg>
     ),
   },
@@ -81,13 +54,10 @@ const ADMIN_MENU_ITEMS = [
 
 const PAGE_TITLES = {
   [ROUTE_PATHS.adminDashboard]: "Admin Dashboard",
-  [ROUTE_PATHS.adminTimetable]: "Timetable Management",
-  [ROUTE_PATHS.adminStudentGroups]: "Student Groups",
-  [ROUTE_PATHS.adminAssignments]: "Assignments",
-  [ROUTE_PATHS.adminPresentations]: "Presentations",
-  [ROUTE_PATHS.adminViva]: "Viva Management",
-  [ROUTE_PATHS.adminLabTests]: "Lab Tests",
-  [ROUTE_PATHS.adminExams]: "Exams",
+  [ROUTE_PATHS.adminStudentProfiles]: "Students",
+  [ROUTE_PATHS.adminModules]: "Modules",
+  [ROUTE_PATHS.adminTimetable]: "Timetable",
+  [ROUTE_PATHS.adminAcademicEvents]: "Academic Events",
 };
 
 const AdminLayout = () => {

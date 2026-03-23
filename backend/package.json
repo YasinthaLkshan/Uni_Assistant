@@ -8,7 +8,13 @@
   "scripts": {
     "dev": "nodemon server.js",
     "start": "node server.js",
-    "seed:admin": "node scripts/seedAdmin.js"
+    "seed:admin": "node scripts/seedAdmin.js",
+    "seed:profiles": "node scripts/seedStudentProfiles.js",
+    "seed:modules": "node scripts/seedModules.js",
+    "seed:timetable": "node scripts/seedTimetableEntries.js",
+    "seed:events": "node scripts/seedAcademicEvents.js",
+    "seed:academic": "npm run seed:modules && npm run seed:profiles && npm run seed:timetable && npm run seed:events",
+    "fix:student-profile-indexes": "node scripts/fixStudentProfileIndexes.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

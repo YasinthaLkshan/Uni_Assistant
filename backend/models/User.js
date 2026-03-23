@@ -42,21 +42,24 @@ const userSchema = new mongoose.Schema(
     studentId: {
       type: String,
       trim: true,
-      required: [
-        function requiredForStudents() {
-          return this.role === "student";
-        },
-        "Student ID is required for student users",
-      ],
+      uppercase: true,
+      match: [/^IT\d{8}$/, "Student ID must be in format IT followed by 8 numbers"],
+    },
+    faculty: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      maxlength: 20,
+    },
+    academicYear: {
+      type: Number,
+      min: [1, "Academic year must be at least 1"],
+      max: [8, "Academic year cannot exceed 8"],
     },
     groupNumber: {
       type: Number,
-      required: [
-        function requiredForStudents() {
-          return this.role === "student";
-        },
-        "Group number is required for student users",
-      ],
+      min: [1, "Group number must be at least 1"],
+      max: [20, "Group number cannot exceed 20"],
     },
     department: {
       type: String,
@@ -78,6 +81,17 @@ userSchema.index(
     unique: true,
     partialFilterExpression: {
       username: { $exists: true, $type: "string" },
+    },
+  }
+);
+
+userSchema.index(
+  { studentId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      role: "student",
+      studentId: { $exists: true, $type: "string" },
     },
   }
 );

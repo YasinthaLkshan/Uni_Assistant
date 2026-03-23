@@ -23,11 +23,41 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "My Modules",
+    path: ROUTE_PATHS.myModules,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14l-8-3-8 3V5zm4 1v2h8V6H8zm0 4v2h8v-2H8z" />
+      </svg>
+    ),
+  },
+  {
+    label: "My Timetable",
+    path: ROUTE_PATHS.myTimetable,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2zm13 8H4v10h16V10z" />
+      </svg>
+    ),
+  },
+  {
+    label: "My Academic Events",
+    path: ROUTE_PATHS.myEvents,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
   [ROUTE_PATHS.dashboard]: "Dashboard Overview",
   [ROUTE_PATHS.tasks]: "Task Management",
+  [ROUTE_PATHS.myModules]: "My Modules",
+  [ROUTE_PATHS.myTimetable]: "My Timetable",
+  [ROUTE_PATHS.myEvents]: "My Academic Events",
 };
 
 const MainLayout = () => {

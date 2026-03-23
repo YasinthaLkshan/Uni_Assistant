@@ -8,7 +8,7 @@ import { ROUTE_PATHS } from "../routes/routePaths";
 import { extractApiErrorMessage } from "../utils/error";
 
 const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
-const isValidStudentId = (id) => /^IT\d{6}$/.test(id);
+const isValidStudentId = (id) => /^IT\d{8}$/i.test(id);
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -29,8 +29,9 @@ const RegisterPage = () => {
       return;
     }
 
-    if (!isValidStudentId(studentId)) {
-      setError("Student ID must be in format IT followed by 6 numbers (e.g., IT123456).");
+    const normalizedStudentId = studentId.toUpperCase();
+    if (!isValidStudentId(normalizedStudentId)) {
+      setError("Student ID must be in format IT followed by 8 numbers (e.g., IT12345678).");
       return;
     }
 
@@ -52,7 +53,7 @@ const RegisterPage = () => {
     try {
       setError("");
       setLoading(true);
-      await register({ studentId, name, email, password });
+      await register({ studentId: normalizedStudentId, name, email, password });
       navigate(ROUTE_PATHS.home);
     } catch (err) {
       setError(extractApiErrorMessage(err));

@@ -16,6 +16,12 @@ Professional backend starter for a MERN application using Express, MongoDB (Mong
 
 - dev: Runs the API with nodemon for live reload.
 - start: Runs the API with Node.js.
+- seed:admin: Seeds the default admin user.
+- seed:profiles: Seeds sample student profiles for IT year 3 (semesters 1/2, groups 1/2/3).
+- seed:modules: Seeds sample modules for IT year 3.
+- seed:timetable: Seeds sample timetable entries for IT year 3.
+- seed:events: Seeds sample academic events for IT year 3.
+- seed:academic: Runs all academic seed scripts in safe order.
 
 ## Setup Instructions
 

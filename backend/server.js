@@ -3,10 +3,16 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import connectDB from "./config/db.js";
+import academicEventRoutes from "./routes/academicEventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import adminAcademicRoutes from "./routes/adminAcademicRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import moduleRoutes from "./routes/moduleRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
+import studentAcademicRoutes from "./routes/studentAcademicRoutes.js";
+import studentProfileRoutes from "./routes/studentProfileRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import timetableRoutes from "./routes/timetableRoutes.js";
 import workloadRoutes from "./routes/workloadRoutes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 
@@ -21,10 +27,20 @@ const configuredOrigins = (process.env.CLIENT_URL || "")
   .filter(Boolean);
 const allowedOrigins = [...new Set([...defaultAllowedOrigins, ...configuredOrigins])];
 
+const isAllowedDevOrigin = (origin) => {
+  try {
+    const parsed = new URL(origin);
+    const isLocalHost = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
+    return isLocalHost && Boolean(parsed.port);
+  } catch {
+    return false;
+  }
+};
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || isAllowedDevOrigin(origin)) {
         callback(null, true);
         return;
       }
@@ -44,9 +60,15 @@ app.get("/api/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/admin/academic", adminAcademicRoutes);
+app.use("/api/admin/academic-events", academicEventRoutes);
+app.use("/api/admin/modules", moduleRoutes);
+app.use("/api/admin/student-profiles", studentProfileRoutes);
+app.use("/api/admin/timetable", timetableRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/workload", workloadRoutes);
 app.use("/api/recommendation", recommendationRoutes);
+app.use("/api/student", studentAcademicRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFound);
