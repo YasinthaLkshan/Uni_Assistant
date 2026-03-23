@@ -63,7 +63,6 @@ const PAGE_TITLES = {
 const MainLayout = () => {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Uni Assistant", [pathname]);
@@ -80,25 +79,29 @@ const MainLayout = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const avatarInitials = useMemo(() => {
+    const parts = displayName.split(" ").filter(Boolean).slice(0, 2);
+    const initials = parts.map((part) => part.charAt(0).toUpperCase()).join("");
+    return initials || "ST";
+  }, [displayName]);
+
   return (
-    <div className="app-shell app-grid page-fade-in main-layout">
+    <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
       <aside
-        className={`sidebar main-sidebar ${isSidebarCollapsed ? "is-collapsed" : ""} ${
-          isMobileMenuOpen ? "is-open" : ""
-        }`}
+        className={`sidebar main-sidebar ${isMobileMenuOpen ? "is-open" : ""}`}
       >
         <div className="sidebar-head">
-          <NavLink to={ROUTE_PATHS.dashboard} className="brand" onClick={closeMobileMenu}>
-            Uni Assistant
-          </NavLink>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-            aria-label="Toggle sidebar"
+          <NavLink
+            to={ROUTE_PATHS.home}
+            className="icon-btn sidebar-home-link"
+            onClick={closeMobileMenu}
+            aria-label="Go to home page"
+            title="Home"
           >
-            {isSidebarCollapsed ? ">" : "<"}
-          </button>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 18v-4h4v4m-9 2h14a1 1 0 0 0 1-1v-8.7a1 1 0 0 0-.32-.73l-7-6.4a1 1 0 0 0-1.36 0l-7 6.4a1 1 0 0 0-.32.73V19a1 1 0 0 0 1 1z" />
+            </svg>
+          </NavLink>
         </div>
 
         <nav className="sidebar-nav">
@@ -118,7 +121,8 @@ const MainLayout = () => {
         </nav>
 
         <button type="button" className="ghost-btn sidebar-logout" onClick={logout}>
-          Logout
+          <span>Logout</span>
+          <span className="sidebar-logout-icon" aria-hidden="true">&rarr;</span>
         </button>
       </aside>
 
@@ -141,8 +145,14 @@ const MainLayout = () => {
 
           <section className="user-panel" aria-label="User information">
             <p className="user-name">
-              <span className="user-status-dot" aria-hidden="true" />
-              <span>{displayName}</span>
+              <span className="user-avatar" aria-hidden="true">{avatarInitials}</span>
+              <span className="user-chip-text">
+                <strong>{displayName}</strong>
+                <span className="user-chip-status">
+                  <span className="user-status-dot" aria-hidden="true" />
+                  <span className="user-status-label">Active</span>
+                </span>
+              </span>
             </p>
           </section>
         </header>

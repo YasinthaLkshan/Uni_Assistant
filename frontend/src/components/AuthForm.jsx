@@ -9,6 +9,9 @@ const AuthForm = ({
   const [form, setForm] = useState({
     studentId: "",
     name: "",
+    academicYear: "",
+    semester: "",
+    groupNumber: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -85,6 +88,72 @@ const AuthForm = ({
               className="form-input"
               required
             />
+          </div>
+        </div>
+      )}
+
+      {isRegister && (
+        <div className="form-group">
+          <label htmlFor="academicYear" className="form-label">
+            Academic Year
+          </label>
+          <div className="form-input-wrapper">
+            <select
+              id="academicYear"
+              name="academicYear"
+              value={form.academicYear}
+              onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select year</option>
+              <option value="3">Year 3</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {isRegister && (
+        <div className="form-group">
+          <label htmlFor="semester" className="form-label">
+            Semester
+          </label>
+          <div className="form-input-wrapper">
+            <select
+              id="semester"
+              name="semester"
+              value={form.semester}
+              onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select semester</option>
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {isRegister && (
+        <div className="form-group">
+          <label htmlFor="groupNumber" className="form-label">
+            Group Number
+          </label>
+          <div className="form-input-wrapper">
+            <select
+              id="groupNumber"
+              name="groupNumber"
+              value={form.groupNumber}
+              onChange={handleChange}
+              className="form-input"
+              required
+            >
+              <option value="">Select group</option>
+              <option value="1">Group 1</option>
+              <option value="2">Group 2</option>
+              <option value="3">Group 3</option>
+            </select>
           </div>
         </div>
       )}

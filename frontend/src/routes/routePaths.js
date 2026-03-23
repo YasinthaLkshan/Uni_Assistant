@@ -13,4 +13,13 @@ export const ROUTE_PATHS = {
   myTimetable: "/my-timetable",
   myEvents: "/my-events",
   tasks: "/tasks",
+e: "/admin/timetable",
+  adminStudentGroups: "/admin/student-groups",
+  adminAssignments: "/admin/assignments",
+  adminPresentations: "/admin/presentations",
+  adminViva: "/admin/viva",
+  adminLabTests: "/admin/lab-tests",
+  adminExams: "/admin/exams",
+  dashboard: "/dashboard",
+  tasks: "/tasks",
 };

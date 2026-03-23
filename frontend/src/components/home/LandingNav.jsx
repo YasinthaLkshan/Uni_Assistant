@@ -5,6 +5,13 @@ import { ROUTE_PATHS } from "../../routes/routePaths";
 
 const LandingNav = ({ isAuthenticated, user }) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const displayName = isAuthenticated ? user?.name || "Student" : "Guest Student";
+  const initials = String(displayName)
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((chunk) => chunk[0]?.toUpperCase() || "")
+    .join("") || "GS";
 
   const closeMenu = () => {
     setMenuOpen(false);
@@ -27,16 +34,22 @@ const LandingNav = ({ isAuthenticated, user }) => {
         </button>
 
         <nav className={`landing-nav-links ${menuOpen ? "is-open" : ""}`.trim()}>
-          <a href="#home" onClick={closeMenu}>Home</a>
-          <a href="#features" onClick={closeMenu}>Features</a>
-          <Link to={ROUTE_PATHS.dashboard} onClick={closeMenu}>Dashboard</Link>
-          <Link to={ROUTE_PATHS.tasks} onClick={closeMenu}>Tasks</Link>
-          <a href="#about" onClick={closeMenu}>About</a>
+          <a href="#home" className="landing-nav-link is-active" onClick={closeMenu}>Home</a>
+          <a href="#features" className="landing-nav-link" onClick={closeMenu}>Features</a>
+          <Link to={ROUTE_PATHS.dashboard} className="landing-nav-link" onClick={closeMenu}>Dashboard</Link>
+          <Link to={ROUTE_PATHS.tasks} className="landing-nav-link" onClick={closeMenu}>Tasks</Link>
+          <a href="#about" className="landing-nav-link" onClick={closeMenu}>About</a>
         </nav>
 
         <div className="landing-profile-chip" aria-label="Student profile">
-          <span className="landing-profile-dot" aria-hidden="true" />
-          <span>{isAuthenticated ? user?.name || "Student" : "Guest Student"}</span>
+          <span className="landing-avatar" aria-hidden="true">{initials}</span>
+          <span className="landing-profile-meta">
+            <strong>{displayName}</strong>
+            <span className="landing-profile-status">
+              <span className="landing-profile-dot" aria-hidden="true" />
+              Active
+            </span>
+          </span>
         </div>
       </div>
     </header>

@@ -20,12 +20,15 @@ const RegisterPage = () => {
   const handleRegister = async (payload) => {
     const studentId = payload.studentId?.trim() || "";
     const name = payload.name?.trim() || "";
+    const academicYear = Number(payload.academicYear);
+    const semester = Number(payload.semester);
+    const groupNumber = Number(payload.groupNumber);
     const email = payload.email?.trim() || "";
     const password = payload.password || "";
     const confirmPassword = payload.confirmPassword || "";
 
-    if (!studentId || !name || !email || !password || !confirmPassword) {
-      setError("Student ID, name, email, password, and confirm password are required.");
+    if (!studentId || !name || !email || !password || !confirmPassword || !academicYear || !semester || !groupNumber) {
+      setError("Student ID, name, academic year, semester, group number, email, password, and confirm password are required.");
       return;
     }
 
@@ -50,10 +53,33 @@ const RegisterPage = () => {
       return;
     }
 
+    if (academicYear !== 3) {
+      setError("Academic year must be Year 3.");
+      return;
+    }
+
+    if (![1, 2].includes(semester)) {
+      setError("Semester must be 1 or 2.");
+      return;
+    }
+
+    if (![1, 2, 3].includes(groupNumber)) {
+      setError("Group number must be 1, 2, or 3.");
+      return;
+    }
+
     try {
       setError("");
       setLoading(true);
-      await register({ studentId: normalizedStudentId, name, email, password });
+      await register({
+        studentId: normalizedStudentId,
+        name,
+        academicYear,
+        semester,
+        groupNumber,
+        email,
+        password,
+      });
       navigate(ROUTE_PATHS.home);
     } catch (err) {
       setError(extractApiErrorMessage(err));
