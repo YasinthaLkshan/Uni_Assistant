@@ -32,14 +32,14 @@ const AdminDashboardOverviewPage = () => {
         </p>
 
         <div className="admin-quick-actions">
-          <Link to={ROUTE_PATHS.adminTimetable} className="primary-btn">
-            Manage Timetable
+          <Link to={ROUTE_PATHS.adminStudentProfiles} className="primary-btn">
+            Manage Student Profiles
           </Link>
-          <Link to={ROUTE_PATHS.adminStudentGroups} className="ghost-btn">
-            View Student Groups
+          <Link to={ROUTE_PATHS.adminModules} className="ghost-btn">
+            Manage Modules
           </Link>
-          <Link to={ROUTE_PATHS.adminAssignments} className="ghost-btn">
-            Review Assignments
+          <Link to={ROUTE_PATHS.adminAcademicEvents} className="ghost-btn">
+            Manage Events
           </Link>
         </div>
       </article>

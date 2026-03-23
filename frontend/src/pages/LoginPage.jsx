@@ -8,6 +8,7 @@ import { ROUTE_PATHS } from "../routes/routePaths";
 import { extractApiErrorMessage } from "../utils/error";
 
 const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
+const isValidStudentId = (value) => /^IT\d{8}$/i.test(value);
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -28,16 +29,16 @@ const LoginPage = () => {
   }, [isAuthenticated, role, navigate]);
 
   const handleLogin = async (credentials) => {
-    const email = credentials.email?.trim() || "";
+    const loginIdentifier = credentials.email?.trim() || "";
     const password = credentials.password || "";
 
-    if (!email || !password) {
-      setError("Email and password are required.");
+    if (!loginIdentifier || !password) {
+      setError("Email or Student ID and password are required.");
       return;
     }
 
-    if (!isValidEmail(email)) {
-      setError("Please enter a valid email address.");
+    if (!isValidEmail(loginIdentifier) && !isValidStudentId(loginIdentifier)) {
+      setError("Please enter a valid email address or Student ID (IT + 8 numbers).");
       return;
     }
 
@@ -49,7 +50,7 @@ const LoginPage = () => {
     try {
       setError("");
       setLoading(true);
-      const authUser = await login({ email, password });
+      const authUser = await login({ identifier: loginIdentifier, password });
 
       if (authUser?.role === "admin") {
         navigate(ROUTE_PATHS.adminDashboard, { replace: true });

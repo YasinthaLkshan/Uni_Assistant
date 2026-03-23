@@ -961,6 +961,249 @@ h3 {
   color: var(--ink-700);
 }
 
+.admin-scope-note {
+  margin-top: 0.35rem;
+  font-size: 0.84rem;
+  color: var(--ink-500);
+  font-weight: 650;
+}
+
+.admin-subsection-title {
+  margin: 1rem 0 0.45rem;
+  font-size: 0.96rem;
+  font-weight: 800;
+  letter-spacing: 0.015em;
+  color: var(--ink-900);
+}
+
+.admin-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.72rem;
+  margin-top: 0.72rem;
+}
+
+.admin-filter-row label,
+.admin-form-grid label {
+  display: grid;
+  gap: 0.32rem;
+  color: var(--ink-700);
+  font-weight: 650;
+  font-size: 0.84rem;
+  letter-spacing: 0.01em;
+}
+
+.admin-filter-row select,
+.admin-form-grid input,
+.admin-form-grid select {
+  min-height: 2.4rem;
+  border-radius: 12px;
+  border: 1px solid rgba(121, 132, 214, 0.35);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.56rem 0.72rem;
+  font: inherit;
+  color: var(--ink-900);
+}
+
+.admin-filter-row select,
+.admin-form-grid input,
+.admin-form-grid select,
+.admin-form-grid textarea {
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), background-color var(--transition-base);
+}
+
+.admin-filter-row select:focus-visible,
+.admin-form-grid input:focus-visible,
+.admin-form-grid select:focus-visible,
+.admin-form-grid textarea:focus-visible {
+  outline: none;
+  border-color: rgba(90, 103, 216, 0.54);
+  box-shadow: 0 0 0 4px rgba(122, 124, 241, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.72rem;
+  margin-top: 0.82rem;
+}
+
+.admin-form-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.56rem;
+}
+
+.admin-data-table-wrap {
+  margin-top: 0.82rem;
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid rgba(121, 132, 214, 0.22);
+  background: rgba(255, 255, 255, 0.44);
+}
+
+.admin-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+}
+
+.admin-data-table th,
+.admin-data-table td {
+  border-bottom: 1px solid rgba(121, 132, 214, 0.24);
+  text-align: left;
+  padding: 0.68rem 0.58rem;
+  font-size: 0.88rem;
+  color: var(--ink-700);
+  vertical-align: top;
+}
+
+.admin-data-table th {
+  color: var(--ink-900);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.74);
+  letter-spacing: 0.01em;
+}
+
+.admin-data-table tbody tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.admin-data-table tbody tr:hover {
+  background: rgba(122, 124, 241, 0.08);
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
+}
+
+.admin-module-form-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.admin-form-span-full {
+  grid-column: 1 / -1;
+}
+
+.admin-form-grid textarea {
+  min-height: 2.4rem;
+  border-radius: 12px;
+  border: 1px solid rgba(121, 132, 214, 0.35);
+  background: rgba(255, 255, 255, 0.78);
+  padding: 0.56rem 0.72rem;
+  font: inherit;
+  color: var(--ink-900);
+  resize: vertical;
+}
+
+.admin-criteria-fieldset {
+  margin: 0;
+  border: 1px solid rgba(121, 132, 214, 0.3);
+  border-radius: 14px;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.admin-criteria-fieldset legend {
+  padding: 0 0.35rem;
+  font-weight: 700;
+  color: var(--ink-900);
+}
+
+.admin-criteria-help {
+  margin-bottom: 0.6rem;
+  color: var(--ink-500);
+  font-size: 0.83rem;
+}
+
+.admin-criteria-grid {
+  display: grid;
+  gap: 0.58rem;
+  margin-bottom: 0.58rem;
+}
+
+.admin-criteria-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 130px auto;
+  gap: 0.52rem;
+  align-items: center;
+}
+
+.admin-inline-note {
+  margin-top: 0.24rem;
+  font-size: 0.78rem;
+  color: var(--ink-500);
+  max-width: 340px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.admin-criteria-list {
+  margin: 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+
+.admin-criteria-list li {
+  font-size: 0.82rem;
+}
+
+.admin-filter-row-with-actions {
+  align-items: end;
+}
+
+.admin-filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-timetable-form-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-filter-grid-events {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.72rem;
+  align-items: end;
+}
+
+.admin-events-form-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.admin-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 96px;
+  padding: 0.26rem 0.62rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+}
+
+.admin-status-badge.is-pending {
+  color: #965c0b;
+  background: rgba(255, 204, 120, 0.28);
+  border-color: rgba(213, 144, 44, 0.4);
+}
+
+.admin-status-badge.is-registered {
+  color: #1f7b3f;
+  background: rgba(116, 211, 142, 0.22);
+  border-color: rgba(58, 162, 92, 0.4);
+}
+
 .admin-module-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -979,6 +1222,110 @@ h3 {
 .admin-sub-card:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-soft);
+}
+
+.student-academic-page {
+  gap: 0.95rem;
+}
+
+.student-grid-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.student-academic-card {
+  border-radius: 14px;
+  border: 1px solid rgba(121, 132, 214, 0.26);
+  background: rgba(255, 255, 255, 0.68);
+  padding: 0.86rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.student-academic-card h3 {
+  margin: 0;
+}
+
+.student-academic-code {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink-900);
+  letter-spacing: 0.02em;
+}
+
+.student-academic-meta {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--ink-700);
+}
+
+.student-academic-note {
+  margin: 0;
+  color: var(--ink-500);
+  font-size: 0.82rem;
+}
+
+.student-table-wrap {
+  margin-top: 0.8rem;
+  overflow-x: auto;
+}
+
+.student-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+
+.student-data-table th,
+.student-data-table td {
+  border-bottom: 1px solid rgba(121, 132, 214, 0.24);
+  text-align: left;
+  padding: 0.56rem 0.5rem;
+  font-size: 0.86rem;
+  color: var(--ink-700);
+  vertical-align: top;
+}
+
+.student-data-table th {
+  color: var(--ink-900);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.student-cell-subtext {
+  margin: 0.16rem 0 0;
+  font-size: 0.78rem;
+  color: var(--ink-500);
+}
+
+.is-today-row {
+  background: rgba(115, 219, 159, 0.12);
+}
+
+.student-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.42rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #1f7b3f;
+  background: rgba(116, 211, 142, 0.2);
+  border: 1px solid rgba(58, 162, 92, 0.35);
+}
+
+.is-upcoming-card {
+  border-color: rgba(214, 149, 47, 0.45);
+  box-shadow: 0 8px 18px rgba(214, 149, 47, 0.12);
+}
+
+.student-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .admin-mobile-trigger {
@@ -2866,6 +3213,55 @@ h3 {
     padding: 0.86rem;
   }
 
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-form-actions {
+    flex-wrap: wrap;
+  }
+
+  .admin-form-actions .primary-btn,
+  .admin-form-actions .ghost-btn {
+    width: 100%;
+  }
+
+  .admin-criteria-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-filter-actions {
+    width: 100%;
+  }
+
+  .admin-filter-actions .primary-btn,
+  .admin-filter-actions .ghost-btn {
+    width: 100%;
+  }
+
+  .admin-filter-grid-events {
+    grid-template-columns: 1fr;
+  }
+
+  .student-grid-cards {
+    grid-template-columns: 1fr;
+  }
+
+
+@media (min-width: 641px) and (max-width: 980px) {
+  .admin-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-timetable-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-events-form-grid,
+  .admin-filter-grid-events {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
   /* Mobile login page adjustments */
   .login-content-wrapper {
     padding: 1rem;
