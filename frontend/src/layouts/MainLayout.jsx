@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
-import { NotificationBadge } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 
@@ -38,6 +37,14 @@ const MainLayout = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Uni Assistant", [pathname]);
+  const displayName = useMemo(() => {
+    const rawName = (user?.name || "Student").trim();
+    if (!rawName) {
+      return "Student";
+    }
+
+    return `${rawName.charAt(0).toUpperCase()}${rawName.slice(1)}`;
+  }, [user?.name]);
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -103,9 +110,10 @@ const MainLayout = () => {
           </div>
 
           <section className="user-panel" aria-label="User information">
-            <p className="user-name">{user?.name || "Student"}</p>
-            <p className="user-meta">{user?.email || "No email"}</p>
-            <NotificationBadge unreadCount={0} className="header-notification-badge" />
+            <p className="user-name">
+              <span className="user-status-dot" aria-hidden="true" />
+              <span>{displayName}</span>
+            </p>
           </section>
         </header>
 

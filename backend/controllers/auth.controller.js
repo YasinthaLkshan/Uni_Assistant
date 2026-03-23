@@ -47,23 +47,37 @@ export const registerUser = asyncHandler(async (req, res) => {
 });
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, username, email, password } = req.body;
 
-  if (!email || !password) {
-    throw new AppError("Email and password are required", 400);
+  const loginIdentifier = (identifier || username || email || "").trim();
+
+  if (!loginIdentifier || !password) {
+    throw new AppError("Login identifier and password are required", 400);
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
-  const user = await User.findOne({ email: normalizedEmail }).select("+password");
+  const normalizedIdentifier = loginIdentifier.toLowerCase();
+  const isEmailIdentifier = /^\S+@\S+\.\S+$/.test(loginIdentifier);
+
+  const userQuery = isEmailIdentifier
+    ? { email: normalizedIdentifier, role: "student" }
+    : { username: normalizedIdentifier, role: "admin" };
+
+  const user = await User.findOne(userQuery).select("+password");
 
   if (!user) {
-    throw new AppError("Invalid email or password", 401);
+    throw new AppError(
+      isEmailIdentifier ? "Invalid student email or password" : "Invalid admin username or password",
+      401
+    );
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    throw new AppError("Invalid email or password", 401);
+    throw new AppError(
+      isEmailIdentifier ? "Invalid student email or password" : "Invalid admin username or password",
+      401
+    );
   }
 
   const token = signToken(user._id);
@@ -76,6 +90,7 @@ export const loginUser = asyncHandler(async (req, res) => {
       user: {
         id: user._id,
         name: user.name,
+        username: user.username,
         email: user.email,
         role: user.role,
         department: user.department,

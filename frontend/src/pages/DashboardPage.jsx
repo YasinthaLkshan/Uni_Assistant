@@ -4,7 +4,6 @@ import {
   EmptyStateCard,
   GlassCard,
   LoadingSpinner,
-  NotificationBadge,
   PageHeader,
   RecommendationCard,
   SkeletonCard,
@@ -184,15 +183,12 @@ const DashboardPage = () => {
           eyebrow="Welcome Back"
           title={`Hello, ${user?.name || "Student"}`}
           subtitle="Here is your academic pulse for today. Stay focused and ahead."
-          rightContent={
-            <NotificationBadge unreadCount={summary.unreadNotificationCount} />
-          }
         />
       </GlassCard>
 
       <div className="dashboard-grid">
         <WorkloadCard
-          className="section-entrance"
+          className="section-entrance summary-card"
           style={{ animationDelay: "80ms" }}
           workloadScore={summary.workloadSummary.workloadScore}
           workloadLevel={summary.workloadSummary.workloadLevel}
@@ -203,7 +199,7 @@ const DashboardPage = () => {
         />
 
         <RecommendationCard
-          className="section-entrance"
+          className="section-entrance summary-card"
           style={{ animationDelay: "140ms" }}
           title={summary.smartRecommendation.title || "No recommendation yet"}
           type={summary.smartRecommendation.type || "N/A"}
@@ -212,20 +208,21 @@ const DashboardPage = () => {
           message={summary.smartRecommendation.message}
         />
 
-        <GlassCard as="article" className="section-entrance" style={{ animationDelay: "200ms" }}>
+        <GlassCard as="article" className="section-entrance summary-card study-suggestion-card" style={{ animationDelay: "200ms" }}>
           <p className="eyebrow">Study Suggestion</p>
-          <h3>{summary.workloadSummary.studySuggestion?.suggestedStudyHoursPerDay || "1 hour/day"}</h3>
-          <p>
+          <h3 className="study-hours-value">{summary.workloadSummary.studySuggestion?.suggestedStudyHoursPerDay || "1 hour/day"}</h3>
+          <p className="study-suggestion-copy">
             Recommended daily focus time based on your current workload profile.
           </p>
           <StatusBadge level="success" label="Consistency beats intensity" />
         </GlassCard>
       </div>
 
-      <GlassCard as="section" className="ui-section section-entrance" style={{ animationDelay: "260ms" }}>
+      <GlassCard as="section" className="ui-section section-entrance dashboard-tasks" style={{ animationDelay: "260ms" }}>
         <SectionTitle
           eyebrow="Today's Tasks"
           rightContent={<StatusBadge level="low" label={`${summary.todaysTasks.length} Due Today`} />}
+          className="dashboard-tasks-head"
         />
 
         {summary.todaysTasks.length ? (

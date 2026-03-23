@@ -25,8 +25,38 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["student", "admin"],
+      enum: ["admin", "student"],
       default: "student",
+    },
+    username: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      required: [
+        function requiredForAdmins() {
+          return this.role === "admin";
+        },
+        "Username is required for admin users",
+      ],
+    },
+    studentId: {
+      type: String,
+      trim: true,
+      required: [
+        function requiredForStudents() {
+          return this.role === "student";
+        },
+        "Student ID is required for student users",
+      ],
+    },
+    groupNumber: {
+      type: Number,
+      required: [
+        function requiredForStudents() {
+          return this.role === "student";
+        },
+        "Group number is required for student users",
+      ],
     },
     department: {
       type: String,
@@ -40,6 +70,16 @@ const userSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+userSchema.index(
+  { username: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      username: { $exists: true, $type: "string" },
+    },
+  }
 );
 
 const User = mongoose.model("User", userSchema);

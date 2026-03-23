@@ -6,12 +6,12 @@ Use this checklist during development testing before merging major changes.
 
 - [X] Backend server is running and connected to MongoDB.
 - [X] Frontend app is running.
-- [ ] Browser local storage/session is clear before auth flow tests.
-- [ ] Use a fresh test user email for registration tests.
+- [X] Browser local storage/session is clear before auth flow tests.
+- [X] Use a fresh test user email for registration tests.
 
 ## 1) User Registration
 
-- [ ] Open Register page.
+- [X] Open Register page.
 - [ ] Submit valid name, valid email, valid password, matching confirm password.
 - [ ] Verify account creation succeeds.
 - [ ] Verify app redirects to dashboard after successful registration.

@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { Logo } from "../components";
 import AuthForm from "../components/AuthForm";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 import { extractApiErrorMessage } from "../utils/error";
 
 const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
+const isValidStudentId = (id) => /^IT\d{6}$/.test(id);
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -16,13 +18,19 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
 
   const handleRegister = async (payload) => {
+    const studentId = payload.studentId?.trim() || "";
     const name = payload.name?.trim() || "";
     const email = payload.email?.trim() || "";
     const password = payload.password || "";
     const confirmPassword = payload.confirmPassword || "";
 
-    if (!name || !email || !password || !confirmPassword) {
-      setError("Name, email, password, and confirm password are required.");
+    if (!studentId || !name || !email || !password || !confirmPassword) {
+      setError("Student ID, name, email, password, and confirm password are required.");
+      return;
+    }
+
+    if (!isValidStudentId(studentId)) {
+      setError("Student ID must be in format IT followed by 6 numbers (e.g., IT123456).");
       return;
     }
 
@@ -44,8 +52,8 @@ const RegisterPage = () => {
     try {
       setError("");
       setLoading(true);
-      await register({ name, email, password });
-      navigate(ROUTE_PATHS.dashboard);
+      await register({ studentId, name, email, password });
+      navigate(ROUTE_PATHS.home);
     } catch (err) {
       setError(extractApiErrorMessage(err));
     } finally {
@@ -55,14 +63,30 @@ const RegisterPage = () => {
 
   return (
     <section className="auth-page register-page page-fade-in">
-      <div className="auth-panel register-card glass-card">
-        <p className="eyebrow">Get Started</p>
-        <h2>Create your account</h2>
-        <p>Set up your Uni Assistant workspace in under one minute and stay in control of your semester.</p>
-        <AuthForm mode="register" onSubmit={handleRegister} loading={loading} error={error} />
-        <p className="switch-auth">
-          Already have an account? <Link to={ROUTE_PATHS.login}>Login</Link>
-        </p>
+      <div className="login-bg-container">
+        <div className="login-bg-overlay" />
+      </div>
+
+      <div className="login-content-wrapper">
+        <div className="auth-panel register-card glass-card">
+          <div className="login-header">
+            <Logo variant="center" />
+            <h1 className="login-title">Create Account</h1>
+            <p className="login-subtitle">Join our academic platform and manage your semester</p>
+          </div>
+
+          <AuthForm mode="register" onSubmit={handleRegister} loading={loading} error={error} />
+
+          <div className="login-footer">
+            <p className="switch-auth">
+              Already have an account? <Link to={ROUTE_PATHS.login}>Sign in here</Link>
+            </p>
+          </div>
+        </div>
+
+        <footer className="login-footer-text">
+          <p>© 2024 Uni Assistant. Educational technology for modern universities.</p>
+        </footer>
       </div>
     </section>
   );

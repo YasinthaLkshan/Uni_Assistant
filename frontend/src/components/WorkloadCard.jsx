@@ -33,11 +33,15 @@ const WorkloadCard = ({
         rightContent={<span className="workload-icon" aria-hidden="true">◔</span>}
       />
 
-      <h3 className="workload-score">Score: {workloadScore}</h3>
-      <p className="metric-line">Total Tasks: {totalTasks}</p>
-      <p className="metric-line">Urgent Tasks: {urgentTasks}</p>
-      <p className="metric-line">Exams Near: {examsNear}</p>
-      <p className="metric-line">Study Suggestion: {studySuggestion}</p>
+      <h3 className="workload-score">{workloadScore}</h3>
+      <p className="workload-score-label">Current workload score</p>
+
+      <div className="metric-stack">
+        <p className="metric-line"><strong>Total Tasks:</strong> {totalTasks}</p>
+        <p className="metric-line"><strong>Urgent Tasks:</strong> {urgentTasks}</p>
+        <p className="metric-line"><strong>Exams Near:</strong> {examsNear}</p>
+        <p className="metric-line"><strong>Study Suggestion:</strong> {studySuggestion}</p>
+      </div>
 
       <StatusBadge level={level} label={`${workloadLevel} Workload`} />
     </GlassCard>
