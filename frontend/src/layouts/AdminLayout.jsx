@@ -75,14 +75,6 @@ const AdminLayout = () => {
           <NavLink to={ROUTE_PATHS.adminDashboard} className="admin-brand" onClick={closeMobileMenu}>
             Uni Assistant Admin
           </NavLink>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-            aria-label="Toggle admin sidebar"
-          >
-            {isSidebarCollapsed ? ">" : "<"}
-          </button>
         </div>
 
         <nav className="admin-sidebar-nav">
