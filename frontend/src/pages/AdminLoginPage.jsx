@@ -177,3 +177,5 @@ const AdminLoginPage = () => {
 };
 
 export default AdminLoginPage;
+
+// Admin login page with form validation, error handling, and password visibility toggle. Redirects authenticated admin users to the admin dashboard.
