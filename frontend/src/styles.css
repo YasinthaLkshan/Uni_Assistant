@@ -87,6 +87,13 @@ p {
   padding: 0 var(--space-4);
 }
 
+/* Full-width layout for authenticated app (dashboard with sidebar) */
+.main-layout.app-shell {
+  width: 100%;
+  max-width: none;
+  margin: clamp(1.1rem, 2vw, var(--space-5)) 0;
+}
+
 .auth-home-layout {
   width: 100%;
 }
