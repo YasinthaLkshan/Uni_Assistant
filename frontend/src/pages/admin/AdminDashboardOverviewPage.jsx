@@ -20,33 +20,26 @@ const RECENT_TIMETABLE_ENTRIES = [
 
 const AdminDashboardOverviewPage = () => {
   const { user } = useAuth();
+  const displayName = user?.name || user?.username || "Admin";
+  const highlights = SUMMARY_METRICS.slice(0, 3);
+  const recentUpdates = RECENT_TIMETABLE_ENTRIES.slice(0, 3);
 
   return (
-    <section className="admin-page-grid section-entrance">
-      <article className="admin-glass-card admin-overview-intro admin-welcome-card">
-        <p className="eyebrow">Admin Dashboard Home</p>
-        <h2>Welcome, {user?.name || user?.username || "Admin"}</h2>
-        <p>
-          Manage student groups, timetable schedules, and assessment timelines from this
-          premium Uni Assistant admin workspace.
-        </p>
-
-        <div className="admin-quick-actions">
-          <Link to={ROUTE_PATHS.adminStudentProfiles} className="primary-btn">
-            Manage Student Profiles
-          </Link>
-          <Link to={ROUTE_PATHS.adminModules} className="ghost-btn">
-            Manage Modules
-          </Link>
-          <Link to={ROUTE_PATHS.adminAcademicEvents} className="ghost-btn">
-            Manage Events
-          </Link>
+    <section className="admin-page-grid admin-home-simple section-entrance">
+      <article className="admin-glass-card admin-simple-hero">
+        <div>
+          <p className="eyebrow">Admin Dashboard Home</p>
+          <h2>Welcome, {displayName}</h2>
+          <p>
+            A simplified control center to manage modules, timetable, and academic events.
+          </p>
+          <Link to={ROUTE_PATHS.adminAcademicEvents} className="ghost-btn">Academic Events</Link>
         </div>
       </article>
 
-      <div className="admin-summary-grid">
-        {SUMMARY_METRICS.map((metric) => (
-          <article key={metric.label} className="admin-glass-card admin-summary-card">
+      <div className="admin-simple-metrics">
+        {highlights.map((metric) => (
+          <article key={metric.label} className="admin-glass-card admin-simple-metric-card">
             <p className="admin-metric-label">{metric.label}</p>
             <h3>{metric.value}</h3>
             <p className="admin-metric-trend">{metric.meta}</p>
@@ -54,11 +47,11 @@ const AdminDashboardOverviewPage = () => {
         ))}
       </div>
 
-      <div className="admin-overview-panels">
-        <article className="admin-glass-card admin-recent-table-card">
-          <p className="eyebrow">Recent Timetable Entries</p>
+      <div className="admin-simple-panels">
+        <article className="admin-glass-card">
+          <p className="eyebrow">Recent Timetable Updates</p>
           <div className="admin-recent-table">
-            {RECENT_TIMETABLE_ENTRIES.map((entry) => (
+            {recentUpdates.map((entry) => (
               <article key={`${entry.group}-${entry.day}-${entry.subject}`} className="admin-table-row">
                 <div>
                   <h4>{entry.subject}</h4>
@@ -73,13 +66,12 @@ const AdminDashboardOverviewPage = () => {
           </div>
         </article>
 
-        <article className="admin-glass-card">
-          <p className="eyebrow">Operational Focus</p>
+        <article className="admin-glass-card admin-focus-panel">
+          <p className="eyebrow">Today Focus</p>
           <ul className="admin-list">
-            <li>Approve pending timetable edits before end of day</li>
-            <li>Confirm exam halls for upcoming assessment window</li>
-            <li>Verify assignment publish dates for all groups</li>
-            <li>Coordinate viva and lab test panels with module leads</li>
+            <li>Review newly registered student timetable scope coverage</li>
+            <li>Validate next week timetable publishing</li>
+            <li>Finalize upcoming assessment event notices</li>
           </ul>
         </article>
       </div>

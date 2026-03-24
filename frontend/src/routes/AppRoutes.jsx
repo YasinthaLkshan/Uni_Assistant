@@ -7,7 +7,6 @@ import AdminLoginPage from "../pages/AdminLoginPage";
 import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPage";
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
-import AdminStudentsPage from "../pages/admin/AdminStudentsPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import DashboardPage from "../pages/DashboardPage";
 import HomePage from "../pages/HomePage";
@@ -39,10 +38,6 @@ const AppRoutes = () => {
         <Route element={<AdminProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route path={ROUTE_PATHS.adminDashboard} element={<AdminDashboardOverviewPage />} />
-            <Route
-              path={ROUTE_PATHS.adminStudentProfiles}
-              element={<AdminStudentsPage />}
-            />
             <Route
               path={ROUTE_PATHS.adminModules}
               element={<AdminModulesPage />}

@@ -2,32 +2,39 @@ import bcrypt from "bcryptjs";
 
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/appError.js";
-import StudentProfile from "../models/StudentProfile.js";
 import User from "../models/User.js";
 import { signToken } from "../utils/token.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
-  const { studentId, name, email, password } = req.body;
+  const { studentId, name, email, password, academicYear, semester, groupNumber } = req.body;
 
-  if (!studentId || !name || !email || !password) {
-    throw new AppError("Student ID, name, email, and password are required", 400);
+  if (!studentId || !name || !email || !password || !academicYear || !semester || !groupNumber) {
+    throw new AppError(
+      "Student ID, name, email, password, academic year, semester, and group number are required",
+      400
+    );
   }
 
   const normalizedStudentId = studentId.trim().toUpperCase();
   const normalizedEmail = email.trim().toLowerCase();
+  const parsedAcademicYear = Number(academicYear);
+  const parsedSemester = Number(semester);
+  const parsedGroupNumber = Number(groupNumber);
 
   if (!/^IT\d{8}$/.test(normalizedStudentId)) {
     throw new AppError("Student ID must be in format IT followed by 8 numbers", 400);
   }
 
-  const profile = await StudentProfile.findOne({ studentId: normalizedStudentId });
-
-  if (!profile) {
-    throw new AppError("Student profile not found. Please contact admin to preload your student record.", 404);
+  if (parsedAcademicYear !== 3) {
+    throw new AppError("Academic year must be 3", 400);
   }
 
-  if (profile.user || profile.registrationStatus === "registered") {
-    throw new AppError("This student ID is already linked to a registered account.", 409);
+  if (![1, 2].includes(parsedSemester)) {
+    throw new AppError("Semester must be 1 or 2", 400);
+  }
+
+  if (![1, 2, 3].includes(parsedGroupNumber)) {
+    throw new AppError("Group number must be 1, 2, or 3", 400);
   }
 
   const existingUser = await User.findOne({ email: normalizedEmail });
@@ -49,15 +56,11 @@ export const registerUser = asyncHandler(async (req, res) => {
     email: normalizedEmail,
     password: hashedPassword,
     role: "student",
-    faculty: profile.faculty,
-    academicYear: profile.academicYear,
-    semester: profile.semester,
-    groupNumber: profile.groupNumber,
+    faculty: "IT",
+    academicYear: parsedAcademicYear,
+    semester: parsedSemester,
+    groupNumber: parsedGroupNumber,
   });
-
-  profile.user = user._id;
-  profile.registrationStatus = "registered";
-  await profile.save();
 
   const token = signToken(user._id);
 
@@ -74,9 +77,9 @@ export const registerUser = asyncHandler(async (req, res) => {
         role: user.role,
         faculty: user.faculty,
         academicYear: user.academicYear,
+        semester: user.semester,
         groupNumber: user.groupNumber,
         department: user.department,
-        semester: user.semester,
       },
     },
   });
@@ -133,6 +136,9 @@ export const loginUser = asyncHandler(async (req, res) => {
         studentId: user.studentId,
         email: user.email,
         role: user.role,
+        faculty: user.faculty,
+        academicYear: user.academicYear,
+        groupNumber: user.groupNumber,
         department: user.department,
         semester: user.semester,
       },
