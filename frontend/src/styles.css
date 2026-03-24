@@ -82,8 +82,8 @@ p {
 }
 
 .app-shell {
-  width: 100%;
-  margin: clamp(1.1rem, 2vw, var(--space-5)) 0;
+  width: min(1400px, 100%);
+  margin: clamp(1.1rem, 2vw, var(--space-5)) auto;
   padding: 0 var(--space-4);
 }
 
@@ -5264,6 +5264,7 @@ select.text-input {
 
   .main-layout-premium {
     width: min(1240px, 95vw);
+    margin-inline: auto;
     position: relative;
     isolation: isolate;
     z-index: 1;
