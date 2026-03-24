@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
+import { ChatWindow } from "../components";
 import { ROUTE_PATHS } from "../routes/routePaths";
 
 const MENU_ITEMS = [
@@ -50,6 +51,15 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "GPA Calculator",
+    path: ROUTE_PATHS.gpaCalculator,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 5h18v2H3V5zm0 6h10v2H3v-2zm0 6h6v2H3v-2zm14.59-5L21 14.41 19.59 15.83 17 13.24l-2.59 2.59L13 14.41 15.59 12 13 9.41 14.41 8 17 10.59 19.59 8 21 9.41 18.41 12z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
@@ -58,12 +68,14 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.myModules]: "My Modules",
   [ROUTE_PATHS.myTimetable]: "My Timetable",
   [ROUTE_PATHS.myEvents]: "My Academic Events",
+  [ROUTE_PATHS.gpaCalculator]: "GPA Calculator",
 };
 
 const MainLayout = () => {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Uni Assistant", [pathname]);
   const displayName = useMemo(() => {
@@ -84,6 +96,25 @@ const MainLayout = () => {
     const initials = parts.map((part) => part.charAt(0).toUpperCase()).join("");
     return initials || "ST";
   }, [displayName]);
+
+  useEffect(() => {
+    if (isChatOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.dataset.prevOverflow = originalOverflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = document.body.dataset.prevOverflow || "";
+        delete document.body.dataset.prevOverflow;
+      };
+    }
+
+    if (!isChatOpen && document.body.dataset.prevOverflow !== undefined) {
+      document.body.style.overflow = document.body.dataset.prevOverflow || "";
+      delete document.body.dataset.prevOverflow;
+    }
+
+    return undefined;
+  }, [isChatOpen]);
 
   return (
     <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
@@ -142,24 +173,37 @@ const MainLayout = () => {
               <h2 className="page-title">{pageTitle}</h2>
             </div>
           </div>
+          <div className="dashboard-head-meta">
+            <button
+              type="button"
+              className="icon-btn chat-toggle-btn"
+              onClick={() => setIsChatOpen((prev) => !prev)}
+              aria-label={isChatOpen ? "Hide Uni Assistant AI" : "Open Uni Assistant AI"}
+              aria-expanded={isChatOpen}
+            >
+              <span className="chat-toggle-icon" aria-hidden="true" />
+            </button>
 
-          <section className="user-panel" aria-label="User information">
-            <p className="user-name">
-              <span className="user-avatar" aria-hidden="true">{avatarInitials}</span>
-              <span className="user-chip-text">
-                <strong>{displayName}</strong>
-                <span className="user-chip-status">
-                  <span className="user-status-dot" aria-hidden="true" />
-                  <span className="user-status-label">Active</span>
+            <section className="user-panel" aria-label="User information">
+              <p className="user-name">
+                <span className="user-avatar" aria-hidden="true">{avatarInitials}</span>
+                <span className="user-chip-text">
+                  <strong>{displayName}</strong>
+                  <span className="user-chip-status">
+                    <span className="user-status-dot" aria-hidden="true" />
+                    <span className="user-status-label">Active</span>
+                  </span>
                 </span>
-              </span>
-            </p>
-          </section>
+              </p>
+            </section>
+          </div>
         </header>
 
         <main className="main-content content-shell">
           <Outlet />
         </main>
+
+        <ChatWindow isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
       </div>
     </div>
   );

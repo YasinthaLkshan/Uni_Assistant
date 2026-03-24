@@ -13,3 +13,4 @@ export { default as SecondaryButton } from "./SecondaryButton";
 export { default as SkeletonCard } from "./SkeletonCard";
 export { default as StatusBadge } from "./StatusBadge";
 export { default as WorkloadCard } from "./WorkloadCard";
+export { default as ChatWindow } from "./ChatWindow";

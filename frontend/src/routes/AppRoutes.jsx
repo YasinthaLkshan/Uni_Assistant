@@ -11,6 +11,8 @@ import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import DashboardPage from "../pages/DashboardPage";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
+import GpaCalculatorPage from "../pages/GpaCalculatorPage";
+import GpaHistoryPage from "../pages/GpaHistoryPage";
 import MyAcademicEventsPage from "../pages/MyAcademicEventsPage";
 import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
@@ -58,6 +60,8 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.myTimetable} element={<MyTimetablePage />} />
             <Route path={ROUTE_PATHS.myEvents} element={<MyAcademicEventsPage />} />
             <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
+            <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
+            <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
           </Route>
         </Route>
 

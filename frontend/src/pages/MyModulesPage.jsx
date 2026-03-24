@@ -67,7 +67,12 @@ const MyModulesPage = () => {
             {modules.map((module) => (
               <article key={module._id} className="student-academic-card">
                 <h3>{module.moduleName}</h3>
-                <p className="student-academic-code">{module.moduleCode}</p>
+                <p
+                  className="student-academic-code"
+                  title={module.moduleName}
+                >
+                  {module.moduleCode}
+                </p>
                 <p className="student-academic-meta">
                   L: {module.lectureHoursPerWeek || 0} | T: {module.tutorialHoursPerWeek || 0} | Lab: {module.labHoursPerWeek || 0}
                 </p>
