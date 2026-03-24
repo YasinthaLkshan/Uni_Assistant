@@ -25,8 +25,41 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["student", "admin"],
+      enum: ["admin", "student"],
       default: "student",
+    },
+    username: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      required: [
+        function requiredForAdmins() {
+          return this.role === "admin";
+        },
+        "Username is required for admin users",
+      ],
+    },
+    studentId: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      match: [/^IT\d{8}$/, "Student ID must be in format IT followed by 8 numbers"],
+    },
+    faculty: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      maxlength: 20,
+    },
+    academicYear: {
+      type: Number,
+      min: [1, "Academic year must be at least 1"],
+      max: [8, "Academic year cannot exceed 8"],
+    },
+    groupNumber: {
+      type: Number,
+      min: [1, "Group number must be at least 1"],
+      max: [20, "Group number cannot exceed 20"],
     },
     department: {
       type: String,
@@ -40,6 +73,27 @@ const userSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+userSchema.index(
+  { username: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      username: { $exists: true, $type: "string" },
+    },
+  }
+);
+
+userSchema.index(
+  { studentId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      role: "student",
+      studentId: { $exists: true, $type: "string" },
+    },
+  }
 );
 
 const User = mongoose.model("User", userSchema);

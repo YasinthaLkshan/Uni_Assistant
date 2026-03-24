@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
-import { NotificationBadge } from "../components";
 import { useAuth } from "../hooks/useAuth";
+import { ChatWindow } from "../components";
 import { ROUTE_PATHS } from "../routes/routePaths";
 
 const MENU_ITEMS = [
@@ -25,11 +25,38 @@ const MENU_ITEMS = [
     ),
   },
   {
+    label: "My Modules",
+    path: ROUTE_PATHS.myModules,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14l-8-3-8 3V5zm4 1v2h8V6H8zm0 4v2h8v-2H8z" />
+      </svg>
+    ),
+  },
+  {
+    label: "My Timetable",
+    path: ROUTE_PATHS.myTimetable,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h3V2zm13 8H4v10h16V10z" />
+      </svg>
+    ),
+  },
+  {
+    label: "My Academic Events",
+    path: ROUTE_PATHS.myEvents,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V9h14v10z" />
+      </svg>
+    ),
+  },
+  {
     label: "GPA Calculator",
     path: ROUTE_PATHS.gpaCalculator,
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 2v4h14V5H5zm3 6h2v2H8v-2zm0 4h2v2H8v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2zm4-4h2v2h-2v-2zm0 4h2v2h-2v-2z" />
+        <path d="M3 5h18v2H3V5zm0 6h10v2H3v-2zm0 6h6v2H3v-2zm14.59-5L21 14.41 19.59 15.83 17 13.24l-2.59 2.59L13 14.41 15.59 12 13 9.41 14.41 8 17 10.59 19.59 8 21 9.41 18.41 12z" />
       </svg>
     ),
   },
@@ -38,40 +65,74 @@ const MENU_ITEMS = [
 const PAGE_TITLES = {
   [ROUTE_PATHS.dashboard]: "Dashboard Overview",
   [ROUTE_PATHS.tasks]: "Task Management",
+  [ROUTE_PATHS.myModules]: "My Modules",
+  [ROUTE_PATHS.myTimetable]: "My Timetable",
+  [ROUTE_PATHS.myEvents]: "My Academic Events",
   [ROUTE_PATHS.gpaCalculator]: "GPA Calculator",
 };
 
 const MainLayout = () => {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Uni Assistant", [pathname]);
+  const displayName = useMemo(() => {
+    const rawName = (user?.name || "Student").trim();
+    if (!rawName) {
+      return "Student";
+    }
+
+    return `${rawName.charAt(0).toUpperCase()}${rawName.slice(1)}`;
+  }, [user?.name]);
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
+  const avatarInitials = useMemo(() => {
+    const parts = displayName.split(" ").filter(Boolean).slice(0, 2);
+    const initials = parts.map((part) => part.charAt(0).toUpperCase()).join("");
+    return initials || "ST";
+  }, [displayName]);
+
+  useEffect(() => {
+    if (isChatOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.dataset.prevOverflow = originalOverflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = document.body.dataset.prevOverflow || "";
+        delete document.body.dataset.prevOverflow;
+      };
+    }
+
+    if (!isChatOpen && document.body.dataset.prevOverflow !== undefined) {
+      document.body.style.overflow = document.body.dataset.prevOverflow || "";
+      delete document.body.dataset.prevOverflow;
+    }
+
+    return undefined;
+  }, [isChatOpen]);
+
   return (
-    <div className="app-shell app-grid page-fade-in main-layout">
+    <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
       <aside
-        className={`sidebar main-sidebar ${isSidebarCollapsed ? "is-collapsed" : ""} ${
-          isMobileMenuOpen ? "is-open" : ""
-        }`}
+        className={`sidebar main-sidebar ${isMobileMenuOpen ? "is-open" : ""}`}
       >
         <div className="sidebar-head">
-          <NavLink to={ROUTE_PATHS.dashboard} className="brand" onClick={closeMobileMenu}>
-            Uni Assistant
-          </NavLink>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-            aria-label="Toggle sidebar"
+          <NavLink
+            to={ROUTE_PATHS.home}
+            className="icon-btn sidebar-home-link"
+            onClick={closeMobileMenu}
+            aria-label="Go to home page"
+            title="Home"
           >
-            {isSidebarCollapsed ? ">" : "<"}
-          </button>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 18v-4h4v4m-9 2h14a1 1 0 0 0 1-1v-8.7a1 1 0 0 0-.32-.73l-7-6.4a1 1 0 0 0-1.36 0l-7 6.4a1 1 0 0 0-.32.73V19a1 1 0 0 0 1 1z" />
+            </svg>
+          </NavLink>
         </div>
 
         <nav className="sidebar-nav">
@@ -91,7 +152,8 @@ const MainLayout = () => {
         </nav>
 
         <button type="button" className="ghost-btn sidebar-logout" onClick={logout}>
-          Logout
+          <span>Logout</span>
+          <span className="sidebar-logout-icon" aria-hidden="true">&rarr;</span>
         </button>
       </aside>
 
@@ -111,17 +173,37 @@ const MainLayout = () => {
               <h2 className="page-title">{pageTitle}</h2>
             </div>
           </div>
+          <div className="dashboard-head-meta">
+            <button
+              type="button"
+              className="icon-btn chat-toggle-btn"
+              onClick={() => setIsChatOpen((prev) => !prev)}
+              aria-label={isChatOpen ? "Hide Uni Assistant AI" : "Open Uni Assistant AI"}
+              aria-expanded={isChatOpen}
+            >
+              <span className="chat-toggle-icon" aria-hidden="true" />
+            </button>
 
-          <section className="user-panel" aria-label="User information">
-            <p className="user-name">{user?.name || "Student"}</p>
-            <p className="user-meta">{user?.email || "No email"}</p>
-            <NotificationBadge unreadCount={0} className="header-notification-badge" />
-          </section>
+            <section className="user-panel" aria-label="User information">
+              <p className="user-name">
+                <span className="user-avatar" aria-hidden="true">{avatarInitials}</span>
+                <span className="user-chip-text">
+                  <strong>{displayName}</strong>
+                  <span className="user-chip-status">
+                    <span className="user-status-dot" aria-hidden="true" />
+                    <span className="user-status-label">Active</span>
+                  </span>
+                </span>
+              </p>
+            </section>
+          </div>
         </header>
 
         <main className="main-content content-shell">
           <Outlet />
         </main>
+
+        <ChatWindow isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
       </div>
     </div>
   );
