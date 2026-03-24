@@ -18,7 +18,6 @@ import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
 import RegisterPage from "../pages/RegisterPage";
 import TasksPage from "../pages/TasksPage";
-import GpaCalculatorPage from "../pages/GpaCalculatorPage";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTE_PATHS } from "./routePaths";

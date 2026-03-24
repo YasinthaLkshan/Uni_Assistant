@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
 import { ROUTE_PATHS } from "../../routes/routePaths";
+import { getAcademicOverview } from "../../services/adminAcademicService";
 import { listStudentProfiles } from "../../services/studentProfileService";
 import { listTimetableEntries } from "../../services/timetableManagementService";
 
@@ -21,6 +22,7 @@ const AdminDashboardOverviewPage = () => {
 
   const [studentProfiles, setStudentProfiles] = useState([]);
   const [timetableEntries, setTimetableEntries] = useState([]);
+  const [studentAccountsCount, setStudentAccountsCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -30,13 +32,31 @@ const AdminDashboardOverviewPage = () => {
         setLoading(true);
         setError("");
 
-        const [studentsResponse, timetableResponse] = await Promise.all([
+        const [studentsResult, timetableResult, overviewResult] = await Promise.allSettled([
           listStudentProfiles(),
           listTimetableEntries(),
+          getAcademicOverview(),
         ]);
 
-        setStudentProfiles(studentsResponse?.data || []);
-        setTimetableEntries(timetableResponse?.data || []);
+        if (studentsResult.status === "fulfilled") {
+          setStudentProfiles(studentsResult.value?.data || []);
+        }
+
+        if (timetableResult.status === "fulfilled") {
+          setTimetableEntries(timetableResult.value?.data || []);
+        }
+
+        if (overviewResult.status === "fulfilled") {
+          setStudentAccountsCount(Number(overviewResult.value?.data?.totals?.studentAccounts || 0));
+        }
+
+        if (
+          studentsResult.status === "rejected" ||
+          timetableResult.status === "rejected" ||
+          overviewResult.status === "rejected"
+        ) {
+          setError("Some dashboard data could not be loaded completely.");
+        }
       } catch (_err) {
         setError("Unable to load latest dashboard metrics right now.");
       } finally {
@@ -47,10 +67,7 @@ const AdminDashboardOverviewPage = () => {
     loadOverview();
   }, []);
 
-  const registeredStudentsCount = useMemo(
-    () => studentProfiles.filter((profile) => profile.registrationStatus === "registered").length,
-    [studentProfiles]
-  );
+  const registeredStudentsCount = useMemo(() => studentAccountsCount, [studentAccountsCount]);
 
   const totalGroupsCount = useMemo(() => {
     const groupKeys = new Set();
@@ -75,7 +92,7 @@ const AdminDashboardOverviewPage = () => {
       {
         label: "Registered Students",
         value: loading ? "..." : String(registeredStudentsCount),
-        meta: "Students with confirmed registration",
+        meta: "Student accounts with login access",
         icon: "students",
       },
       {

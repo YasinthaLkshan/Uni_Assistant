@@ -10,6 +10,7 @@ import AcademicEvent from "../models/AcademicEvent.js";
 import AcademicModule from "../models/AcademicModule.js";
 import StudentProfile from "../models/StudentProfile.js";
 import TimetableEntry from "../models/TimetableEntry.js";
+import User from "../models/User.js";
 import AppError from "../utils/appError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
@@ -122,8 +123,9 @@ const normalizePayload = (entityKey, payload) => {
 };
 
 export const getAcademicOverview = asyncHandler(async (_req, res) => {
-  const [studentProfiles, modules, timetableEntries, events] = await Promise.all([
+  const [studentProfiles, studentAccounts, modules, timetableEntries, events] = await Promise.all([
     StudentProfile.countDocuments({ faculty: ACADEMIC_FACULTY, year: ACADEMIC_YEAR }),
+    User.countDocuments({ role: "student" }),
     AcademicModule.countDocuments({ faculty: ACADEMIC_FACULTY, year: ACADEMIC_YEAR }),
     TimetableEntry.countDocuments({ faculty: ACADEMIC_FACULTY, year: ACADEMIC_YEAR }),
     AcademicEvent.countDocuments({ faculty: ACADEMIC_FACULTY, year: ACADEMIC_YEAR }),
@@ -141,6 +143,7 @@ export const getAcademicOverview = asyncHandler(async (_req, res) => {
       },
       totals: {
         studentProfiles,
+        studentAccounts,
         modules,
         timetableEntries,
         events,
