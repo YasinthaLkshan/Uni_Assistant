@@ -59,6 +59,8 @@ const AdminLayout = () => {
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Admin Panel", [pathname]);
   const isDashboard = pathname === ROUTE_PATHS.adminDashboard;
+  const profileName = user?.name || "Admin";
+  const profileInitial = profileName.charAt(0).toUpperCase();
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -117,8 +119,14 @@ const AdminLayout = () => {
             </div>
 
             <section className="admin-profile-chip" aria-label="Admin profile">
-              <p className="admin-chip-name">Admin</p>
-              <p className="admin-chip-meta">{user?.username || user?.name || "admin"}</p>
+              <span className="admin-chip-avatar" aria-hidden="true">{profileInitial}</span>
+              <div className="admin-chip-body">
+                <p className="admin-chip-name">{profileName}</p>
+                <p className="admin-chip-meta">
+                  <span className="admin-chip-status-dot" aria-hidden="true" />
+                  Active
+                </p>
+              </div>
             </section>
           </header>
         )}
