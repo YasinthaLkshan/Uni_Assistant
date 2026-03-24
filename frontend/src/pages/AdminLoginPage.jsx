@@ -177,5 +177,5 @@ const AdminLoginPage = () => {
 };
 
 export default AdminLoginPage;
-
-// Admin login page with form validation, error handling, and password visibility toggle. Redirects authenticated admin users to the admin dashboard.
+// Note: The above code is a complete React component for the Admin Login Page. It includes form handling, validation, authentication logic, and UI elements. The component uses hooks for state management and side effects, and it integrates with the application's authentication context.
+// The styling and icons are assumed to be defined in the corresponding CSS and SVG assets.\
