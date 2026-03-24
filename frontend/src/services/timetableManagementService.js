@@ -24,3 +24,8 @@ export const deleteTimetableEntry = async (id) => {
   const { data } = await api.delete(`/admin/timetable/${id}`);
   return data;
 };
+
+export const duplicateTimetableToGroups = async (payload) => {
+  const { data } = await api.post("/admin/timetable/duplicate-groups", payload);
+  return data;
+};

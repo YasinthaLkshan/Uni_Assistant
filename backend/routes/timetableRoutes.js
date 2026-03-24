@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   createTimetableEntryController,
   deleteTimetableEntryController,
+  duplicateTimetableToGroupsController,
   filterTimetableBySemesterAndGroupController,
   getAllTimetableEntriesController,
   getTimetableEntryByIdController,
@@ -17,6 +18,7 @@ const router = Router();
 router.use(protect, adminMiddleware);
 
 router.post("/", validate(), createTimetableEntryController);
+router.post("/duplicate-groups", validate(), duplicateTimetableToGroupsController);
 router.get("/", getAllTimetableEntriesController);
 router.get("/semester/:semester/group/:groupNumber", filterTimetableBySemesterAndGroupController);
 router.get("/:id", getTimetableEntryByIdController);

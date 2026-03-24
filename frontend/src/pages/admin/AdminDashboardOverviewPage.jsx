@@ -1,74 +1,169 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../../hooks/useAuth";
 import { ROUTE_PATHS } from "../../routes/routePaths";
+import { listStudentProfiles } from "../../services/studentProfileService";
+import { listTimetableEntries } from "../../services/timetableManagementService";
 
-const SUMMARY_METRICS = [
-  { label: "Total Students", value: "486", meta: "Across all active groups" },
-  { label: "Total Groups", value: "18", meta: "Level 1 to Level 4" },
-  { label: "Total Timetable Entries", value: "264", meta: "Weekly schedule records" },
-  { label: "Upcoming Assignments", value: "23", meta: "Due within 7 days" },
-  { label: "Upcoming Exams", value: "7", meta: "Scheduled this month" },
-];
+const formatUpdatedDate = (value) => {
+  if (!value) return "Recently updated";
 
-const RECENT_TIMETABLE_ENTRIES = [
-  { group: "Group 2", day: "Monday", subject: "Database Systems", time: "09:00 - 11:00", venue: "Lab 03" },
-  { group: "Group 5", day: "Tuesday", subject: "Software Engineering", time: "13:00 - 15:00", venue: "Hall B" },
-  { group: "Group 1", day: "Wednesday", subject: "Computer Networks", time: "10:00 - 12:00", venue: "Room 201" },
-  { group: "Group 7", day: "Thursday", subject: "AI Fundamentals", time: "08:30 - 10:30", venue: "Lab 01" },
-];
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "Recently updated";
+
+  return parsed.toLocaleString();
+};
 
 const AdminDashboardOverviewPage = () => {
   const { user } = useAuth();
   const displayName = user?.name || user?.username || "Admin";
-  const highlights = SUMMARY_METRICS.slice(0, 3);
-  const recentUpdates = RECENT_TIMETABLE_ENTRIES.slice(0, 3);
+
+  const [studentProfiles, setStudentProfiles] = useState([]);
+  const [timetableEntries, setTimetableEntries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadOverview = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const [studentsResponse, timetableResponse] = await Promise.all([
+          listStudentProfiles(),
+          listTimetableEntries(),
+        ]);
+
+        setStudentProfiles(studentsResponse?.data || []);
+        setTimetableEntries(timetableResponse?.data || []);
+      } catch (_err) {
+        setError("Unable to load latest dashboard metrics right now.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadOverview();
+  }, []);
+
+  const registeredStudentsCount = useMemo(
+    () => studentProfiles.filter((profile) => profile.registrationStatus === "registered").length,
+    [studentProfiles]
+  );
+
+  const totalGroupsCount = useMemo(() => {
+    const groupKeys = new Set();
+
+    studentProfiles.forEach((profile) => {
+      if (profile.semester && profile.groupNumber) {
+        groupKeys.add(`${profile.semester}-${profile.groupNumber}`);
+      }
+    });
+
+    timetableEntries.forEach((entry) => {
+      if (entry.semester && entry.groupNumber) {
+        groupKeys.add(`${entry.semester}-${entry.groupNumber}`);
+      }
+    });
+
+    return groupKeys.size;
+  }, [studentProfiles, timetableEntries]);
+
+  const highlights = useMemo(
+    () => [
+      {
+        label: "Registered Students",
+        value: loading ? "..." : String(registeredStudentsCount),
+        meta: "Students with confirmed registration",
+        icon: "students",
+      },
+      {
+        label: "Total Groups",
+        value: loading ? "..." : String(totalGroupsCount),
+        meta: "Active semester-group combinations",
+        icon: "groups",
+      },
+    ],
+    [loading, registeredStudentsCount, totalGroupsCount]
+  );
+
+  const recentUpdates = useMemo(() => {
+    return [...timetableEntries]
+      .sort((a, b) => {
+        const aTime = new Date(a.updatedAt || a.createdAt || 0).getTime();
+        const bTime = new Date(b.updatedAt || b.createdAt || 0).getTime();
+        return bTime - aTime;
+      })
+      .slice(0, 4);
+  }, [timetableEntries]);
 
   return (
     <section className="admin-page-grid admin-home-simple section-entrance">
-      <article className="admin-glass-card admin-simple-hero">
-        <div>
+      <article className="admin-glass-card admin-simple-hero admin-home-hero-card">
+        <div className="admin-home-hero-content">
           <p className="eyebrow">Admin Dashboard Home</p>
           <h2>Welcome, {displayName}</h2>
-          <p>
+          <p className="admin-home-hero-copy">
             A simplified control center to manage modules, timetable, and academic events.
           </p>
-          <Link to={ROUTE_PATHS.adminAcademicEvents} className="ghost-btn">Academic Events</Link>
+
+          <div className="admin-simple-actions admin-home-btn-row">
+            <Link to={ROUTE_PATHS.adminAcademicEvents} className="primary-btn admin-home-btn">Academic Events</Link>
+            <Link to={ROUTE_PATHS.adminTimetable} className="ghost-btn admin-home-btn">Timetable</Link>
+            <Link to={ROUTE_PATHS.adminStudentProfiles} className="ghost-btn admin-home-btn">Student Profiles</Link>
+          </div>
         </div>
       </article>
 
-      <div className="admin-simple-metrics">
+      {error ? <p className="form-error">{error}</p> : null}
+
+      <div className="admin-simple-metrics admin-home-summary-grid">
         {highlights.map((metric) => (
-          <article key={metric.label} className="admin-glass-card admin-simple-metric-card">
-            <p className="admin-metric-label">{metric.label}</p>
+          <article key={metric.label} className="admin-glass-card admin-simple-metric-card admin-home-summary-card">
+            <div className="admin-summary-head-row">
+              <p className="admin-metric-label">{metric.label}</p>
+              <span className={`admin-summary-glyph is-${metric.icon}`} aria-hidden="true" />
+            </div>
             <h3>{metric.value}</h3>
             <p className="admin-metric-trend">{metric.meta}</p>
           </article>
         ))}
       </div>
 
-      <div className="admin-simple-panels">
-        <article className="admin-glass-card">
-          <p className="eyebrow">Recent Timetable Updates</p>
+      <div className="admin-simple-panels admin-home-panels">
+        <article className="admin-glass-card admin-home-panel admin-home-recent-panel">
+          <div className="admin-home-panel-head">
+            <p className="eyebrow">Recent Timetable Updates</p>
+          </div>
+
+          {!loading && recentUpdates.length === 0 ? <p className="admin-metric-trend">No timetable updates found.</p> : null}
+
           <div className="admin-recent-table">
             {recentUpdates.map((entry) => (
-              <article key={`${entry.group}-${entry.day}-${entry.subject}`} className="admin-table-row">
-                <div>
-                  <h4>{entry.subject}</h4>
-                  <p>{entry.group} • {entry.day}</p>
+              <article key={entry._id} className="admin-table-row admin-home-update-row">
+                <div className="admin-home-update-main">
+                  <span className="admin-update-dot" aria-hidden="true" />
+                  <h4>{entry.moduleName || entry.moduleCode || "Timetable Entry"}</h4>
+                  <p>
+                    Semester {entry.semester} • Group {entry.groupNumber} • {entry.dayOfWeek}
+                  </p>
+                  <p className="admin-inline-note">Updated: {formatUpdatedDate(entry.updatedAt || entry.createdAt)}</p>
                 </div>
-                <div className="admin-table-meta">
-                  <span>{entry.time}</span>
-                  <span>{entry.venue}</span>
+                <div className="admin-table-meta admin-home-update-meta">
+                  <span>{entry.startTime} - {entry.endTime}</span>
+                  <span>{entry.venue || "TBA"}</span>
                 </div>
               </article>
             ))}
           </div>
         </article>
 
-        <article className="admin-glass-card admin-focus-panel">
-          <p className="eyebrow">Today Focus</p>
-          <ul className="admin-list">
+        <article className="admin-glass-card admin-focus-panel admin-home-panel">
+          <div className="admin-home-panel-head">
+            <p className="eyebrow">Today Focus</p>
+          </div>
+          <ul className="admin-list admin-home-focus-list">
             <li>Review newly registered student timetable scope coverage</li>
             <li>Validate next week timetable publishing</li>
             <li>Finalize upcoming assessment event notices</li>
