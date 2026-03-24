@@ -345,3 +345,90 @@ export const deleteTimetableEntry = async (id) => {
 
   return deleted;
 };
+
+export const duplicateTimetableToGroups = async (payload = {}) => {
+  const semester = validateSemester(payload.semester);
+  const sourceGroupNumber = validateGroupNumber(payload.sourceGroupNumber ?? 1);
+
+  const targetGroupsInput = Array.isArray(payload.targetGroupNumbers)
+    ? payload.targetGroupNumbers
+    : [2, 3];
+
+  const targetGroupNumbers = [...new Set(targetGroupsInput.map((groupNumber) => validateGroupNumber(groupNumber)))].filter(
+    (groupNumber) => groupNumber !== sourceGroupNumber
+  );
+
+  if (!targetGroupNumbers.length) {
+    throw new AppError("At least one target group different from source group is required", 400);
+  }
+
+  const sourceEntries = await TimetableEntry.find(
+    buildScopedQuery({
+      semester,
+      groupNumber: sourceGroupNumber,
+    })
+  ).lean();
+
+  if (!sourceEntries.length) {
+    throw new AppError(`No timetable entries found for semester ${semester}, group ${sourceGroupNumber}`, 404);
+  }
+
+  const operations = [];
+
+  sourceEntries.forEach((entry) => {
+    targetGroupNumbers.forEach((targetGroupNumber) => {
+      operations.push({
+        updateOne: {
+          filter: {
+            faculty: ACADEMIC_FACULTY,
+            $or: [{ academicYear: ACADEMIC_YEAR }, { year: ACADEMIC_YEAR }],
+            semester,
+            groupNumber: targetGroupNumber,
+            moduleCode: entry.moduleCode,
+            moduleName: entry.moduleName,
+            dayOfWeek: entry.dayOfWeek,
+            activityType: entry.activityType,
+            startTime: entry.startTime,
+            endTime: entry.endTime,
+            venue: entry.venue,
+          },
+          update: {
+            $setOnInsert: {
+              faculty: ACADEMIC_FACULTY,
+              academicYear: ACADEMIC_YEAR,
+              year: ACADEMIC_YEAR,
+              semester,
+              groupNumber: targetGroupNumber,
+              module: entry.module || null,
+              moduleCode: entry.moduleCode,
+              moduleName: entry.moduleName,
+              moduleTitle: entry.moduleName,
+              dayOfWeek: entry.dayOfWeek,
+              activityType: entry.activityType,
+              startTime: entry.startTime,
+              endTime: entry.endTime,
+              venue: entry.venue,
+              lecturerNames: Array.isArray(entry.lecturerNames) ? entry.lecturerNames : [],
+              lecturer: Array.isArray(entry.lecturerNames) ? entry.lecturerNames.join(", ") : "",
+              note: entry.note || "",
+            },
+          },
+          upsert: true,
+        },
+      });
+    });
+  });
+
+  const result = await TimetableEntry.bulkWrite(operations, { ordered: false });
+  const totalCandidates = sourceEntries.length * targetGroupNumbers.length;
+  const createdCount = result.upsertedCount || 0;
+
+  return {
+    semester,
+    sourceGroupNumber,
+    targetGroupNumbers,
+    sourceEntryCount: sourceEntries.length,
+    createdCount,
+    skippedCount: Math.max(totalCandidates - createdCount, 0),
+  };
+};

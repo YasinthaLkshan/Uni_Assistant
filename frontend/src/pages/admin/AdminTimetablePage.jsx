@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   createTimetableEntry,
@@ -49,6 +49,21 @@ const AdminTimetablePage = () => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+
+  const groupedRecords = useMemo(() => {
+    const grouped = records.reduce((acc, record) => {
+      const groupKey = Number(record.groupNumber) || 0;
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+
+      acc[groupKey].push(record);
+      return acc;
+    }, {});
+
+    return Object.entries(grouped).sort((a, b) => Number(a[0]) - Number(b[0]));
+  }, [records]);
 
   const loadEntries = async () => {
     try {
@@ -86,21 +101,6 @@ const AdminTimetablePage = () => {
     await loadEntries();
   };
 
-  const clearFilters = async () => {
-    setFilters({ semester: "", groupNumber: "" });
-
-    try {
-      setLoading(true);
-      setError("");
-      const response = await listTimetableEntries();
-      setRecords(response.data || []);
-    } catch (err) {
-      setError(extractApiErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -112,6 +112,7 @@ const AdminTimetablePage = () => {
     try {
       setSubmitting(true);
       setError("");
+      setNotice("");
 
       const payload = {
         semester: Number(form.semester),
@@ -129,8 +130,10 @@ const AdminTimetablePage = () => {
 
       if (editingId) {
         await updateTimetableEntry(editingId, payload);
+        setNotice("Timetable entry updated.");
       } else {
         await createTimetableEntry(payload);
+        setNotice("Timetable entry added.");
       }
 
       resetForm();
@@ -163,7 +166,9 @@ const AdminTimetablePage = () => {
   const handleDelete = async (id) => {
     try {
       setError("");
+      setNotice("");
       await deleteTimetableEntry(id);
+      setNotice("Timetable entry deleted.");
       await loadEntries();
 
       if (editingId === id) {
@@ -207,9 +212,6 @@ const AdminTimetablePage = () => {
           <div className="admin-filter-actions">
             <button type="button" className="primary-btn" onClick={applyFilters}>
               Apply Filter
-            </button>
-            <button type="button" className="ghost-btn" onClick={clearFilters}>
-              Clear
             </button>
           </div>
         </div>
@@ -332,61 +334,68 @@ const AdminTimetablePage = () => {
         </form>
 
         {error ? <p className="form-error">{error}</p> : null}
+        {notice ? <p className="admin-inline-note admin-action-note">{notice}</p> : null}
 
   <h3 className="admin-subsection-title">Timetable Entries</h3>
 
-        <div className="admin-data-table-wrap">
+        <div className="admin-data-table-wrap admin-data-table-group-wrap">
           {loading ? <p>Loading timetable...</p> : null}
           {!loading && records.length === 0 ? <p>No timetable entries found.</p> : null}
 
-          {!loading && records.length > 0 ? (
-            <table className="admin-data-table">
-              <thead>
-                <tr>
-                  <th>Semester</th>
-                  <th>Group</th>
-                  <th>Module</th>
-                  <th>Day</th>
-                  <th>Activity</th>
-                  <th>Time</th>
-                  <th>Lecturers</th>
-                  <th>Venue</th>
-                  <th>Note</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((record) => (
-                  <tr key={record._id}>
-                    <td>{record.semester}</td>
-                    <td>{record.groupNumber}</td>
-                    <td>
-                      <strong>{record.moduleCode}</strong>
-                      <p className="admin-inline-note">{record.moduleName}</p>
-                    </td>
-                    <td>{record.dayOfWeek}</td>
-                    <td>{record.activityType}</td>
-                    <td>
-                      {record.startTime} - {record.endTime}
-                    </td>
-                    <td>{formatLecturerNames(record.lecturerNames)}</td>
-                    <td>{record.venue || "-"}</td>
-                    <td>{record.note || "-"}</td>
-                    <td>
-                      <div className="admin-row-actions">
-                        <button type="button" className="ghost-btn" onClick={() => handleEdit(record)}>
-                          Edit
-                        </button>
-                        <button type="button" className="ui-btn is-ghost" onClick={() => handleDelete(record._id)}>
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : null}
+          {!loading && records.length > 0
+            ? groupedRecords.map(([groupNumber, groupRecords]) => (
+              <section key={groupNumber} className="admin-group-table-section">
+                <h4 className="admin-group-table-title">Group {groupNumber}</h4>
+
+                <table className="admin-data-table">
+                  <thead>
+                    <tr>
+                      <th>Semester</th>
+                      <th>Group</th>
+                      <th>Module</th>
+                      <th>Day</th>
+                      <th>Activity</th>
+                      <th>Time</th>
+                      <th>Lecturers</th>
+                      <th>Venue</th>
+                      <th>Note</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {groupRecords.map((record) => (
+                      <tr key={record._id}>
+                        <td>{record.semester}</td>
+                        <td>{record.groupNumber}</td>
+                        <td>
+                          <strong>{record.moduleCode}</strong>
+                          <p className="admin-inline-note">{record.moduleName}</p>
+                        </td>
+                        <td>{record.dayOfWeek}</td>
+                        <td>{record.activityType}</td>
+                        <td>
+                          {record.startTime} - {record.endTime}
+                        </td>
+                        <td>{formatLecturerNames(record.lecturerNames)}</td>
+                        <td>{record.venue || "-"}</td>
+                        <td>{record.note || "-"}</td>
+                        <td>
+                          <div className="admin-row-actions">
+                            <button type="button" className="ghost-btn" onClick={() => handleEdit(record)}>
+                              Edit
+                            </button>
+                            <button type="button" className="ui-btn is-ghost" onClick={() => handleDelete(record._id)}>
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
+            ))
+            : null}
         </div>
       </article>
     </section>

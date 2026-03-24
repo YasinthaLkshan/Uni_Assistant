@@ -4,18 +4,47 @@ import { EmptyStateCard, GlassCard, SectionTitle, StatusBadge } from "../compone
 import { getMyEvents } from "../services/studentAcademicService";
 import { extractApiErrorMessage } from "../utils/error";
 
-const isUpcoming = (value) => {
-  if (!value) return false;
+const getDaysUntilEvent = (value) => {
+  if (!value) return null;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const nextWeek = new Date(today);
-  nextWeek.setDate(today.getDate() + 7);
-
   const eventDate = new Date(value);
+  if (Number.isNaN(eventDate.getTime())) return null;
   eventDate.setHours(0, 0, 0, 0);
 
-  return eventDate >= today && eventDate <= nextWeek;
+  const dayInMs = 24 * 60 * 60 * 1000;
+  return Math.round((eventDate.getTime() - today.getTime()) / dayInMs);
+};
+
+const getUpcomingCategory = (value) => {
+  const daysUntilEvent = getDaysUntilEvent(value);
+
+  if (daysUntilEvent === null || daysUntilEvent < 1 || daysUntilEvent > 7) {
+    return null;
+  }
+
+  if (daysUntilEvent <= 3) {
+    return {
+      level: "danger",
+      label: `${daysUntilEvent} ${daysUntilEvent === 1 ? "day" : "days"} left`,
+      cardClass: "is-imminent-card",
+    };
+  }
+
+  if (daysUntilEvent <= 5) {
+    return {
+      level: "warning",
+      label: `${daysUntilEvent} ${daysUntilEvent === 1 ? "day" : "days"} left`,
+      cardClass: "is-near-card",
+    };
+  }
+
+  return {
+    level: "success",
+    label: `${daysUntilEvent} ${daysUntilEvent === 1 ? "day" : "days"} left`,
+    cardClass: "is-soon-card",
+  };
 };
 
 const formatDate = (value) => {
@@ -31,7 +60,7 @@ const MyAcademicEventsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const upcomingCount = useMemo(() => events.filter((event) => isUpcoming(event.eventDate)).length, [events]);
+  const upcomingCount = useMemo(() => events.filter((event) => getUpcomingCategory(event.eventDate)).length, [events]);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -88,12 +117,15 @@ const MyAcademicEventsPage = () => {
         {!loading && events.length ? (
           <div className="student-grid-cards">
             {events.map((event) => {
-              const upcoming = isUpcoming(event.eventDate);
+              const upcomingCategory = getUpcomingCategory(event.eventDate);
               return (
-                <article key={event._id} className={`student-academic-card ${upcoming ? "is-upcoming-card" : ""}`.trim()}>
+                <article
+                  key={event._id}
+                  className={`student-academic-card ${upcomingCategory?.cardClass || ""}`.trim()}
+                >
                   <div className="student-card-head">
                     <h3>{event.title}</h3>
-                    {upcoming ? <StatusBadge level="warning" label="Upcoming" /> : null}
+                    {upcomingCategory ? <StatusBadge level={upcomingCategory.level} label={upcomingCategory.label} /> : null}
                   </div>
                   <p className="student-academic-meta">{event.eventType} • {formatDate(event.eventDate)}</p>
                   <p className="student-academic-meta">{event.moduleCode} {event.moduleName ? `- ${event.moduleName}` : ""}</p>
