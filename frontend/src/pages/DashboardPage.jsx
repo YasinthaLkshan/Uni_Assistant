@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 import {
   EmptyStateCard,
@@ -15,6 +16,7 @@ import {
 import { useAuth } from "../hooks/useAuth";
 import { getDashboardSummary } from "../services/dashboardService";
 import { extractApiErrorMessage } from "../utils/error";
+import { ROUTE_PATHS } from "../routes/routePaths";
 
 const DEFAULT_SUMMARY = {
   todaysTasks: [],
@@ -183,6 +185,16 @@ const DashboardPage = () => {
           eyebrow="Welcome Back"
           title={`Hello, ${user?.name || "Student"}`}
           subtitle="Here is your academic pulse for today. Stay focused and ahead."
+          rightContent={
+            <div className="dashboard-head-actions">
+              <Link to={ROUTE_PATHS.gpaCalculator} className="ui-btn is-ghost">
+                Open GPA Calculator
+              </Link>
+              <Link to={ROUTE_PATHS.gpaHistory} className="ui-btn is-primary">
+                GPA Calculation History
+              </Link>
+            </div>
+          }
         />
       </GlassCard>
 

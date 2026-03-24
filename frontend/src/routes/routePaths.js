@@ -13,4 +13,6 @@ export const ROUTE_PATHS = {
   myTimetable: "/my-timetable",
   myEvents: "/my-events",
   tasks: "/tasks",
+  gpaCalculator: "/gpa-calculator",
+  gpaHistory: "/gpa-history",
 };
