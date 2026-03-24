@@ -2,6 +2,7 @@ import asyncHandler from "../utils/asyncHandler.js";
 import {
   createTimetableEntry,
   deleteTimetableEntry,
+  duplicateTimetableToGroups,
   filterTimetableBySemesterAndGroup,
   getAllTimetableEntries,
   getTimetableEntryById,
@@ -64,5 +65,15 @@ export const deleteTimetableEntryController = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Timetable entry deleted successfully",
+  });
+});
+
+export const duplicateTimetableToGroupsController = asyncHandler(async (req, res) => {
+  const result = await duplicateTimetableToGroups(req.body || {});
+
+  res.status(200).json({
+    success: true,
+    message: "Timetable duplicated successfully",
+    data: result,
   });
 });
