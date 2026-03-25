@@ -13,6 +13,7 @@ import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
 import GpaHistoryPage from "../pages/GpaHistoryPage";
+import GpaTrendPage from "../pages/GpaTrendPage";
 import MyAcademicEventsPage from "../pages/MyAcademicEventsPage";
 import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
@@ -62,6 +63,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
             <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
             <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
+            <Route path={ROUTE_PATHS.gpaTrendHistory} element={<GpaTrendPage />} />
           </Route>
         </Route>
 

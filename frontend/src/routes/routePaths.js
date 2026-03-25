@@ -21,4 +21,5 @@ export const ROUTE_PATHS = {
   tasks: "/tasks",
   gpaCalculator: "/gpa-calculator",
   gpaHistory: "/gpa-history",
+  gpaTrendHistory: "/gpa-trend",
 };

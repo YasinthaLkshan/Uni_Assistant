@@ -148,7 +148,6 @@ const MainLayout = () => {
               ≡
             </button>
             <div>
-              <p className="eyebrow">Student Productivity Suite</p>
               <h2 className="page-title">{pageTitle}</h2>
             </div>
           </div>

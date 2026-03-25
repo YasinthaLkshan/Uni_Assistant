@@ -50,6 +50,44 @@ const GpaHistoryPage = () => {
     setEntries(next);
   };
 
+  const handleDownloadSheet = () => {
+    if (!entries.length) return;
+
+    const headerRow = ["Semester", "Course", "GPA", "Credits", "Saved On"];
+    const rows = entries.map((entry) => {
+      const createdAt = entry.createdAt ? new Date(entry.createdAt) : null;
+      return [
+        entry.semesterLabel || entry.semesterKey || "",
+        entry.courseLabel || "",
+        typeof entry.gpa === "number" ? entry.gpa.toFixed(2) : "",
+        entry.totalCredits != null ? String(entry.totalCredits) : "",
+        createdAt ? createdAt.toLocaleDateString() : "",
+      ];
+    });
+
+    const escapeCell = (value) => {
+      const stringValue = String(value ?? "");
+      if (stringValue.includes(",") || stringValue.includes("\"")) {
+        return `"${stringValue.replace(/"/g, '""')}"`;
+      }
+      return stringValue;
+    };
+
+    const csv = [headerRow, ...rows]
+      .map((row) => row.map(escapeCell).join(","))
+      .join("\r\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `gpa-history-${userId}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <section className="dashboard gpa-history-page">
       <div className="section-entrance" style={{ animationDelay: "20ms", marginBottom: "1rem" }}>
@@ -63,40 +101,48 @@ const GpaHistoryPage = () => {
       </div>
       <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>
         <PageHeader
-          eyebrow="GPA Insights"
+          eyebrow={null}
           title="GPA Calculation History"
-          subtitle="Every time you save a calculation, it is stored here so you can see how your GPA changes over time."
+          subtitle={null}
           rightContent={hasEntries && stats ? (
             <div className="gpa-history-stats">
-              <p>
-                <strong>{stats.count}</strong>
-                {" "}
-                saved calculations
-              </p>
-              <p>
-                Best GPA:
-                {" "}
-                <strong>{stats.bestGpa.toFixed(2)}</strong>
-              </p>
-              <p>
-                Average GPA:
-                {" "}
-                <strong>{stats.averageGpa.toFixed(2)}</strong>
-              </p>
+              <div className="metric-stack">
+                <p className="metric-line">
+                  <strong>{stats.count}</strong>
+                  {" "}
+                  saved calculations
+                </p>
+                <p className="metric-line">
+                  Best GPA: <strong>{stats.bestGpa.toFixed(2)}</strong>
+                </p>
+                <p className="metric-line">
+                  Average GPA: <strong>{stats.averageGpa.toFixed(2)}</strong>
+                </p>
+              </div>
             </div>
           ) : null}
         />
       </GlassCard>
 
-      <GlassCard as="section" className="ui-section section-entrance" style={{ animationDelay: "100ms" }}>
+      <GlassCard as="section" className="ui-section section-entrance" style={{ animationDelay: "80ms" }}>
         <SectionTitle
           eyebrow="History"
           title="Saved GPA calculations"
           className="gpa-history-section-title"
           rightContent={hasEntries ? (
-            <SecondaryButton type="button" onClick={handleClearAll}>
-              Clear history
-            </SecondaryButton>
+            <div className="gpa-history-header-actions">
+              <Link to={ROUTE_PATHS.gpaTrendHistory} style={{ textDecoration: "none" }}>
+                <SecondaryButton type="button">
+                  GPA trend
+                </SecondaryButton>
+              </Link>
+              <SecondaryButton type="button" onClick={handleDownloadSheet}>
+                Download GPA sheet
+              </SecondaryButton>
+              <SecondaryButton type="button" onClick={handleClearAll}>
+                Clear history
+              </SecondaryButton>
+            </div>
           ) : null}
         />
 
@@ -144,10 +190,27 @@ const GpaHistoryPage = () => {
                   <div className="gpa-history-actions-row">
                     <button
                       type="button"
-                      className="ghost-btn gpa-history-delete-btn"
+                      className="icon-btn gpa-history-delete-btn"
                       onClick={() => handleRemoveEntry(entry.id)}
+                      aria-label="Delete this GPA entry from history"
                     >
-                      Remove from history
+                      <svg
+                        aria-hidden="true"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="3 6 5 6 21 6" />
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                        <path d="M10 11v6" />
+                        <path d="M14 11v6" />
+                        <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+                      </svg>
                     </button>
                   </div>
                 </article>
