@@ -61,6 +61,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.myEvents} element={<MyAcademicEventsPage />} />
             <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
             <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
+            <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
           </Route>
         </Route>
 

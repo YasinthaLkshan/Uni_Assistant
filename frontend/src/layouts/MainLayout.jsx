@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
 
 import { useAuth } from "../hooks/useAuth";
-import { ChatWindow } from "../components";
 import { ROUTE_PATHS } from "../routes/routePaths";
 
 const MENU_ITEMS = [
@@ -75,7 +74,6 @@ const MainLayout = () => {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Uni Assistant", [pathname]);
   const displayName = useMemo(() => {
@@ -96,25 +94,6 @@ const MainLayout = () => {
     const initials = parts.map((part) => part.charAt(0).toUpperCase()).join("");
     return initials || "ST";
   }, [displayName]);
-
-  useEffect(() => {
-    if (isChatOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.dataset.prevOverflow = originalOverflow;
-      document.body.style.overflow = "hidden";
-      return () => {
-        document.body.style.overflow = document.body.dataset.prevOverflow || "";
-        delete document.body.dataset.prevOverflow;
-      };
-    }
-
-    if (!isChatOpen && document.body.dataset.prevOverflow !== undefined) {
-      document.body.style.overflow = document.body.dataset.prevOverflow || "";
-      delete document.body.dataset.prevOverflow;
-    }
-
-    return undefined;
-  }, [isChatOpen]);
 
   return (
     <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
@@ -174,16 +153,6 @@ const MainLayout = () => {
             </div>
           </div>
           <div className="dashboard-head-meta">
-            <button
-              type="button"
-              className="icon-btn chat-toggle-btn"
-              onClick={() => setIsChatOpen((prev) => !prev)}
-              aria-label={isChatOpen ? "Hide Uni Assistant AI" : "Open Uni Assistant AI"}
-              aria-expanded={isChatOpen}
-            >
-              <span className="chat-toggle-icon" aria-hidden="true" />
-            </button>
-
             <section className="user-panel" aria-label="User information">
               <p className="user-name">
                 <span className="user-avatar" aria-hidden="true">{avatarInitials}</span>
@@ -202,8 +171,6 @@ const MainLayout = () => {
         <main className="main-content content-shell">
           <Outlet />
         </main>
-
-        <ChatWindow isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
       </div>
     </div>
   );
