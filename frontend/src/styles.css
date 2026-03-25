@@ -82,16 +82,16 @@ p {
 }
 
 .app-shell {
-  width: min(1400px, 100%);
+  width: min(1680px, 100%);
   margin: clamp(1.1rem, 2vw, var(--space-5)) auto;
   padding: 0 var(--space-4);
 }
 
 /* Full-width layout for authenticated app (dashboard with sidebar) */
 .main-layout.app-shell {
-  width: 100%;
-  max-width: none;
-  margin: clamp(1.1rem, 2vw, var(--space-5)) 0;
+  width: min(1680px, 100%);
+  max-width: 1680px;
+  margin: clamp(1.1rem, 2vw, var(--space-5)) auto;
 }
 
 .auth-home-layout {
@@ -5263,7 +5263,7 @@ select.text-input {
   }
 
   .main-layout-premium {
-    width: min(1240px, 95vw);
+    width: min(1488px, 96vw);
     margin-inline: auto;
     position: relative;
     isolation: isolate;
@@ -6192,13 +6192,13 @@ select.text-input {
 
 /* Dashboard Body Width Expansion */
 .main-layout.main-layout-premium {
-  width: min(1420px, 92vw);
+  width: min(1665px, 88vw);
 }
 
 .app-shell,
 .admin-shell,
 .landing-app-shell {
-  width: min(1420px, 92vw);
+  width: min(1665px, 88vw);
 }
 
 @media (min-width: 1800px) {
@@ -6206,7 +6206,7 @@ select.text-input {
   .app-shell,
   .admin-shell,
   .landing-app-shell {
-    width: min(1580px, 93vw);
+    width: min(1845px, 89vw);
   }
 }
 
