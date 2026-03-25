@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 
 import { GlassCard, EmptyStateCard, PageHeader, SectionTitle, SecondaryButton, StatusBadge } from "../components";
 import { useAuth } from "../hooks/useAuth";
+import { ROUTE_PATHS } from "../routes/routePaths";
 import { clearGpaHistory, loadGpaHistory, removeGpaHistoryEntry } from "../utils/gpaHistory";
 
 const GpaHistoryPage = () => {
@@ -50,6 +52,15 @@ const GpaHistoryPage = () => {
 
   return (
     <section className="dashboard gpa-history-page">
+      <div className="section-entrance" style={{ animationDelay: "20ms", marginBottom: "1rem" }}>
+        <Link 
+          to={ROUTE_PATHS.gpaCalculator} 
+          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "var(--ink-700)", textDecoration: "none", fontSize: "0.95rem", fontWeight: "600", padding: "0.4rem 0" }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Back to Calculator
+        </Link>
+      </div>
       <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>
         <PageHeader
           eyebrow="GPA Insights"
