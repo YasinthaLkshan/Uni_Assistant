@@ -40,6 +40,23 @@ const formatDate = (value) => {
   return date.toLocaleDateString();
 };
 
+// Validation helper functions
+const validateModuleCode = (value) => {
+  return /^[A-Z0-9]*$/i.test(value) && value.length <= 10;
+};
+
+const validateModuleName = (value) => {
+  return /^[a-zA-Z\s]*$/.test(value) && value.length <= 20;
+};
+
+const validateTitle = (value) => {
+  return /^[a-zA-Z0-9\s]*$/.test(value);
+};
+
+const validateWeightPercentage = (value) => {
+  return /^\d*$/.test(value);
+};
+
 const AdminAcademicEventsPage = () => {
   const [records, setRecords] = useState([]);
   const [filters, setFilters] = useState({ semester: "", groupNumber: "", moduleCode: "", eventType: "" });
@@ -93,11 +110,73 @@ const AdminAcademicEventsPage = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    let filteredValue = value;
+
+    // Apply field-specific validation
+    if (name === "moduleCode") {
+      // Module Code: only alphanumeric, max 10 characters
+      filteredValue = value.replace(/[^A-Z0-9]/gi, "").slice(0, 10);
+    } else if (name === "moduleName") {
+      // Module Name: only letters and spaces, max 20 characters
+      filteredValue = value.replace(/[^a-zA-Z\s]/g, "").slice(0, 20);
+    } else if (name === "title") {
+      // Title: only letters and numbers
+      filteredValue = value.replace(/[^a-zA-Z0-9\s]/g, "");
+    } else if (name === "weightPercentage") {
+      // Weight Percentage: only numbers, max 100
+      filteredValue = value.replace(/[^0-9]/g, "");
+      if (filteredValue && Number(filteredValue) > 100) {
+        filteredValue = "100";
+      }
+    }
+
+    setForm((prev) => ({ ...prev, [name]: filteredValue }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validate field patterns before submission
+    if (!form.moduleCode.trim()) {
+      setError("Module Code is required");
+      return;
+    }
+
+    if (!validateModuleCode(form.moduleCode)) {
+      setError("Module Code can only contain letters and numbers (max 10 characters)");
+      return;
+    }
+
+    if (!form.moduleName.trim()) {
+      setError("Module Name is required");
+      return;
+    }
+
+    if (!validateModuleName(form.moduleName)) {
+      setError("Module Name can only contain letters and spaces (max 20 characters)");
+      return;
+    }
+
+    if (!form.title.trim()) {
+      setError("Title is required");
+      return;
+    }
+
+    if (!validateTitle(form.title)) {
+      setError("Title can only contain letters and numbers");
+      return;
+    }
+
+    if (form.weightPercentage && !validateWeightPercentage(form.weightPercentage)) {
+      setError("Weight Percentage can only contain numbers");
+      return;
+    }
+
+    const weightValue = Number(form.weightPercentage || 0);
+    if (weightValue > 100) {
+      setError("Weight Percentage cannot exceed 100");
+      return;
+    }
 
     try {
       setSubmitting(true);
@@ -115,7 +194,7 @@ const AdminAcademicEventsPage = () => {
         startTime: form.startTime,
         endTime: form.endTime,
         venue: form.venue.trim(),
-        weightPercentage: Number(form.weightPercentage || 0),
+        weightPercentage: weightValue,
       };
 
       if (editingId) {
