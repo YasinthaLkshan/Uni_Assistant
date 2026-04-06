@@ -5,6 +5,7 @@ import { GlassCard, EmptyStateCard, PageHeader, SectionTitle, SecondaryButton, S
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 import { clearGpaHistory, loadGpaHistory, removeGpaHistoryEntry } from "../utils/gpaHistory";
+import { exportGpaHistoryPdf } from "../utils/gpaPdf";
 
 const GpaHistoryPage = () => {
   const { user } = useAuth();
@@ -51,52 +52,38 @@ const GpaHistoryPage = () => {
   };
 
   const handleDownloadSheet = () => {
-    if (!entries.length) return;
+    if (!entries.length || !stats) return;
 
-    const headerRow = ["Semester", "Course", "GPA", "Credits", "Saved On"];
-    const rows = entries.map((entry) => {
-      const createdAt = entry.createdAt ? new Date(entry.createdAt) : null;
-      return [
-        entry.semesterLabel || entry.semesterKey || "",
-        entry.courseLabel || "",
-        typeof entry.gpa === "number" ? entry.gpa.toFixed(2) : "",
-        entry.totalCredits != null ? String(entry.totalCredits) : "",
-        createdAt ? createdAt.toLocaleDateString() : "",
-      ];
+    exportGpaHistoryPdf({
+      user,
+      entries,
+      stats,
     });
-
-    const escapeCell = (value) => {
-      const stringValue = String(value ?? "");
-      if (stringValue.includes(",") || stringValue.includes("\"")) {
-        return `"${stringValue.replace(/"/g, '""')}"`;
-      }
-      return stringValue;
-    };
-
-    const csv = [headerRow, ...rows]
-      .map((row) => row.map(escapeCell).join(","))
-      .join("\r\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `gpa-history-${userId}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
   };
 
   return (
     <section className="dashboard gpa-history-page">
       <div className="section-entrance" style={{ animationDelay: "20ms", marginBottom: "1rem" }}>
-        <Link 
-          to={ROUTE_PATHS.gpaCalculator} 
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "var(--ink-700)", textDecoration: "none", fontSize: "0.95rem", fontWeight: "600", padding: "0.4rem 0" }}
+        <Link
+          to={ROUTE_PATHS.gpaCalculator}
+          className="back-link-button"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          Back to Calculator
+          <span className="back-link-icon" aria-hidden="true">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+          </span>
+          <span className="back-link-label">Back to calculator</span>
         </Link>
       </div>
       <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>

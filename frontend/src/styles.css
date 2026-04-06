@@ -182,6 +182,44 @@ p {
   padding: 0.58rem 0.92rem;
 }
 
+.back-link-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.32rem 0.8rem 0.32rem 0.3rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-700);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  transition: background-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base), border-color var(--transition-base);
+}
+
+.back-link-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(79, 70, 229, 0.8);
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.9), rgba(238, 242, 255, 0.95));
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.25);
+}
+
+.back-link-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  background: linear-gradient(135deg, #4f46e5, #0ea5e9);
+  color: #ffffff;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.6);
+}
+
+.back-link-label {
+  letter-spacing: -0.01em;
+}
+
 .pill-link,
 .primary-btn,
 .ghost-btn,
@@ -236,9 +274,9 @@ p {
 
 .ghost-btn,
 .ui-btn.is-ghost {
-  background: var(--glass);
-  color: var(--ink-700);
-  border: 1px solid var(--line-strong);
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.96), rgba(224, 231, 255, 0.96));
+  color: #1f2937;
+  border: 1px solid rgba(79, 70, 229, 0.6);
   padding: 0.7rem 1.15rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   font-size: 0.95rem;
@@ -247,8 +285,9 @@ p {
 .ghost-btn:hover,
 .ui-btn.is-ghost:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.82);
-  border-color: rgba(121, 132, 214, 0.45);
+  background: linear-gradient(135deg, rgba(219, 234, 254, 1), rgba(224, 231, 255, 1));
+  border-color: rgba(79, 70, 229, 0.9);
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.25);
 }
 
 .icon-btn {
@@ -497,6 +536,24 @@ p {
   gap: var(--space-2);
 }
 
+.gpa-trend-layout {
+  margin-top: 0.4rem;
+}
+
+.gpa-trend-header-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+.gpa-trend-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
+}
+
 .gpa-analysis-actions {
   display: flex;
   flex-wrap: wrap;
@@ -536,17 +593,36 @@ p {
   color: var(--ink-500);
 }
 
-.gpa-trend-labels span {
+.gpa-trend-label {
   flex: 1;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.gpa-trend-label-gpa {
+  display: block;
+  font-weight: 750;
+  font-size: 0.8rem;
+  color: #1f2937;
+  font-variant-numeric: tabular-nums;
+}
+
+.gpa-trend-label-semester {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  color: var(--ink-500);
   white-space: nowrap;
 }
 
 @media (max-width: 900px) {
   .gpa-analysis-body {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .gpa-trend-header-meta {
+    align-items: flex-start;
   }
 }
 

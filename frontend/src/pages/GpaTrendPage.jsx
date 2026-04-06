@@ -30,7 +30,11 @@ const GpaTrendChart = ({ entries }) => {
     return `${x},${y}`;
   });
 
-  const labels = sorted.map((entry) => entry.semesterLabel || entry.semesterKey || "");
+  const labelItems = sorted.map((entry) => ({
+    id: entry.id,
+    label: entry.semesterLabel || entry.semesterKey || "",
+    gpa: typeof entry.gpa === "number" ? entry.gpa : null,
+  }));
 
   return (
     <div className="gpa-trend-chart">
@@ -65,17 +69,38 @@ const GpaTrendChart = ({ entries }) => {
 
           {points.map((point, index) => {
             const [x, y] = point.split(",").map(Number);
+            const entry = sorted[index];
+
             return (
-              <g key={sorted[index].id || index}>
-                <circle cx={x} cy={y} r={1.7} fill="#ffffff" stroke="#4f46e5" strokeWidth="0.9" />
+              <g key={entry.id || index}>
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={2.1}
+                  fill="#ffffff"
+                  stroke="#4f46e5"
+                  strokeWidth="0.9"
+                />
+                <circle
+                  cx={x}
+                  cy={y}
+                  r={3.4}
+                  fill="rgba(129, 140, 248, 0.16)"
+                  stroke="none"
+                />
               </g>
             );
           })}
         </svg>
       </div>
       <div className="gpa-trend-labels" aria-hidden="true">
-        {labels.map((label, index) => (
-          <span key={`${label || ""}-${index}`}>{label}</span>
+        {labelItems.map((item, index) => (
+          <div className="gpa-trend-label" key={`${item.id || item.label || ""}-${index}`}>
+            <span className="gpa-trend-label-gpa">
+              {item.gpa != null ? item.gpa.toFixed(2) : "--"}
+            </span>
+            <span className="gpa-trend-label-semester">{item.label}</span>
+          </div>
         ))}
       </div>
     </div>
@@ -118,41 +143,47 @@ const GpaTrendPage = () => {
       <div className="section-entrance" style={{ animationDelay: "20ms", marginBottom: "1rem" }}>
         <Link
           to={ROUTE_PATHS.gpaHistory}
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", color: "var(--ink-700)", textDecoration: "none", fontSize: "0.95rem", fontWeight: "600", padding: "0.4rem 0" }}
+          className="back-link-button"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
-          Back to GPA history
+          <span className="back-link-icon" aria-hidden="true">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+          </span>
+          <span className="back-link-label">Back to GPA history</span>
         </Link>
       </div>
 
       <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>
         <PageHeader
-          eyebrow="GPA insights"
+          eyebrow={null}
           title="GPA trend"
           subtitle="See how your GPA has changed across semesters over time."
           rightContent={hasEntries && stats ? (
-            <div className="gpa-history-stats">
-              <p>
-                <strong>{stats.count}</strong>
-                {" "}
-                saved calculations
-              </p>
-              <p>
-                Best GPA:
-                {" "}
-                <strong>{stats.bestGpa.toFixed(2)}</strong>
-              </p>
-              <p>
-                Average GPA:
-                {" "}
-                <strong>{stats.averageGpa.toFixed(2)}</strong>
+            <div className="gpa-trend-header-meta">
+              <div className="gpa-trend-chip-row">
+                <span className="ui-badge is-success">Best {stats.bestGpa.toFixed(2)}</span>
+                <span className="ui-badge is-warning">Average {stats.averageGpa.toFixed(2)}</span>
+              </div>
+              <p className="metric-line">
+                {stats.count} saved calculation{stats.count > 1 ? "s" : ""}
               </p>
             </div>
           ) : null}
         />
       </GlassCard>
 
-      <GlassCard as="section" className="ui-section section-entrance gpa-analysis-card" style={{ animationDelay: "80ms" }}>
+      <GlassCard as="section" className="ui-section section-entrance gpa-analysis-card gpa-trend-layout" style={{ animationDelay: "80ms" }}>
         {!hasEntries && (
           <EmptyStateCard
             title="No GPA history yet"
@@ -163,9 +194,9 @@ const GpaTrendPage = () => {
         {hasEntries && stats && (
           <>
             <SectionTitle
-              eyebrow="GPA trend"
+              eyebrow="Trend overview"
               title="How your GPA is moving"
-              subtitle="Each point below represents a saved semester GPA in your history."
+              subtitle="Each point represents a saved semester GPA in your history."
             />
 
             <div className="gpa-analysis-body">
