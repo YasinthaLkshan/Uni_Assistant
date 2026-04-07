@@ -59,6 +59,13 @@ const taskSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1200, "Description cannot exceed 1200 characters"],
     },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address"],
+      default: "",
+    },
   },
   {
     timestamps: true,
