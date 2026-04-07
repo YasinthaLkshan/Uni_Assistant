@@ -165,6 +165,9 @@ const AdminLoginPage = () => {
             <p className="switch-auth">
               Student login? <Link to={ROUTE_PATHS.login}>Go to Student Login</Link>
             </p>
+            <p className="switch-auth">
+              Lecturer login? <Link to={ROUTE_PATHS.lecturerLogin}>Go to Lecturer Login</Link>
+            </p>
           </div>
         </article>
 

@@ -86,7 +86,7 @@ const ensureRequiredFields = (payload, requiredFields) => {
   }
 };
 
-const normalizePayload = (entityKey, payload) => {
+const normalizePayload = async (entityKey, payload) => {
   const normalized = { ...payload };
 
   if (normalized.studentId) {
@@ -114,6 +114,16 @@ const normalizePayload = (entityKey, payload) => {
 
   if (normalized.groupNumber !== undefined) {
     normalized.groupNumber = Number(normalized.groupNumber);
+  }
+
+  if (entityKey === "modules" && normalized.lecturer) {
+    if (!mongoose.Types.ObjectId.isValid(normalized.lecturer)) {
+      throw new AppError("Invalid lecturer ID", 400);
+    }
+    const lecturerUser = await User.findById(normalized.lecturer);
+    if (!lecturerUser || lecturerUser.role !== "lecturer") {
+      throw new AppError("Lecturer not found or user is not a lecturer", 400);
+    }
   }
 
   normalized.faculty = ACADEMIC_FACULTY;
@@ -157,7 +167,13 @@ export const listAcademicEntity = asyncHandler(async (req, res) => {
   const { model, sort } = getEntityConfig(entity);
   const query = buildScopeQuery(req.query);
 
-  const records = await model.find(query).sort(sort).lean();
+  let dbQuery = model.find(query).sort(sort);
+
+  if (entity === "modules") {
+    dbQuery = dbQuery.populate("lecturer", "name email department");
+  }
+
+  const records = await dbQuery.lean();
 
   res.status(200).json({
     success: true,
@@ -169,7 +185,7 @@ export const listAcademicEntity = asyncHandler(async (req, res) => {
 export const createAcademicEntity = asyncHandler(async (req, res) => {
   const { entity } = req.params;
   const { model, requiredFields } = getEntityConfig(entity);
-  const normalizedPayload = normalizePayload(entity, req.body);
+  const normalizedPayload = await normalizePayload(entity, req.body);
 
   ensureRequiredFields(normalizedPayload, requiredFields);
 
@@ -190,7 +206,7 @@ export const updateAcademicEntity = asyncHandler(async (req, res) => {
     throw new AppError("Invalid record id", 400);
   }
 
-  const normalizedPayload = normalizePayload(entity, req.body);
+  const normalizedPayload = await normalizePayload(entity, req.body);
 
   const updated = await model.findOneAndUpdate(
     {

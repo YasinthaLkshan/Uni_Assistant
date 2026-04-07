@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { listLecturers } from "../../services/adminLecturerService";
 import {
   createModule,
   deleteModule,
@@ -14,6 +15,7 @@ const EMPTY_FORM = {
   moduleCode: "",
   moduleName: "",
   semester: "",
+  lecturer: "",
   lectureHoursPerWeek: "0",
   tutorialHoursPerWeek: "0",
   labHoursPerWeek: "0",
@@ -21,11 +23,21 @@ const EMPTY_FORM = {
   assessmentCriteria: [EMPTY_CRITERIA],
 };
 
+// Validation helper functions
+const validateModuleCode = (value) => {
+  return /^[A-Z0-9]*$/i.test(value) && value.length <= 10;
+};
+
+const validateModuleName = (value) => {
+  return /^[a-zA-Z\s]*$/.test(value);
+};
+
 const AdminModulesPage = () => {
   const [records, setRecords] = useState([]);
   const [semesterFilter, setSemesterFilter] = useState("");
   const [form, setForm] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState("");
+  const [lecturers, setLecturers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -55,6 +67,19 @@ const AdminModulesPage = () => {
     loadModules();
   }, [activeFilter.semester]);
 
+  useEffect(() => {
+    const fetchLecturers = async () => {
+      try {
+        const response = await listLecturers();
+        setLecturers(response.data || []);
+      } catch {
+        // Lecturers list is non-critical, silently handle
+      }
+    };
+
+    fetchLecturers();
+  }, []);
+
   const resetForm = () => {
     setForm(EMPTY_FORM);
     setEditingId("");
@@ -62,7 +87,18 @@ const AdminModulesPage = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    let filteredValue = value;
+
+    // Apply field-specific validation
+    if (name === "moduleCode") {
+      // Module Code: only alphanumeric, max 10 characters
+      filteredValue = value.replace(/[^A-Z0-9]/gi, "").slice(0, 10);
+    } else if (name === "moduleName") {
+      // Module Name: only letters and spaces
+      filteredValue = value.replace(/[^a-zA-Z\s]/g, "");
+    }
+
+    setForm((prev) => ({ ...prev, [name]: filteredValue }));
   };
 
   const handleCriteriaChange = (index, key, value) => {
@@ -113,6 +149,32 @@ const AdminModulesPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    // Validate field patterns before submission
+    if (!form.moduleCode.trim()) {
+      setError("Module Code is required");
+      return;
+    }
+
+    if (!validateModuleCode(form.moduleCode)) {
+      setError("Module Code can only contain letters and numbers (max 10 characters)");
+      return;
+    }
+
+    if (!form.moduleName.trim()) {
+      setError("Module Name is required");
+      return;
+    }
+
+    if (!validateModuleName(form.moduleName)) {
+      setError("Module Name can only contain letters and spaces");
+      return;
+    }
+
+    if (!form.semester) {
+      setError("Semester is required");
+      return;
+    }
+
     try {
       setSubmitting(true);
       setError("");
@@ -121,6 +183,7 @@ const AdminModulesPage = () => {
         moduleCode: form.moduleCode.trim().toUpperCase(),
         moduleName: form.moduleName.trim(),
         semester: Number(form.semester),
+        lecturer: form.lecturer || null,
         lectureHoursPerWeek: Number(form.lectureHoursPerWeek || 0),
         tutorialHoursPerWeek: Number(form.tutorialHoursPerWeek || 0),
         labHoursPerWeek: Number(form.labHoursPerWeek || 0),
@@ -148,6 +211,7 @@ const AdminModulesPage = () => {
       moduleCode: record.moduleCode || "",
       moduleName: record.moduleName || "",
       semester: record.semester ? String(record.semester) : "",
+      lecturer: record.lecturer?._id || record.lecturer || "",
       lectureHoursPerWeek: String(record.lectureHoursPerWeek ?? 0),
       tutorialHoursPerWeek: String(record.tutorialHoursPerWeek ?? 0),
       labHoursPerWeek: String(record.labHoursPerWeek ?? 0),
@@ -232,6 +296,18 @@ const AdminModulesPage = () => {
               <option value="">Select</option>
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
+            </select>
+          </label>
+
+          <label>
+            Assigned Lecturer
+            <select name="lecturer" value={form.lecturer} onChange={handleInputChange}>
+              <option value="">None</option>
+              {lecturers.map((lec) => (
+                <option key={lec._id} value={lec._id}>
+                  {lec.name} ({lec.email})
+                </option>
+              ))}
             </select>
           </label>
 
@@ -342,6 +418,7 @@ const AdminModulesPage = () => {
                   <th>Code</th>
                   <th>Module Name</th>
                   <th>Semester</th>
+                  <th>Lecturer</th>
                   <th>Hours/Week</th>
                   <th>Assessment Criteria</th>
                   <th>Actions</th>
@@ -356,6 +433,7 @@ const AdminModulesPage = () => {
                       {record.outline ? <p className="admin-inline-note">{record.outline}</p> : null}
                     </td>
                     <td>{record.semester}</td>
+                    <td>{record.lecturer?.name || "-"}</td>
                     <td>
                       L: {record.lectureHoursPerWeek ?? 0} | T: {record.tutorialHoursPerWeek ?? 0} | Lab: {record.labHoursPerWeek ?? 0}
                     </td>

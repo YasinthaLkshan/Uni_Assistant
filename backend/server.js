@@ -1,18 +1,23 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 
 import connectDB from "./config/db.js";
 import academicEventRoutes from "./routes/academicEventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminAcademicRoutes from "./routes/adminAcademicRoutes.js";
+import adminLecturerRoutes from "./routes/adminLecturerRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import lecturerRoutes from "./routes/lecturerRoutes.js";
 import moduleRoutes from "./routes/moduleRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
 import studentAcademicRoutes from "./routes/studentAcademicRoutes.js";
 import studentProfileRoutes from "./routes/studentProfileRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import timetableRoutes from "./routes/timetableRoutes.js";
+import studyAssistantRoutes from "./routes/studyAssistantRoutes.js";
 import workloadRoutes from "./routes/workloadRoutes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 
@@ -52,6 +57,10 @@ app.use(
 );
 app.use(express.json());
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 app.get("/api/health", (_req, res) => {
   res.status(200).json({
     success: true,
@@ -69,6 +78,9 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/workload", workloadRoutes);
 app.use("/api/recommendation", recommendationRoutes);
 app.use("/api/student", studentAcademicRoutes);
+app.use("/api/student/study-assistant", studyAssistantRoutes);
+app.use("/api/lecturer", lecturerRoutes);
+app.use("/api/admin/lecturers", adminLecturerRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFound);

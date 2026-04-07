@@ -2,15 +2,30 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import AdminLayout from "../layouts/AdminLayout";
 import AuthLayout from "../layouts/AuthLayout";
+import LecturerLayout from "../layouts/LecturerLayout";
 import MainLayout from "../layouts/MainLayout";
 import AdminLoginPage from "../pages/AdminLoginPage";
+import LecturerLoginPage from "../pages/LecturerLoginPage";
 import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPage";
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
+import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
+import AdminLecturersPage from "../pages/admin/AdminLecturersPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import DashboardPage from "../pages/DashboardPage";
+import FcscDashboardPage from "../pages/FcscDashboardPage";
+import FcscInformsPage from "../pages/FcscInformsPage";
 import HomePage from "../pages/HomePage";
+import LecturerDashboardPage from "../pages/lecturer/LecturerDashboardPage";
+import LecturerEventsPage from "../pages/lecturer/LecturerEventsPage";
+import LecturerModulesPage from "../pages/lecturer/LecturerModulesPage";
+import LecturerStudentsPage from "../pages/lecturer/LecturerStudentsPage";
+import LecturerTimetablePage from "../pages/lecturer/LecturerTimetablePage";
+import LecturerMaterialUploadsPage from "../pages/lecturer/LecturerMaterialUploadsPage";
+import LecturerExamSubmissionPage from "../pages/lecturer/LecturerExamSubmissionPage";
+import LecturerCourseworkUploadPage from "../pages/lecturer/LecturerCourseworkUploadPage";
 import LoginPage from "../pages/LoginPage";
+import StudyAssistantPage from "../pages/StudyAssistantPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
 import GpaHistoryPage from "../pages/GpaHistoryPage";
 import MyAcademicEventsPage from "../pages/MyAcademicEventsPage";
@@ -19,6 +34,7 @@ import MyTimetablePage from "../pages/MyTimetablePage";
 import RegisterPage from "../pages/RegisterPage";
 import TasksPage from "../pages/TasksPage";
 import AdminProtectedRoute from "./AdminProtectedRoute";
+import LecturerProtectedRoute from "./LecturerProtectedRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import { ROUTE_PATHS } from "./routePaths";
 
@@ -31,7 +47,9 @@ const AppRoutes = () => {
         <Route element={<AuthLayout />}>
           <Route path={ROUTE_PATHS.home} element={<HomePage />} />
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.fcscDashboard} element={<FcscDashboardPage />} />
           <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
+          <Route path={ROUTE_PATHS.lecturerLogin} element={<LecturerLoginPage />} />
           <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
         </Route>
 
@@ -50,12 +68,35 @@ const AppRoutes = () => {
               path={ROUTE_PATHS.adminAcademicEvents}
               element={<AdminAcademicEventsPage />}
             />
+            <Route
+              path={ROUTE_PATHS.adminFcscInforms}
+              element={<AdminFcscInformsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminLecturers}
+              element={<AdminLecturersPage />}
+            />
+          </Route>
+        </Route>
+
+        <Route element={<LecturerProtectedRoute />}>
+          <Route element={<LecturerLayout />}>
+            <Route path={ROUTE_PATHS.lecturerDashboard} element={<LecturerDashboardPage />} />
+            <Route path={ROUTE_PATHS.lecturerModules} element={<LecturerModulesPage />} />
+            <Route path={ROUTE_PATHS.lecturerTimetable} element={<LecturerTimetablePage />} />
+            <Route path={ROUTE_PATHS.lecturerEvents} element={<LecturerEventsPage />} />
+            <Route path={ROUTE_PATHS.lecturerStudents} element={<LecturerStudentsPage />} />
+            <Route path={ROUTE_PATHS.lecturerMaterials} element={<LecturerMaterialUploadsPage />} />
+            <Route path={ROUTE_PATHS.lecturerExamSubmission} element={<LecturerExamSubmissionPage />} />
+            <Route path={ROUTE_PATHS.lecturerCoursework} element={<LecturerCourseworkUploadPage />} />
           </Route>
         </Route>
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path={ROUTE_PATHS.dashboard} element={<DashboardPage />} />
+            <Route path={ROUTE_PATHS.studyAssistant} element={<StudyAssistantPage />} />
+            <Route path={ROUTE_PATHS.fcscInforms} element={<FcscInformsPage />} />
             <Route path={ROUTE_PATHS.myModules} element={<MyModulesPage />} />
             <Route path={ROUTE_PATHS.myTimetable} element={<MyTimetablePage />} />
             <Route path={ROUTE_PATHS.myEvents} element={<MyAcademicEventsPage />} />

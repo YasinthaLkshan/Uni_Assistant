@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 import { ACADEMIC_FACULTY, ACADEMIC_SEMESTERS, ACADEMIC_YEAR } from "../constants/academicScope.js";
 import Module from "../models/Module.js";
+import User from "../models/User.js";
 import AppError from "../utils/appError.js";
 
 const normalizeModuleCode = (value = "") => String(value).trim().toUpperCase();
@@ -38,7 +39,7 @@ const buildCreatePayload = (payload) => {
     throw new AppError("moduleCode, moduleName, and semester are required", 400);
   }
 
-  return {
+  const result = {
     moduleCode: normalizeModuleCode(payload.moduleCode),
     moduleName: String(payload.moduleName).trim(),
     semester: validateSemester(payload.semester),
@@ -50,6 +51,12 @@ const buildCreatePayload = (payload) => {
     faculty: ACADEMIC_FACULTY,
     academicYear: ACADEMIC_YEAR,
   };
+
+  if (payload.lecturer !== undefined) {
+    result.lecturer = payload.lecturer || null;
+  }
+
+  return result;
 };
 
 const buildUpdatePayload = (payload) => {
@@ -87,6 +94,10 @@ const buildUpdatePayload = (payload) => {
     nextPayload.assessmentCriteria = normalizeAssessmentCriteria(payload.assessmentCriteria);
   }
 
+  if (payload.lecturer !== undefined) {
+    nextPayload.lecturer = payload.lecturer || null;
+  }
+
   nextPayload.faculty = ACADEMIC_FACULTY;
   nextPayload.academicYear = ACADEMIC_YEAR;
 
@@ -109,7 +120,9 @@ export const getAllModules = async () => {
   const modules = await Module.find({
     faculty: ACADEMIC_FACULTY,
     academicYear: ACADEMIC_YEAR,
-  }).sort({ semester: 1, moduleCode: 1 });
+  })
+    .populate("lecturer", "name email department")
+    .sort({ semester: 1, moduleCode: 1 });
 
   return modules;
 };
@@ -121,7 +134,9 @@ export const filterModulesBySemester = async (semester) => {
     faculty: ACADEMIC_FACULTY,
     academicYear: ACADEMIC_YEAR,
     semester: validatedSemester,
-  }).sort({ moduleCode: 1 });
+  })
+    .populate("lecturer", "name email department")
+    .sort({ moduleCode: 1 });
 
   return modules;
 };

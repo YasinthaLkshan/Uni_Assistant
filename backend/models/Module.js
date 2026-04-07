@@ -69,6 +69,11 @@ const moduleSchema = new mongoose.Schema(
       min: [0, "Lab hours cannot be negative"],
       default: 0,
     },
+    lecturer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
     outline: {
       type: String,
       trim: true,

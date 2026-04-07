@@ -36,21 +36,37 @@ const LandingNav = ({ isAuthenticated, user }) => {
         <nav className={`landing-nav-links ${menuOpen ? "is-open" : ""}`.trim()}>
           <a href="#home" className="landing-nav-link is-active" onClick={closeMenu}>Home</a>
           <a href="#features" className="landing-nav-link" onClick={closeMenu}>Features</a>
-          <Link to={ROUTE_PATHS.dashboard} className="landing-nav-link" onClick={closeMenu}>Dashboard</Link>
-          <Link to={ROUTE_PATHS.tasks} className="landing-nav-link" onClick={closeMenu}>Tasks</Link>
+          {isAuthenticated ? (
+            <>
+              <Link to={ROUTE_PATHS.dashboard} className="landing-nav-link" onClick={closeMenu}>Dashboard</Link>
+              <Link to={ROUTE_PATHS.tasks} className="landing-nav-link" onClick={closeMenu}>Tasks</Link>
+            </>
+          ) : (
+            <>
+              <Link to={ROUTE_PATHS.login} className="landing-nav-link" onClick={closeMenu}>Student Login</Link>
+              <Link to={ROUTE_PATHS.lecturerLogin} className="landing-nav-link" onClick={closeMenu}>Lecturer Login</Link>
+              <Link to={ROUTE_PATHS.adminLogin} className="landing-nav-link" onClick={closeMenu}>Admin Login</Link>
+            </>
+          )}
           <a href="#about" className="landing-nav-link" onClick={closeMenu}>About</a>
         </nav>
 
-        <div className="landing-profile-chip" aria-label="Student profile">
-          <span className="landing-avatar" aria-hidden="true">{initials}</span>
-          <span className="landing-profile-meta">
-            <strong>{displayName}</strong>
-            <span className="landing-profile-status">
-              <span className="landing-profile-dot" aria-hidden="true" />
-              Active
+        {isAuthenticated ? (
+          <div className="landing-profile-chip" aria-label="Student profile">
+            <span className="landing-avatar" aria-hidden="true">{initials}</span>
+            <span className="landing-profile-meta">
+              <strong>{displayName}</strong>
+              <span className="landing-profile-status">
+                <span className="landing-profile-dot" aria-hidden="true" />
+                Active
+              </span>
             </span>
-          </span>
-        </div>
+          </div>
+        ) : (
+          <Link to={ROUTE_PATHS.login} className="primary-btn landing-login-btn" onClick={closeMenu}>
+            Sign In
+          </Link>
+        )}
       </div>
     </header>
   );
