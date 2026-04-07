@@ -6,9 +6,12 @@ import MainLayout from "../layouts/MainLayout";
 import AdminLoginPage from "../pages/AdminLoginPage";
 import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPage";
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
+import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import DashboardPage from "../pages/DashboardPage";
+import FcscDashboardPage from "../pages/FcscDashboardPage";
+import FcscInformsPage from "../pages/FcscInformsPage";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
@@ -32,6 +35,7 @@ const AppRoutes = () => {
         <Route element={<AuthLayout />}>
           <Route path={ROUTE_PATHS.home} element={<HomePage />} />
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.fcscDashboard} element={<FcscDashboardPage />} />
           <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
           <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
         </Route>
@@ -51,12 +55,17 @@ const AppRoutes = () => {
               path={ROUTE_PATHS.adminAcademicEvents}
               element={<AdminAcademicEventsPage />}
             />
+            <Route
+              path={ROUTE_PATHS.adminFcscInforms}
+              element={<AdminFcscInformsPage />}
+            />
           </Route>
         </Route>
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>
             <Route path={ROUTE_PATHS.dashboard} element={<DashboardPage />} />
+            <Route path={ROUTE_PATHS.fcscInforms} element={<FcscInformsPage />} />
             <Route path={ROUTE_PATHS.myModules} element={<MyModulesPage />} />
             <Route path={ROUTE_PATHS.myTimetable} element={<MyTimetablePage />} />
             <Route path={ROUTE_PATHS.myEvents} element={<MyAcademicEventsPage />} />

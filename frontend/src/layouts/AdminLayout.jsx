@@ -41,6 +41,15 @@ const ADMIN_MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "FCSC Informs",
+    path: ROUTE_PATHS.adminFcscInforms,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
@@ -49,6 +58,7 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.adminModules]: "Modules",
   [ROUTE_PATHS.adminTimetable]: "Timetable",
   [ROUTE_PATHS.adminAcademicEvents]: "Academic Events",
+  [ROUTE_PATHS.adminFcscInforms]: "FCSC Informs",
 };
 
 const AdminLayout = () => {
