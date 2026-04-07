@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import { GlassCard, PrimaryButton, SecondaryButton, SectionTitle } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { addGpaHistoryEntry } from "../utils/gpaHistory";
 import { ROUTE_PATHS } from "../routes/routePaths";
+
+import "./GpaCalculatorPage.css"; // Import new styles
 
 const DEANS_LIST_THRESHOLD = 3.7;
 
@@ -18,8 +19,9 @@ const gradeOptions = [
   { label: "C+ (2.3)", value: 2.3 },
   { label: "C (2.0)", value: 2.0 },
   { label: "C- (1.7)", value: 1.7 },
+  { label: "D+ (1.3)", value: 1.3 },
   { label: "D (1.0)", value: 1.0 },
-  { label: "F (0.0)", value: 0.0 },
+  { label: "E (0.0)", value: 0.0 },
 ];
 
 const marksGuide = [
@@ -128,12 +130,11 @@ const GpaCalculatorPage = () => {
   const [courses, setCourses] = useState([createEmptyCourse(), createEmptyCourse(), createEmptyCourse()]);
   const [selectedCourse, setSelectedCourse] = useState(courseOptions[0].value);
   const [selectedSemester, setSelectedSemester] = useState("");
-  const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState([
     {
       id: 1,
       from: "bot",
-      text: "Hi, I am your GPA assistant. Ask me how to interpret or improve your GPA.",
+      text: "Hi! I am your GPA AI Assistant. Need tips on improving your GPA or reaching Dean's List? Just ask!",
     },
   ]);
   const [chatInput, setChatInput] = useState("");
@@ -190,12 +191,11 @@ const GpaCalculatorPage = () => {
 
   const gpaLevel = (() => {
     if (!totalCredits) return "neutral";
-    if (gpa >= DEANS_LIST_THRESHOLD) return "success";
-    if (gpa >= 3.0) return "warning";
+    if (gpa >= DEANS_LIST_THRESHOLD) return "excellent";
+    if (gpa >= 3.0) return "success";
+    if (gpa >= 2.0) return "warning";
     return "danger";
   })();
-
-  const normalizedGpa = Math.max(0, Math.min(4, gpa));
 
   const canSaveToHistory = Boolean(totalCredits && selectedSemester);
   const maxModulesForSelection = getMaxModulesForSelection(selectedCourse, selectedSemester);
@@ -222,7 +222,7 @@ const GpaCalculatorPage = () => {
       createdAt: new Date().toISOString(),
     });
 
-    setSaveStatus("Saved to GPA history for this semester.");
+    setSaveStatus("Successfully saved to your history! 🚀");
     window.setTimeout(() => {
       setSaveStatus("");
     }, 2500);
@@ -232,421 +232,283 @@ const GpaCalculatorPage = () => {
     const trimmed = userText.trim().toLowerCase();
 
     if (!totalCredits) {
-      return "Start by adding your modules, credits and grades. Once I see a GPA, I can help you plan how to improve it.";
+      return "I notice you haven't added any credits yet. Start by entering your modules to calculate an estimated GPA!";
     }
 
     if (trimmed.includes("improve") || trimmed.includes("increase") || trimmed.includes("higher")) {
       if (gpa >= 3.5) {
-        return `Your GPA is already strong at ${gpa.toFixed(2)}. Focus on keeping consistent grades in high-credit modules and avoid taking on too many risky courses at once.`;
+        return `You're doing fantastic with a GPA of ${gpa.toFixed(2)}. Focus on consistency in high-credit modules.`;
       }
-
       if (gpa >= 2.5) {
-        return `You are in a passing range with a GPA of ${gpa.toFixed(2)}. Improving grades in modules with the most credits will move your GPA the fastest.`;
+        return `At ${gpa.toFixed(2)}, focus your energy on the next high-credit modules to quickly boost your score.`;
       }
-
-      return `With a GPA of ${gpa.toFixed(2)}, the priority is passing all modules and retaking or improving the lowest grades, especially where credits are high.`;
+      return `With a GPA of ${gpa.toFixed(2)}, prioritize passing all current modules and consider retaking subjects with lower grades next term.`;
     }
 
     if (trimmed.includes("good") || trimmed.includes("okay") || trimmed.includes("ok")) {
       if (gpa >= 3.7) {
-        return `Yes, ${gpa.toFixed(2)} is an excellent GPA. It is typically competitive for scholarships and honours, depending on your university.`;
+        return `Absolutely! ${gpa.toFixed(2)} is an excellent GPA, often qualifying for Dean's List.`;
       }
-
       if (gpa >= 3.0) {
-        return `${gpa.toFixed(2)} is generally considered good. If you want it higher, look at which future modules carry more credits and plan to aim for A or A- there.`;
+        return `${gpa.toFixed(2)} is a solid GPA. You're in good standing.`;
       }
-
-      if (gpa >= 2.0) {
-        return `${gpa.toFixed(2)} is usually a passing GPA, but could limit some opportunities. Improving just one or two high-credit modules can make a visible difference.`;
-      }
-
-      return `${gpa.toFixed(2)} is in an at-risk range. Talk with an advisor and use this calculator to test what grades you need next term to return to good standing.`;
+      return `${gpa.toFixed(2)} is passing, but you might want to try to push it higher for more opportunities.`;
     }
 
-    return `Your current GPA is ${gpa.toFixed(2)} based on ${totalCredits} credits. You can ask me things like "How can I improve my GPA?" or "Is this GPA good enough for scholarships?"`;
-  };
-
-  const handleToggleChat = () => {
-    setIsChatOpen((prev) => !prev);
+    return `Your estimated GPA is currently ${gpa.toFixed(2)}. How else can I assist with your academic planning?`;
   };
 
   const handleSendMessage = (event) => {
     event.preventDefault();
-
     const text = chatInput.trim();
     if (!text) return;
 
-    const nextUserMessage = {
-      id: Date.now(),
-      from: "user",
-      text,
-    };
-
-    setChatMessages((prev) => [...prev, nextUserMessage]);
+    setChatMessages((prev) => [...prev, { id: Date.now(), from: "user", text }]);
     setChatInput("");
     setIsChatThinking(true);
 
     window.setTimeout(() => {
-      const botReply = generateBotReply(text);
-      const nextBotMessage = {
-        id: Date.now() + 1,
-        from: "bot",
-        text: botReply,
-      };
-
-      setChatMessages((prev) => [...prev, nextBotMessage]);
+      setChatMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 1, from: "bot", text: generateBotReply(text) },
+      ]);
       setIsChatThinking(false);
-    }, 260);
+    }, 600);
   };
 
   return (
-    <section className="dashboard gpa-page">
-      <div className="section-entrance" style={{ animationDelay: "20ms", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.5rem" }}>
-        <h1 style={{ fontSize: "1.75rem", fontWeight: "700", color: "var(--ink-900)", margin: 0, letterSpacing: "-0.01em" }}>
-          Semester GPA calculator
-        </h1>
-        <Link 
-          to={ROUTE_PATHS.gpaHistory} 
-          style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem", padding: "0.6rem 1.2rem", background: "#000", color: "#fff", borderRadius: "8px", textDecoration: "none", fontSize: "0.9rem", fontWeight: "500", border: "none", boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          View GPA History
+    <section className="modern-gpa-wrapper">
+      <header className="modern-gpa-header">
+        <h1>Calculate GPA</h1>
+        <Link to={ROUTE_PATHS.gpaHistory} className="history-link-btn">
+          View History
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
         </Link>
-      </div>
+      </header>
 
-      <div className="dashboard-grid" style={{ animationDelay: "60ms", display: "grid", gridTemplateColumns: "1fr", gap: "2rem", alignItems: "start", marginTop: "1.5rem" }}>
-        <style>{`
-          @media (min-width: 900px) {
-            .dashboard-grid { grid-template-columns: 2.2fr 1fr !important; }
-          }
-        `}</style>
-        <GlassCard as="section" className="ui-section gpa-inputs">
-          <SectionTitle
-            eyebrow="Your Modules"
-            title="Enter modules and grades"
-            className="gpa-section-title"
-          />
-
-          <div className="gpa-field-group" style={{ marginBottom: "1.25rem" }}>
-            <label className="field-label" htmlFor="course-select">
-              Course
-            </label>
-            <select
-              id="course-select"
-              className="text-input"
-              value={selectedCourse}
-              onChange={(event) => {
-                const nextCourse = event.target.value;
-                setSelectedCourse(nextCourse);
-                if (selectedSemester) {
-                  applySemesterTemplate(nextCourse, selectedSemester);
-                }
-              }}
-            >
-              {courseOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+      <div className="dashboard-grid-custom">
+        
+        {/* Left Column: Inputs */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          
+          {/* General Selectors */}
+          <div className="premium-glass-card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.2rem", padding: "1.5rem" }}>
+            <div className="modern-input-group" style={{ marginBottom: 0 }}>
+              <label className="modern-label" htmlFor="course-select">Program / Course</label>
+              <select
+                id="course-select"
+                className="modern-select"
+                value={selectedCourse}
+                onChange={(event) => {
+                  const nextCourse = event.target.value;
+                  setSelectedCourse(nextCourse);
+                  if (selectedSemester) applySemesterTemplate(nextCourse, selectedSemester);
+                }}
+              >
+                {courseOptions.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="modern-input-group" style={{ marginBottom: 0 }}>
+              <label className="modern-label" htmlFor="semester-select">Academic Semester</label>
+              <select
+                id="semester-select"
+                className="modern-select"
+                value={selectedSemester}
+                onChange={(event) => {
+                  const nextSemester = event.target.value;
+                  setSelectedSemester(nextSemester);
+                  if (nextSemester) applySemesterTemplate(selectedCourse, nextSemester);
+                }}
+              >
+                <option value="">Choose semester...</option>
+                {semesterOptions.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
-          <div className="gpa-field-group" style={{ marginBottom: "1.5rem" }}>
-            <label className="field-label" htmlFor="semester-select">
-              Semester
-            </label>
-            <select
-              id="semester-select"
-              className="text-input"
-              value={selectedSemester}
-              onChange={(event) => {
-                const nextSemester = event.target.value;
-                setSelectedSemester(nextSemester);
-                if (nextSemester) {
-                  applySemesterTemplate(selectedCourse, nextSemester);
-                }
-              }}
-            >
-              <option value="">Select semester…</option>
-              {semesterOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {/* Module List */}
+          <div className="premium-glass-card">
+            <div style={{ marginBottom: "1.5rem" }}>
+              <h2 style={{ fontSize: "1.4rem", fontWeight: "700", margin: 0, color: "#1e293b" }}>Your Modules</h2>
+              <p style={{ color: "#64748b", margin: "0.2rem 0 0", fontSize: "0.9rem" }}>Enter module name, credits, and expected grade to calculate.</p>
+            </div>
 
-          <div className="gpa-course-list">
-            {courses.map((course, index) => (
-              <div key={course.id} className="gpa-course-row" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.5fr auto", gap: "1rem", alignItems: "start", padding: "1.2rem", background: "var(--glass)", borderRadius: "12px", border: "1px solid var(--line)", marginBottom: "1rem", boxShadow: "0 2px 8px -2px rgba(0,0,0,0.03)" }}>
-                <div className="gpa-field-group" style={{ marginBottom: 0 }}>
-                  <label className="field-label" htmlFor={`course-name-${course.id}`} style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--ink-700)", marginBottom: "0.4rem", display: "block" }}>
-                    Module Name
-                  </label>
-                  <input
-                    id={`course-name-${course.id}`}
-                    type="text"
-                    className="text-input"
-                    placeholder="e.g. Data Structures"
-                    value={course.name}
-                    onChange={(e) => handleCourseChange(course.id, "name", e.target.value)}
-                    style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid var(--line-strong)", background: "var(--bg-2)", color: "var(--ink-900)" }}
-                  />
-                </div>
-
-                <div className="gpa-field credits" style={{ marginBottom: 0 }}>
-                  <label className="field-label" htmlFor={`course-credits-${course.id}`} style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--ink-700)", marginBottom: "0.4rem", display: "block" }}>
-                    Credits
-                  </label>
-                  <input
-                    id={`course-credits-${course.id}`}
-                    type="number"
-                    min="0"
-                    step="0.5"
-                    className="text-input"
-                    placeholder="e.g. 3"
-                    value={course.credits}
-                    onChange={(e) => handleCourseChange(course.id, "credits", e.target.value)}
-                    style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid var(--line-strong)", background: "var(--bg-2)", color: "var(--ink-900)" }}
-                  />
-                </div>
-
-                <div className="gpa-field grade" style={{ marginBottom: 0 }}>
-                  <label className="field-label" htmlFor={`course-grade-${course.id}`} style={{ fontSize: "0.85rem", fontWeight: "600", color: "var(--ink-700)", marginBottom: "0.4rem", display: "block" }}>
-                    Grade
-                  </label>
-                  <select
-                    id={`course-grade-${course.id}`}
-                    className="text-input"
-                    value={course.grade}
-                    onChange={(e) => handleCourseChange(course.id, "grade", Number(e.target.value))}
-                    style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid var(--line-strong)", background: "var(--bg-2)", color: "var(--ink-900)" }}
+            <div>
+              {courses.map((course) => (
+                <div key={course.id} className="course-row-card">
+                  <div>
+                    <label className="modern-label" style={{ fontSize: "0.75rem" }} htmlFor={`cname-${course.id}`}>Module Name</label>
+                    <input
+                      id={`cname-${course.id}`}
+                      type="text"
+                      className="modern-input"
+                      placeholder="e.g. Data Structures"
+                      value={course.name}
+                      onChange={(e) => handleCourseChange(course.id, "name", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="modern-label" style={{ fontSize: "0.75rem" }} htmlFor={`ccred-${course.id}`}>Credits</label>
+                    <input
+                      id={`ccred-${course.id}`}
+                      type="number"
+                      min="0" step="0.5"
+                      className="modern-input"
+                      placeholder="3"
+                      value={course.credits}
+                      onChange={(e) => handleCourseChange(course.id, "credits", e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="modern-label" style={{ fontSize: "0.75rem" }} htmlFor={`cgrade-${course.id}`}>Grade</label>
+                    <select
+                      id={`cgrade-${course.id}`}
+                      className="modern-select"
+                      value={course.grade}
+                      onChange={(e) => handleCourseChange(course.id, "grade", Number(e.target.value))}
+                    >
+                      {gradeOptions.map((o) => (
+                        <option key={o.label} value={o.value}>{o.label}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    title="Remove module"
+                    onClick={() => handleRemoveCourse(course.id)}
+                    disabled={courses.length === 1}
                   >
-                    {gradeOptions.map((option) => (
-                      <option key={option.label} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                  </button>
                 </div>
+              ))}
+            </div>
 
-                <button
-                  type="button"
-                  className="icon-btn"
-                  title="Remove module"
-                  style={{ border: "none", background: courses.length === 1 ? "transparent" : "rgba(239, 68, 68, 0.08)", color: courses.length === 1 ? "var(--ink-500)" : "var(--danger)", marginTop: "1.7rem", width: "42px", height: "42px", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "8px", cursor: courses.length === 1 ? "not-allowed" : "pointer" }}
-                  onClick={() => handleRemoveCourse(course.id)}
-                  disabled={courses.length === 1}
-                >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                </button>
+            <div className="modern-actions">
+              <button type="button" className="btn-add" onClick={handleAddCourse} disabled={isAtModuleLimit}>
+                + Add Module
+              </button>
+              <button type="button" className="btn-reset" onClick={handleReset}>
+                Reset Selection
+              </button>
+            </div>
+          </div>
+          
+          {/* Marks Guide Reference Table */}
+          <div className="marks-guide-wrapper">
+             <div className="marks-guide-header">
+                <h3>Uni Marks Guide</h3>
+             </div>
+             <div className="marks-list">
+                {marksGuide.map((item) => (
+                  <div key={item.grade} className="mark-item">
+                    <span className="mark-grade">{item.grade}</span>
+                    <span className="mark-point">{item.point.toFixed(1)} Points</span>
+                    <span className="mark-range">{item.range} Marks</span>
+                  </div>
+                ))}
+             </div>
+          </div>
+
+        </div>
+
+        {/* Right Column: Result & Chat */}
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+          
+          {/* Live GPA Display */}
+          <div className="gpa-display-wrapper">
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "700", color: "#334155", margin: 0 }}>
+              {selectedSemesterLabel ? `Result: ${selectedSemesterLabel}` : "Estimated GPA"}
+            </h2>
+            
+            <div className="gpa-value-container">
+              <div className={`gpa-score ${gpaLevel}`}>
+                {gpa.toFixed(2)}
               </div>
-            ))}
-          </div>
+              <div className="gpa-subtitle">out of 4.0</div>
+            </div>
 
-          <div className="gpa-actions">
-            <SecondaryButton type="button" onClick={handleAddCourse} disabled={isAtModuleLimit}>
-              Add another module
-            </SecondaryButton>
-            <button type="button" className="ghost-btn" onClick={handleReset}>
-              Reset
-            </button>
-          </div>
-        </GlassCard>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <GlassCard as="aside" className="ui-section gpa-summary">
-          <SectionTitle
-            eyebrow="Result"
-            title={selectedSemesterLabel ? `GPA ${selectedSemesterLabel}` : "Estimated GPA"}
-          />
-
-          <div className="gpa-value-wrap">
-            <p className={`gpa-value gpa-value-${gpaLevel}`}>{gpa.toFixed(2)}</p>
-          </div>
-
-          {totalCredits > 0 && (
-            <div className="gpa-deans-chart" style={{ marginTop: "0.75rem" }}>
-              <div
-                style={{
-                  position: "relative",
-                  height: "12px",
-                  borderRadius: "999px",
-                  background: "rgba(37,99,235,0.25)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    bottom: 0,
-                    left: 0,
-                    width: `${(normalizedGpa / 4) * 100}%`,
-                    background: "#16a34a",
-                  }}
-                />
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    bottom: 0,
-                    left: `${(DEANS_LIST_THRESHOLD / 4) * 100}%`,
-                    width: "2px",
-                    background: "#2563eb",
-                  }}
-                />
+            <div className="gpa-stats">
+              <div className="stat-item">
+                <span className="stat-label">Credits</span>
+                <span className="stat-value">{totalCredits}</span>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "0.25rem",
-                  fontSize: "0.75rem",
-                  opacity: 0.8,
-                }}
-              >
-                <span>0.0</span>
-                <span>
-                  Dean&apos;s List
-                  {" "}
-                  {DEANS_LIST_THRESHOLD.toFixed(1)}
-                </span>
-                <span>4.0</span>
+              <div className="stat-item">
+                <span className="stat-label">Modules</span>
+                <span className="stat-value">{validCount(courses)}</span>
               </div>
             </div>
-          )}
 
-          {totalCredits > 0 && (
-            <div className="gpa-details">
-              <p className="gpa-detail-line">
-                <span className="gpa-detail-label">Total credits:</span> {totalCredits}
-              </p>
-              <p className="gpa-detail-line">
-                <span className="gpa-detail-label">Current GPA:</span> {gpa.toFixed(2)}
-              </p>
-            </div>
-          )}
-
-          <div className="gpa-history-actions">
-            <PrimaryButton
+            <button
               type="button"
+              className="btn-save-gpa"
               onClick={handleSaveToHistory}
               disabled={!canSaveToHistory}
             >
-              Save this calculation
-            </PrimaryButton>
-            {!canSaveToHistory && (
-              <p className="gpa-history-hint">
-                Select a semester and enter at least one module with credits to save.
-              </p>
-            )}
-            {saveStatus && (
-              <p className="gpa-history-status">
-                {saveStatus}
-              </p>
-            )}
+              {saveStatus ? saveStatus : "Save Calculation"}
+            </button>
           </div>
 
-          {totalCredits > 0 && gpa < 2 && (
-            <p className="gpa-warning-message">
-              Warning: your GPA is below 2.0. You may be at academic risk and should consider speaking with your academic advisor.
-            </p>
-          )}
-
-          {totalCredits > 0 && gpa >= 3.7 && (
-            <p className="gpa-deans-list-message">
-              Congratulations! With a GPA of
-              {" "}
-              {gpa.toFixed(2)} you may qualify for the Dean&apos;s List, depending on your university&apos;s rules.
-            </p>
-          )}
-
-          <div className="gpa-marks-guide">
-            <h3 className="gpa-marks-guide-title">Marks Guide</h3>
-            <div className="gpa-marks-guide-table" aria-label="Grade to GPA and marks guide">
-              <div className="gpa-marks-guide-row gpa-marks-guide-header">
-                <span>Grade</span>
-                <span>Grade Point</span>
-                <span>Marks Range</span>
+          {/* AI Chat Widget */}
+          <div className="ai-assistant-widget">
+            <div className="ai-header">
+              <div className="ai-avatar">✨</div>
+              <div className="ai-header-text">
+                <h3>AI Study Assistant</h3>
+                <p>Always here to help you strategize</p>
               </div>
-              {marksGuide.map((item) => (
-                <div key={item.grade} className="gpa-marks-guide-row">
-                  <span>{item.grade}</span>
-                  <span>{item.point.toFixed(1)}</span>
-                  <span>{item.range}</span>
+            </div>
+            
+            <div className="ai-messages">
+              {chatMessages.map((msg) => (
+                <div key={msg.id} className={`ai-message ${msg.from}`}>
+                  {msg.text}
                 </div>
               ))}
+              {isChatThinking && (
+                <div className="ai-message bot" style={{ display: "flex", gap: "5px", width: "fit-content" }}>
+                  <span style={{ width: "6px", height: "6px", background: "#94a3b8", borderRadius: "50%", animation: "pulse 1s infinite" }}></span>
+                  <span style={{ width: "6px", height: "6px", background: "#94a3b8", borderRadius: "50%", animation: "pulse 1s infinite 0.2s" }}></span>
+                  <span style={{ width: "6px", height: "6px", background: "#94a3b8", borderRadius: "50%", animation: "pulse 1s infinite 0.4s" }}></span>
+                </div>
+              )}
             </div>
-          </div>
 
-        </GlassCard>
-
-        {/* New Dedicated Chat Box */}
-        <GlassCard as="section" className="ui-section gpa-chat-box" aria-label="AI GPA assistant" style={{ background: "var(--glass-strong)", border: "1px solid var(--line)", padding: "1.2rem", borderRadius: "12px", boxShadow: "0 2px 8px -2px rgba(0,0,0,0.03)", display: "flex", flexDirection: "column" }}>
-          <header className="gpa-chat-header" style={{ marginBottom: "1rem", display: "flex", alignItems: "center", gap: "0.6rem" }}>
-            <span style={{ fontSize: "1.2rem", width: "32px", height: "32px", display: "flex", alignItems: "center", justifyContent: "center", background: "#f0fdf4", color: "#16a34a", borderRadius: "8px" }}>🤖</span>
-            <div>
-              <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: "600", color: "var(--ink-900)" }}>AI Assistant</h3>
-              <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--ink-500)" }}>Ask about your GPA strategy</p>
-            </div>
-          </header>
-
-          <div className="gpa-chat-messages" style={{ display: "flex", flexDirection: "column", gap: "0.8rem", maxHeight: "250px", minHeight: "150px", overflowY: "auto", paddingRight: "0.5rem", marginBottom: "0.8rem" }}>
-            {chatMessages.map((message) => (
-              <div
-                key={message.id}
-                style={{
-                  alignSelf: message.from === "user" ? "flex-end" : "flex-start",
-                  maxWidth: "90%",
-                  padding: "0.7rem 0.9rem",
-                  borderRadius: message.from === "user" ? "12px 12px 2px 12px" : "12px 12px 12px 2px",
-                  background: message.from === "user" ? "#000" : "var(--bg-2)",
-                  color: message.from === "user" ? "#fff" : "var(--ink-900)",
-                  border: message.from === "user" ? "none" : "1px solid var(--line)",
-                  fontSize: "0.85rem",
-                  lineHeight: "1.4"
-                }}
+            <form className="ai-input-area" onSubmit={handleSendMessage}>
+              <input
+                type="text"
+                className="ai-input"
+                placeholder="Ask how to reach 3.5..."
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="ai-send-btn"
+                disabled={!chatInput.trim() || isChatThinking}
               >
-                <p style={{ margin: 0 }}>{message.text}</p>
-              </div>
-            ))}
-            {isChatThinking && (
-              <div style={{ background: "var(--bg-2)", padding: "0.5rem 0.8rem", borderRadius: "12px 12px 12px 2px", border: "1px solid var(--line)", alignSelf: "flex-start", display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                <span style={{ width: "5px", height: "5px", background: "var(--ink-500)", borderRadius: "50%", animation: "pulse 1.2s infinite" }} />
-                <span style={{ width: "5px", height: "5px", background: "var(--ink-500)", borderRadius: "50%", animation: "pulse 1.2s infinite 0.2s" }} />
-                <span style={{ width: "5px", height: "5px", background: "var(--ink-500)", borderRadius: "50%", animation: "pulse 1.2s infinite 0.4s" }} />
-              </div>
-            )}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              </button>
+            </form>
           </div>
 
-          <form onSubmit={handleSendMessage} style={{ display: "flex", gap: "0.5rem", borderTop: "1px solid var(--line-strong)", paddingTop: "1rem", marginTop: "auto" }}>
-            <input
-              type="text"
-              placeholder="Ask how to improve..."
-              value={chatInput}
-              onChange={(event) => setChatInput(event.target.value)}
-              style={{ flexGrow: 1, padding: "0.6rem 0.75rem", borderRadius: "8px", border: "1px solid var(--line-strong)", background: "var(--bg-2)", color: "var(--ink-900)", fontSize: "0.85rem", width: "100%" }}
-            />
-            <button
-              type="submit"
-              disabled={!chatInput.trim() || isChatThinking}
-              style={{ padding: "0 1rem", borderRadius: "8px", background: "#000", color: "#fff", border: "none", fontWeight: "500", fontSize: "0.85rem", cursor: (!chatInput.trim() || isChatThinking) ? "not-allowed" : "pointer", opacity: (!chatInput.trim() || isChatThinking) ? 0.5 : 1, transition: "transform 0.2s, opacity 0.2s" }}
-            >
-              Ask
-            </button>
-          </form>
-        </GlassCard>
         </div>
       </div>
-      {showLimitToast && (
-        <div className="toast toast-gpa-limit" role="status" aria-live="polite">
-          <p className="toast-title">Limit Reached</p>
-          <p className="toast-body">You have already added all the required modules for this semester.</p>
-        </div>
-      )}
     </section>
   );
 };
+
+function validCount(arr) {
+  return arr.filter(c => Number(c.credits) > 0 && !Number.isNaN(Number(c.credits))).length;
+}
 
 export default GpaCalculatorPage;

@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { GlassCard, EmptyStateCard, PageHeader, SectionTitle, SecondaryButton, StatusBadge } from "../components";
+import { EmptyStateCard } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 import { clearGpaHistory, loadGpaHistory, removeGpaHistoryEntry } from "../utils/gpaHistory";
 import { exportGpaHistoryPdf } from "../utils/gpaPdf";
+
+import "./GpaCalculatorPage.css";
 
 const GpaHistoryPage = () => {
   const { user } = useAuth();
@@ -20,14 +22,11 @@ const GpaHistoryPage = () => {
   const hasEntries = entries.length > 0;
 
   const stats = useMemo(() => {
-    if (!entries.length) {
-      return null;
-    }
+    if (!entries.length) return null;
 
     const gpas = entries.map((entry) => entry.gpa || 0);
     const best = Math.max(...gpas);
     const average = gpas.reduce((sum, value) => sum + value, 0) / gpas.length;
-
     const lastUpdated = entries[0]?.createdAt ? new Date(entries[0].createdAt) : null;
 
     return {
@@ -62,150 +61,92 @@ const GpaHistoryPage = () => {
   };
 
   return (
-    <section className="dashboard gpa-history-page">
-      <div className="section-entrance" style={{ animationDelay: "20ms", marginBottom: "1rem" }}>
-        <Link
-          to={ROUTE_PATHS.gpaCalculator}
-          className="back-link-button"
-        >
-          <span className="back-link-icon" aria-hidden="true">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-          </span>
-          <span className="back-link-label">Back to calculator</span>
+    <section className="modern-gpa-wrapper">
+      <header className="modern-gpa-header">
+        <div>
+          <h1>GPA History</h1>
+          <p style={{ color: "#64748b", margin: "0.2rem 0 0" }}>Review your beautifully tracked academic performance.</p>
+        </div>
+        <Link to={ROUTE_PATHS.gpaCalculator} className="history-link-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "rotate(180deg)" }}>
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+          Back to Calculator
         </Link>
-      </div>
-      <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>
-        <PageHeader
-          eyebrow={null}
-          title="GPA Calculation History"
-          subtitle={null}
-          rightContent={hasEntries && stats ? (
-            <div className="gpa-history-stats">
-              <div className="metric-stack">
-                <p className="metric-line">
-                  <strong>{stats.count}</strong>
-                  {" "}
-                  saved calculations
-                </p>
-                <p className="metric-line">
-                  Best GPA: <strong>{stats.bestGpa.toFixed(2)}</strong>
-                </p>
-                <p className="metric-line">
-                  Average GPA: <strong>{stats.averageGpa.toFixed(2)}</strong>
-                </p>
+      </header>
+
+      {hasEntries && stats && (
+        <div className="premium-glass-card" style={{ marginBottom: "2rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <h2>History Metrics</h2>
+              <p className="subtitle">Breakdown of your saved performance</p>
+            </div>
+            <div className="stats-bar-flex">
+              <div className="glass-stat-item">
+                Records: <b>{stats.count}</b>
+              </div>
+              <div className="glass-stat-item">
+                Best GPA: <b style={{ color: "#10b981" }}>{stats.bestGpa.toFixed(2)}</b>
+              </div>
+              <div className="glass-stat-item">
+                Average GPA: <b style={{ color: "#3b82f6" }}>{stats.averageGpa.toFixed(2)}</b>
               </div>
             </div>
-          ) : null}
-        />
-      </GlassCard>
+          </div>
+        </div>
+      )}
 
-      <GlassCard as="section" className="ui-section section-entrance" style={{ animationDelay: "80ms" }}>
-        <SectionTitle
-          eyebrow="History"
-          title="Saved GPA calculations"
-          className="gpa-history-section-title"
-          rightContent={hasEntries ? (
-            <div className="gpa-history-header-actions">
-              <Link to={ROUTE_PATHS.gpaTrendHistory} style={{ textDecoration: "none" }}>
-                <SecondaryButton type="button">
-                  GPA trend
-                </SecondaryButton>
+      <div className="premium-glass-card">
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+          <h2>Saved Calculations</h2>
+          {hasEntries && (
+            <div className="modern-actions" style={{ marginTop: 0 }}>
+              <Link to={ROUTE_PATHS.gpaTrendHistory}>
+                <button className="btn-add" style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", color: "white", border: "none" }}>Show trend</button>
               </Link>
-              <SecondaryButton type="button" onClick={handleDownloadSheet}>
-                Download GPA sheet
-              </SecondaryButton>
-              <SecondaryButton type="button" onClick={handleClearAll}>
-                Clear history
-              </SecondaryButton>
+              <button className="btn-add" onClick={handleDownloadSheet}>Export Sheet</button>
+              <button className="btn-reset" onClick={handleClearAll} style={{ color: "#ef4444" }}>Clear History</button>
             </div>
-          ) : null}
-        />
+          )}
+        </div>
 
-        {!hasEntries && (
+        {!hasEntries ? (
           <EmptyStateCard
-            title="No GPA history yet"
-            description="Use the GPA calculator, then click ‘Save this calculation’ to keep a record for this semester."
+            title="No history found"
+            description="Use the GPA calculator and hit save to start building your academic timeline."
           />
-        )}
-
-        {hasEntries && (
-          <div className="gpa-history-list">
+        ) : (
+          <div>
             {entries.map((entry) => {
               const createdAt = entry.createdAt ? new Date(entry.createdAt) : null;
-
+              const isExcellent = entry.gpa >= 3.7;
+              
               return (
-                <article key={entry.id} className="gpa-history-card">
-                  <div className="gpa-history-main">
-                    <div className="gpa-history-meta">
-                      <p className="gpa-history-semester">
-                        {entry.semesterLabel || entry.semesterKey || "Semester"}
-                      </p>
-                      {entry.courseLabel && (
-                        <p className="gpa-history-specialization">{entry.courseLabel}</p>
-                      )}
-                      {createdAt && (
-                        <p className="gpa-history-date">
-                          Saved on
-                          {" "}
-                          {createdAt.toLocaleDateString()}
-                        </p>
-                      )}
+                <div key={entry.id} className="modern-history-card">
+                  <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
+                    <div className="gpa-badge">
+                      <span>{entry.gpa.toFixed(2)}</span>
                     </div>
-
-                    <div className="gpa-history-gpa-wrap">
-                      <p className="gpa-history-gpa">{entry.gpa.toFixed(2)}</p>
-                      <p className="gpa-history-credits">{entry.totalCredits} credits</p>
-                      <StatusBadge
-                        level={entry.gpa >= 3.7 ? "success" : entry.gpa >= 3.0 ? "warning" : "danger"}
-                        label={entry.gpa >= 3.7 ? "High" : entry.gpa >= 3.0 ? "Balanced" : "Needs attention"}
-                      />
+                    <div className="history-info-group">
+                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                        <h4>{entry.semesterLabel || entry.semesterKey || "Semester"}</h4>
+                        {isExcellent && <span style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10b981", fontSize: "0.7rem", padding: "0.2rem 0.5rem", borderRadius: "100px", fontWeight: "700" }}>DEAN'S LIST</span>}
+                      </div>
+                      <p>{entry.courseLabel && `${entry.courseLabel} • `}{entry.totalCredits} Credits Total</p>
+                      {createdAt && <p style={{ fontSize: "0.75rem", opacity: 0.7, marginTop: "0.2rem" }}>Saved: {createdAt.toLocaleDateString()}</p>}
                     </div>
                   </div>
-
-                  <div className="gpa-history-actions-row">
-                    <button
-                      type="button"
-                      className="icon-btn gpa-history-delete-btn"
-                      onClick={() => handleRemoveEntry(entry.id)}
-                      aria-label="Delete this GPA entry from history"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2.2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                        <path d="M10 11v6" />
-                        <path d="M14 11v6" />
-                        <path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
-                      </svg>
-                    </button>
-                  </div>
-                </article>
+                  <button onClick={() => handleRemoveEntry(entry.id)} className="delete-action-btn" title="Delete record">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                  </button>
+                </div>
               );
             })}
           </div>
         )}
-      </GlassCard>
+      </div>
     </section>
   );
 };

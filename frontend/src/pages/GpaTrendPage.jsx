@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { GlassCard, EmptyStateCard, PageHeader, SectionTitle, SecondaryButton } from "../components";
+import { EmptyStateCard } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 import { loadGpaHistory } from "../utils/gpaHistory";
+
+import "./GpaCalculatorPage.css";
 
 const GpaTrendChart = ({ entries }) => {
   if (!entries.length) return null;
@@ -17,12 +19,12 @@ const GpaTrendChart = ({ entries }) => {
 
   const maxGpa = 4;
   const minGpa = 0;
-  const verticalPadding = 6;
+  const verticalPadding = 8;
   const chartHeight = 100 - verticalPadding * 2;
 
   const points = sorted.map((entry, index) => {
     const ratio = sorted.length > 1 ? index / (sorted.length - 1) : 0.5;
-    const x = 4 + ratio * 92;
+    const x = 5 + ratio * 90;
     const gpa = typeof entry.gpa === "number" ? entry.gpa : 0;
     const clampedGpa = Math.max(minGpa, Math.min(maxGpa, gpa));
     const valueRatio = (clampedGpa - minGpa) / (maxGpa - minGpa || 1);
@@ -37,36 +39,50 @@ const GpaTrendChart = ({ entries }) => {
   }));
 
   return (
-    <div className="gpa-trend-chart">
-      <div className="gpa-trend-chart-inner">
+    <div className="modern-chart-container">
+      <div style={{ width: "100%", height: "200px" }}>
         <svg
-          className="gpa-trend-svg"
+          style={{ width: "100%", height: "100%", display: "block" }}
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
           aria-hidden="true"
         >
           <defs>
             <linearGradient id="gpaTrendGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.22" />
-              <stop offset="100%" stopColor="#4f46e5" stopOpacity="0" />
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
             </linearGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="1.5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
           </defs>
 
-          <rect x="0" y="0" width="100" height="100" fill="url(#gpaTrendGradient)" opacity="0.08" />
+          {/* Background Gradient under curve */}
+          {points.length > 1 && (
+            <polygon
+              fill="url(#gpaTrendGradient)"
+              points={`5,100 ${points.join(" ")} ${points.slice(-1)[0].split(',')[0]},100`}
+            />
+          )}
 
-          <line x1="4" y1="90" x2="96" y2="90" stroke="#e4e4e7" strokeWidth="0.6" />
-          <line x1="4" y1="58" x2="96" y2="58" stroke="#e4e4e7" strokeWidth="0.4" strokeDasharray="1.5 2" />
-          <line x1="4" y1="26" x2="96" y2="26" stroke="#e4e4e7" strokeWidth="0.4" strokeDasharray="1.5 2" />
+          {/* Grid lines */}
+          <line x1="0" y1="92" x2="100" y2="92" stroke="#e2e8f0" strokeWidth="0.5" />
+          <line x1="0" y1="60" x2="100" y2="60" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="1.5 2" />
+          <line x1="0" y1="28" x2="100" y2="28" stroke="#e2e8f0" strokeWidth="0.5" strokeDasharray="1.5 2" />
 
+          {/* Main Line connecting points */}
           <polyline
             fill="none"
-            stroke="#4f46e5"
-            strokeWidth="1.2"
+            stroke="#6366f1"
+            strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
             points={points.join(" ")}
+            filter="url(#glow)"
           />
 
+          {/* Data Points */}
           {points.map((point, index) => {
             const [x, y] = point.split(",").map(Number);
             const entry = sorted[index];
@@ -76,30 +92,33 @@ const GpaTrendChart = ({ entries }) => {
                 <circle
                   cx={x}
                   cy={y}
-                  r={2.1}
-                  fill="#ffffff"
-                  stroke="#4f46e5"
-                  strokeWidth="0.9"
+                  r={3.8}
+                  fill="rgba(99, 102, 241, 0.15)"
+                  stroke="none"
                 />
                 <circle
                   cx={x}
                   cy={y}
-                  r={3.4}
-                  fill="rgba(129, 140, 248, 0.16)"
-                  stroke="none"
+                  r={1.8}
+                  fill="#ffffff"
+                  stroke="#4f46e5"
+                  strokeWidth="1.2"
                 />
               </g>
             );
           })}
         </svg>
       </div>
-      <div className="gpa-trend-labels" aria-hidden="true">
+
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "1rem" }}>
         {labelItems.map((item, index) => (
-          <div className="gpa-trend-label" key={`${item.id || item.label || ""}-${index}`}>
-            <span className="gpa-trend-label-gpa">
+          <div key={`${item.id || item.label || ""}-${index}`} style={{ textAlign: "center", flex: 1, padding: "0 4px" }}>
+            <span style={{ display: "block", fontWeight: "750", fontSize: "1rem", color: "#0f172a" }}>
               {item.gpa != null ? item.gpa.toFixed(2) : "--"}
             </span>
-            <span className="gpa-trend-label-semester">{item.label}</span>
+            <span style={{ display: "block", marginTop: "0.2rem", fontSize: "0.75rem", color: "#64748b", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {item.label}
+            </span>
           </div>
         ))}
       </div>
@@ -120,14 +139,11 @@ const GpaTrendPage = () => {
   const hasEntries = entries.length > 0;
 
   const stats = useMemo(() => {
-    if (!entries.length) {
-      return null;
-    }
+    if (!entries.length) return null;
 
     const gpas = entries.map((entry) => entry.gpa || 0);
     const best = Math.max(...gpas);
     const average = gpas.reduce((sum, value) => sum + value, 0) / gpas.length;
-
     const lastUpdated = entries[0]?.createdAt ? new Date(entries[0].createdAt) : null;
 
     return {
@@ -139,86 +155,59 @@ const GpaTrendPage = () => {
   }, [entries]);
 
   return (
-    <section className="dashboard gpa-trend-page">
-      <div className="section-entrance" style={{ animationDelay: "20ms", marginBottom: "1rem" }}>
-        <Link
-          to={ROUTE_PATHS.gpaHistory}
-          className="back-link-button"
-        >
-          <span className="back-link-icon" aria-hidden="true">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-          </span>
-          <span className="back-link-label">Back to GPA history</span>
+    <section className="modern-gpa-wrapper">
+      <header className="modern-gpa-header">
+        <div>
+          <h1>GPA Trend</h1>
+          <p style={{ color: "#64748b", margin: "0.2rem 0 0" }}>Visualize your academic journey over time.</p>
+        </div>
+        <Link to={ROUTE_PATHS.gpaHistory} className="history-link-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "rotate(180deg)" }}>
+            <path d="M5 12h14"></path>
+            <path d="m12 5 7 7-7 7"></path>
+          </svg>
+          Back to History
         </Link>
-      </div>
+      </header>
 
-      <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>
-        <PageHeader
-          eyebrow={null}
-          title="GPA trend"
-          subtitle="See how your GPA has changed across semesters over time."
-          rightContent={hasEntries && stats ? (
-            <div className="gpa-trend-header-meta">
-              <div className="gpa-trend-chip-row">
-                <span className="ui-badge is-success">Best {stats.bestGpa.toFixed(2)}</span>
-                <span className="ui-badge is-warning">Average {stats.averageGpa.toFixed(2)}</span>
-              </div>
-              <p className="metric-line">
-                {stats.count} saved calculation{stats.count > 1 ? "s" : ""}
-              </p>
+      {hasEntries && stats && (
+        <div className="premium-glass-card" style={{ marginBottom: "2rem" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+            <div>
+              <h2>Trend Summary</h2>
+              <p className="subtitle">From {stats.count} calculations</p>
             </div>
-          ) : null}
-        />
-      </GlassCard>
+            <div className="stats-bar-flex">
+              <div className="glass-stat-item" style={{ borderColor: "rgba(16, 185, 129, 0.4)", background: "rgba(16, 185, 129, 0.05)" }}>
+                Best: <b style={{ color: "#10b981" }}>{stats.bestGpa.toFixed(2)}</b>
+              </div>
+              <div className="glass-stat-item" style={{ borderColor: "rgba(245, 158, 11, 0.4)", background: "rgba(245, 158, 11, 0.05)" }}>
+                Average: <b style={{ color: "#f59e0b" }}>{stats.averageGpa.toFixed(2)}</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <GlassCard as="section" className="ui-section section-entrance gpa-analysis-card gpa-trend-layout" style={{ animationDelay: "80ms" }}>
-        {!hasEntries && (
+      <div className="premium-glass-card">
+        <h2 style={{ marginBottom: "1.5rem" }}>Progression Chart</h2>
+        
+        {!hasEntries ? (
           <EmptyStateCard
-            title="No GPA history yet"
-            description="Use the GPA calculator, then save a calculation to see your GPA trend."
+            title="Not enough data"
+            description="Use the GPA calculator and save multiple semesters to plot a trend."
           />
+        ) : (
+          <div>
+            <GpaTrendChart entries={entries} />
+            {stats.lastUpdated && (
+              <p style={{ textAlign: "right", marginTop: "1.5rem", fontSize: "0.8rem", color: "#94a3b8" }}>
+                Last updated on <strong>{stats.lastUpdated.toLocaleDateString()}</strong>
+              </p>
+            )}
+          </div>
         )}
-
-        {hasEntries && stats && (
-          <>
-            <SectionTitle
-              eyebrow="Trend overview"
-              title="How your GPA is moving"
-              subtitle="Each point represents a saved semester GPA in your history."
-            />
-
-            <div className="gpa-analysis-body">
-              <div className="metric-stack">
-                <p className="metric-line">
-                  Best GPA: <strong>{stats.bestGpa.toFixed(2)}</strong>
-                </p>
-                <p className="metric-line">
-                  Average GPA across {stats.count} calculation{stats.count > 1 ? "s" : ""}: <strong>{stats.averageGpa.toFixed(2)}</strong>
-                </p>
-                {stats.lastUpdated && (
-                  <p className="metric-line">
-                    Last updated on <strong>{stats.lastUpdated.toLocaleDateString()}</strong>
-                  </p>
-                )}
-              </div>
-
-              <GpaTrendChart entries={entries} />
-            </div>
-          </>
-        )}
-      </GlassCard>
+      </div>
     </section>
   );
 };
