@@ -9,6 +9,13 @@ import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
+import AdminStudentProfilesPage from "../pages/admin/AdminStudentProfilesPage";
+import AdminStudentGroupsPage from "../pages/admin/AdminStudentGroupsPage";
+import AdminAssignmentsPage from "../pages/admin/AdminAssignmentsPage";
+import AdminPresentationsPage from "../pages/admin/AdminPresentationsPage";
+import AdminVivaPage from "../pages/admin/AdminVivaPage";
+import AdminLabTestsPage from "../pages/admin/AdminLabTestsPage";
+import AdminExamsPage from "../pages/admin/AdminExamsPage";
 import DashboardPage from "../pages/DashboardPage";
 import FcscDashboardPage from "../pages/FcscDashboardPage";
 import FcscInformsPage from "../pages/FcscInformsPage";
@@ -43,6 +50,14 @@ const AppRoutes = () => {
           <Route element={<AdminLayout />}>
             <Route path={ROUTE_PATHS.adminDashboard} element={<AdminDashboardOverviewPage />} />
             <Route
+              path={ROUTE_PATHS.adminStudentProfiles}
+              element={<AdminStudentProfilesPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminStudentGroups}
+              element={<AdminStudentGroupsPage />}
+            />
+            <Route
               path={ROUTE_PATHS.adminModules}
               element={<AdminModulesPage />}
             />
@@ -53,6 +68,26 @@ const AppRoutes = () => {
             <Route
               path={ROUTE_PATHS.adminAcademicEvents}
               element={<AdminAcademicEventsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminAssignments}
+              element={<AdminAssignmentsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminPresentations}
+              element={<AdminPresentationsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminViva}
+              element={<AdminVivaPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminLabTests}
+              element={<AdminLabTestsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminExams}
+              element={<AdminExamsPage />}
             />
             <Route
               path={ROUTE_PATHS.adminFcscInforms}
@@ -70,6 +105,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.myEvents} element={<MyAcademicEventsPage />} />
             <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
             <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
+            <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
           </Route>
         </Route>
 
