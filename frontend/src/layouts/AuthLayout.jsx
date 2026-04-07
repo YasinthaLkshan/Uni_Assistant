@@ -8,10 +8,12 @@ const AuthLayout = () => {
   const { isAuthenticated, user } = useAuth();
   const { pathname } = useLocation();
   const isHomeRoute = pathname === ROUTE_PATHS.home;
+  const isFcscPage = pathname === ROUTE_PATHS.fcscDashboard;
+  const shouldShowTopbar = !isHomeRoute && !isFcscPage;
 
   return (
     <div className={`${isHomeRoute ? "auth-home-layout" : "app-shell"} page-fade-in`.trim()}>
-      {!isHomeRoute ? (
+      {shouldShowTopbar ? (
         <header className="topbar">
           <Link to="/" className="brand">
             Uni Assistant

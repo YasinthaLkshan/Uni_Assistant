@@ -41,6 +41,23 @@ const formatLecturerNames = (lecturerNames = []) => {
   return lecturerNames.join(", ");
 };
 
+// Validation helper functions
+const validateModuleCode = (value) => {
+  return /^[A-Z0-9]*$/i.test(value);
+};
+
+const validateModuleName = (value) => {
+  return /^[a-zA-Z\s]*$/.test(value);
+};
+
+const validateLecturerNames = (value) => {
+  return /^[a-zA-Z,\s]*$/.test(value);
+};
+
+const validateVenue = (value) => {
+  return /^[a-zA-Z0-9\s]*$/.test(value);
+};
+
 const AdminTimetablePage = () => {
   const [records, setRecords] = useState([]);
   const [filters, setFilters] = useState({ semester: "", groupNumber: "" });
@@ -103,11 +120,49 @@ const AdminTimetablePage = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    let filteredValue = value;
+
+    // Apply field-specific validation
+    if (name === "moduleCode") {
+      // Module Code: only alphanumeric
+      filteredValue = value.replace(/[^A-Z0-9]/gi, "");
+    } else if (name === "moduleName") {
+      // Module Name: only letters and spaces
+      filteredValue = value.replace(/[^a-zA-Z\s]/g, "");
+    } else if (name === "lecturerNames") {
+      // Lecturer Names: only letters, spaces, and commas
+      filteredValue = value.replace(/[^a-zA-Z,\s]/g, "");
+    } else if (name === "venue") {
+      // Venue: only letters, numbers, and spaces
+      filteredValue = value.replace(/[^a-zA-Z0-9\s]/g, "");
+    }
+
+    setForm((prev) => ({ ...prev, [name]: filteredValue }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validate field patterns before submission
+    if (!validateModuleCode(form.moduleCode)) {
+      setError("Module Code can only contain letters and numbers (no symbols allowed)");
+      return;
+    }
+
+    if (!validateModuleName(form.moduleName)) {
+      setError("Module Name can only contain letters and spaces");
+      return;
+    }
+
+    if (form.lecturerNames && !validateLecturerNames(form.lecturerNames)) {
+      setError("Lecturer Names can only contain letters, spaces, and commas");
+      return;
+    }
+
+    if (!validateVenue(form.venue)) {
+      setError("Venue can only contain letters, numbers, and spaces");
+      return;
+    }
 
     try {
       setSubmitting(true);

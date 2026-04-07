@@ -23,6 +23,7 @@ const INITIAL_FORM = {
   deadline: "",
   priority: "medium",
   description: "",
+  email: "",
 };
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Completed"];
@@ -61,6 +62,7 @@ const TasksPage = () => {
     title: "",
     type: "",
     deadline: "",
+    email: "",
   });
 
   const isEditMode = Boolean(activeTaskId);
@@ -90,10 +92,20 @@ const TasksPage = () => {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setApiError("");
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    // Restrict title to letters and numbers only
+    if (name === "title") {
+      const alphanumericOnly = value.replace(/[^a-zA-Z0-9\s]/g, "");
+      setForm((prev) => ({
+        ...prev,
+        [name]: alphanumericOnly,
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
 
     if (name in fieldErrors) {
       setFieldErrors((prev) => ({
@@ -111,6 +123,7 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
+      email: "",
     });
   };
 
@@ -119,10 +132,13 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
+      email: "",
     };
 
     if (!form.title.trim()) {
       nextErrors.title = "Please enter a task title.";
+    } else if (!/^[a-zA-Z0-9\s]+$/.test(form.title)) {
+      nextErrors.title = "Title must contain only letters and numbers.";
     }
 
     if (!form.type) {
@@ -139,6 +155,14 @@ const TasksPage = () => {
         nextErrors.deadline = "Please provide a valid deadline date and time.";
       } else if (parsedDeadline.getTime() < Date.now()) {
         nextErrors.deadline = "Deadline cannot be in the past.";
+      }
+    }
+
+    // Email validation - optional but must be valid if provided
+    if (form.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.email)) {
+        nextErrors.email = "Please enter a valid email address.";
       }
     }
 
@@ -165,6 +189,7 @@ const TasksPage = () => {
       deadline: form.deadline,
       priority: form.priority,
       description: form.description.trim(),
+      email: form.email.trim(),
     };
 
     try {
@@ -192,6 +217,7 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
+      email: "",
     });
     setActiveTaskId(task._id);
     setForm({
@@ -200,6 +226,7 @@ const TasksPage = () => {
       deadline: toDateTimeLocal(task.deadline),
       priority: task.priority || "medium",
       description: task.description || "",
+      email: task.email || "",
     });
   };
 
@@ -293,6 +320,19 @@ const TasksPage = () => {
                 {fieldErrors.deadline ? <p className="tm-field-error">{fieldErrors.deadline}</p> : null}
               </label>
             </div>
+
+            <label>
+              Email Notification (Optional)
+              <input
+                className="ui-input"
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleInputChange}
+                placeholder="your.email@example.com"
+              />
+              {fieldErrors.email ? <p className="tm-field-error">{fieldErrors.email}</p> : null}
+            </label>
 
             <label>
               Description

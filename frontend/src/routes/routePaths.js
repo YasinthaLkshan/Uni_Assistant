@@ -1,6 +1,7 @@
 export const ROUTE_PATHS = {
   home: "/",
   login: "/login",
+  fcscDashboard: "/fcsc/dashboard",
   adminLogin: "/admin/login",
   register: "/register",
   adminDashboard: "/admin/dashboard",
@@ -8,6 +9,7 @@ export const ROUTE_PATHS = {
   adminModules: "/admin/modules",
   adminTimetable: "/admin/timetable",
   adminAcademicEvents: "/admin/academic-events",
+  adminFcscInforms: "/admin/fcsc-informs",
   adminStudentGroups: "/admin/student-groups",
   adminAssignments: "/admin/assignments",
   adminPresentations: "/admin/presentations",
@@ -18,6 +20,7 @@ export const ROUTE_PATHS = {
   myModules: "/my-modules",
   myTimetable: "/my-timetable",
   myEvents: "/my-events",
+  fcscInforms: "/fcsc-informs",
   tasks: "/tasks",
   gpaCalculator: "/gpa-calculator",
   gpaHistory: "/gpa-history",

@@ -21,6 +21,15 @@ const EMPTY_FORM = {
   assessmentCriteria: [EMPTY_CRITERIA],
 };
 
+// Validation helper functions
+const validateModuleCode = (value) => {
+  return /^[A-Z0-9]*$/i.test(value) && value.length <= 10;
+};
+
+const validateModuleName = (value) => {
+  return /^[a-zA-Z\s]*$/.test(value);
+};
+
 const AdminModulesPage = () => {
   const [records, setRecords] = useState([]);
   const [semesterFilter, setSemesterFilter] = useState("");
@@ -62,7 +71,18 @@ const AdminModulesPage = () => {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    let filteredValue = value;
+
+    // Apply field-specific validation
+    if (name === "moduleCode") {
+      // Module Code: only alphanumeric, max 10 characters
+      filteredValue = value.replace(/[^A-Z0-9]/gi, "").slice(0, 10);
+    } else if (name === "moduleName") {
+      // Module Name: only letters and spaces
+      filteredValue = value.replace(/[^a-zA-Z\s]/g, "");
+    }
+
+    setForm((prev) => ({ ...prev, [name]: filteredValue }));
   };
 
   const handleCriteriaChange = (index, key, value) => {
@@ -112,6 +132,32 @@ const AdminModulesPage = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    // Validate field patterns before submission
+    if (!form.moduleCode.trim()) {
+      setError("Module Code is required");
+      return;
+    }
+
+    if (!validateModuleCode(form.moduleCode)) {
+      setError("Module Code can only contain letters and numbers (max 10 characters)");
+      return;
+    }
+
+    if (!form.moduleName.trim()) {
+      setError("Module Name is required");
+      return;
+    }
+
+    if (!validateModuleName(form.moduleName)) {
+      setError("Module Name can only contain letters and spaces");
+      return;
+    }
+
+    if (!form.semester) {
+      setError("Semester is required");
+      return;
+    }
 
     try {
       setSubmitting(true);
