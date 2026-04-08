@@ -58,6 +58,7 @@ const validateWeightPercentage = (value) => {
 };
 
 const AdminAcademicEventsPage = () => {
+  const todayDate = new Date().toISOString().slice(0, 10);
   const [records, setRecords] = useState([]);
   const [filters, setFilters] = useState({ semester: "", groupNumber: "", moduleCode: "", eventType: "" });
   const [form, setForm] = useState(EMPTY_FORM);
@@ -169,6 +170,11 @@ const AdminAcademicEventsPage = () => {
 
     if (form.weightPercentage && !validateWeightPercentage(form.weightPercentage)) {
       setError("Weight Percentage can only contain numbers");
+      return;
+    }
+
+    if (form.eventDate && form.eventDate < todayDate) {
+      setError("Event date cannot be in the past");
       return;
     }
 
@@ -356,7 +362,7 @@ const AdminAcademicEventsPage = () => {
 
           <label>
             Event Date
-            <input type="date" name="eventDate" value={form.eventDate} onChange={handleInputChange} required />
+            <input type="date" name="eventDate" value={form.eventDate} onChange={handleInputChange} min={todayDate} required />
           </label>
 
           <label>

@@ -39,6 +39,12 @@ const toDateTimeLocal = (value) => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
 
+const getCurrentDateTimeLocal = () => {
+  const now = new Date();
+  now.setSeconds(0, 0);
+  return toDateTimeLocal(now);
+};
+
 const getUrgencyBadgeClass = (urgency) => {
   if (urgency === "High") {
     return "danger";
@@ -66,6 +72,7 @@ const TasksPage = () => {
   });
 
   const isEditMode = Boolean(activeTaskId);
+  const minDeadlineDateTime = getCurrentDateTimeLocal();
 
   const sortedTasks = useMemo(
     () => [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)),
@@ -315,6 +322,7 @@ const TasksPage = () => {
                   name="deadline"
                   value={form.deadline}
                   onChange={handleInputChange}
+                  min={minDeadlineDateTime}
                   required
                 />
                 {fieldErrors.deadline ? <p className="tm-field-error">{fieldErrors.deadline}</p> : null}

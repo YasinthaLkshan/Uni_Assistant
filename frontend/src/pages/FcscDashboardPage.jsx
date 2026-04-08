@@ -20,6 +20,7 @@ const isApprovedEventExpired = (eventDate) => {
 };
 
 const FcscDashboardPage = () => {
+  const todayDate = new Date().toISOString().slice(0, 10);
   const navigate = useNavigate();
   const [eventTitle, setEventTitle] = useState("");
   const [eventEventTitle, setEventEventTitle] = useState("");
@@ -129,6 +130,10 @@ const FcscDashboardPage = () => {
 
     if (!eventDate) {
       newErrors.eventDate = "Date is required";
+    }
+
+    if (eventDate && eventDate < todayDate) {
+      newErrors.eventDate = "Date cannot be in the past";
     }
 
     if (!eventVenue.trim()) {
@@ -320,6 +325,7 @@ const FcscDashboardPage = () => {
                 type="date"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
+                min={todayDate}
                 className="fcsc-form-input"
               />
               {errors.eventDate && (

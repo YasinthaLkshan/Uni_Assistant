@@ -35,6 +35,7 @@ const EMPTY_FORM = {
 };
 
 const LecturerChangeRequestsPage = () => {
+  const todayDate = new Date().toISOString().slice(0, 10);
   const [sessions, setSessions] = useState([]);
   const [requests, setRequests] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -92,6 +93,10 @@ const LecturerChangeRequestsPage = () => {
     }
     if (!form.proposedSlot) {
       setError("Proposed time slot is required");
+      return;
+    }
+    if (form.proposedDate < todayDate) {
+      setError("Proposed date cannot be in the past");
       return;
     }
     if (!form.reason.trim()) {
@@ -163,6 +168,7 @@ const LecturerChangeRequestsPage = () => {
               name="proposedDate"
               value={form.proposedDate}
               onChange={handleInputChange}
+              min={todayDate}
               required
             />
           </label>

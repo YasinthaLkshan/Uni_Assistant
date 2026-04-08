@@ -76,9 +76,33 @@ const sharedSemesterModules = {
 };
 
 const courseSemesterModules = {
-  SE: sharedSemesterModules,
-  DS: sharedSemesterModules,
-  IT: sharedSemesterModules,
+  SE: {
+    ...sharedSemesterModules,
+    Y3S1: [
+      { name: "AF", credits: 4 },
+      { name: "SA", credits: 4 },
+      { name: "DS", credits: 4 },
+      { name: "SEP", credits: 4 },
+      { name: "QM", credits: 4 },
+    ],
+  },
+  DS: {
+    ...sharedSemesterModules,
+    Y3S1: [
+      { name: "PAF", credits: 4 },
+      { name: "DWBI", credits: 4 },
+      { name: "DSDD", credits: 4 },
+    ],
+  },
+  IT: {
+    ...sharedSemesterModules,
+    Y3S1: [
+      { name: "PAF", credits: 4 },
+      { name: "DS", credits: 4 },
+      { name: "NDM", credits: 4 },
+      { name: "ITPM", credits: 4 },
+    ],
+  },
 };
 
 const semesterOptions = [
@@ -86,6 +110,7 @@ const semesterOptions = [
   { label: "1st Year - 2nd Semester", value: "Y1S2" },
   { label: "2nd Year - 1st Semester", value: "Y2S1" },
   { label: "2nd Year - 2nd Semester", value: "Y2S2" },
+  { label: "3rd Year - 1st Semester", value: "Y3S1" },
 ];
 
 const createEmptyCourse = () => ({

@@ -44,6 +44,7 @@ const EMPTY_FORM = {
 };
 
 const LecturerVivaPage = () => {
+  const todayDate = new Date().toISOString().slice(0, 10);
   const [modules, setModules] = useState([]);
   const [vivas, setVivas] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -97,6 +98,11 @@ const LecturerVivaPage = () => {
 
     if (!form.moduleId || !form.group || !form.assignmentTitle.trim() || !form.vivaType || !form.date || !form.slot) {
       setError("All fields are required");
+      return;
+    }
+
+    if (form.date < todayDate) {
+      setError("Viva date cannot be in the past");
       return;
     }
 
@@ -199,6 +205,7 @@ const LecturerVivaPage = () => {
               name="date"
               value={form.date}
               onChange={handleInputChange}
+              min={todayDate}
               required
             />
           </label>

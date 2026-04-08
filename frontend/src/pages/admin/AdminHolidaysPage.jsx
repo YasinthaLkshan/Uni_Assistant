@@ -32,6 +32,7 @@ const formatDate = (dateStr) => {
 };
 
 const AdminHolidaysPage = () => {
+  const todayDate = new Date().toISOString().slice(0, 10);
   const [records, setRecords] = useState([]);
   const [yearFilter, setYearFilter] = useState(String(new Date().getFullYear()));
   const [typeFilter, setTypeFilter] = useState("");
@@ -90,6 +91,11 @@ const AdminHolidaysPage = () => {
 
     if (!form.type) {
       setError("Holiday type is required");
+      return;
+    }
+
+    if (form.date < todayDate) {
+      setError("Holiday date cannot be in the past");
       return;
     }
 
@@ -183,6 +189,7 @@ const AdminHolidaysPage = () => {
               name="date"
               value={form.date}
               onChange={handleInputChange}
+              min={todayDate}
               required
             />
           </label>
