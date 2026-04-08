@@ -1,6 +1,7 @@
 export const ROUTE_PATHS = {
   home: "/",
   login: "/login",
+  communityLogin: "/community/login",
   fcscDashboard: "/fcsc/dashboard",
   adminLogin: "/admin/login",
   register: "/register",

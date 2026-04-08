@@ -1,0 +1,573 @@
+/* ============================================
+   MODERN LOGIN PAGE - Glassmorphism Design
+   ============================================ */
+
+.modern-login-page {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Background with Celestial Gradient */
+.modern-login-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.celestial-gradient {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    #0f0c29 0%,
+    #302b63 25%,
+    #24243e 50%,
+    #302b63 75%,
+    #16213e 100%
+  );
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 25%, #24243e 50%, #302b63 75%, #16213e 100%);
+  }
+  50% {
+    background: linear-gradient(135deg, #16213e 0%, #0f3460 25%, #1a1a2e 50%, #16213e 75%, #0f0c29 100%);
+  }
+}
+
+.geometric-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(0deg, transparent 24%, rgba(148, 112, 255, 0.15) 25%, rgba(148, 112, 255, 0.15) 26%, transparent 27%, transparent 74%, rgba(148, 112, 255, 0.15) 75%, rgba(148, 112, 255, 0.15) 76%, transparent 77%),
+    linear-gradient(90deg, transparent 24%, rgba(148, 112, 255, 0.15) 25%, rgba(148, 112, 255, 0.15) 26%, transparent 27%, transparent 74%, rgba(148, 112, 255, 0.15) 75%, rgba(148, 112, 255, 0.15) 76%, transparent 77%);
+  background-size: 60px 60px, 60px 60px;
+  animation: moveLines 20s linear infinite;
+}
+
+@keyframes moveLines {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 60px 60px, -60px -60px;
+  }
+}
+
+/* Frosted Overlay */
+.modern-login-bg::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* Container and Card */
+.modern-login-container {
+  position: fixed;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-4);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.modern-login-card {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  padding: 1.75rem 2rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 2.5rem;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.5),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.1);
+  animation: cardEnter 0.6s ease-out both;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header Section */
+.modern-login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.modern-cloud-icon {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 10px 20px rgba(99, 102, 241, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.modern-login-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 0;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modern-login-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+  line-height: 1.5;
+  font-weight: 400;
+  display: none;
+}
+
+/* Segmented Control */
+.modern-segmented-control {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.375rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+
+.segment-btn {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-transform: uppercase;
+}
+
+.segment-btn.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.segment-btn:hover:not(.active) {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Form Styles - Override defaults for modern look */
+.modern-login-card .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+/* Horizontal layout for year and semester */
+.modern-login-card .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+.modern-login-card .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.modern-login-card .form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.25rem;
+}
+
+.modern-login-card .form-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 0.875rem;
+  padding: 0.65rem 0.9rem;
+  transition: all var(--transition-base);
+  box-shadow: none;
+}
+
+.modern-login-card .form-input-wrapper:focus-within {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+.modern-login-card .form-input-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+  flex-shrink: 0;
+}
+
+.modern-login-card input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 0.95rem;
+  outline: none;
+  padding: 0;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  -webkit-text-fill-color: white;
+  -webkit-autofill-selected-background: transparent !important;
+  -webkit-autofill-selected-text-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
+  -webkit-transition: background-color 5000s ease-in-out 0s;
+}
+
+.modern-login-card input::placeholder {
+  color: transparent !important;
+  opacity: 0 !important;
+}
+
+.modern-login-card input:-webkit-autofill {
+  -webkit-box-shadow: inset 0 0 0 1000px transparent !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.modern-login-card input:-webkit-autofill:hover,
+.modern-login-card input:-webkit-autofill:focus,
+.modern-login-card input:-webkit-autofill:active {
+  -webkit-box-shadow: inset 0 0 0 1000px transparent !important;
+  -webkit-text-fill-color: white !important;
+}
+
+.modern-login-card input:-autofill,
+.modern-login-card input:-autofill:hover,
+.modern-login-card input:-autofill:focus {
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: inset 0 0 0 1000px transparent !important;
+  background-color: transparent !important;
+}
+
+/* Select/Dropdown Styling */
+.modern-login-card select {
+  flex: 1;
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 0.95rem;
+  outline: none !important;
+  padding: 0 1.75rem 0 0;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/csvg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1.2rem;
+  transition: all var(--transition-base);
+}
+
+.modern-login-card select:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.modern-login-card select:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.modern-login-card select option {
+  background: #1f2937;
+  color: rgba(255, 255, 255, 0.95);
+  padding: 0.5rem;
+  font-weight: 500;
+}
+
+.modern-login-card select option:checked {
+  background: linear-gradient(#6366f1, #6366f1);
+  background-color: #6366f1 !important;
+  color: white;
+}
+
+/* Error Message */
+.modern-login-card .error-message {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 0.75rem;
+  color: rgba(255, 200, 200, 0.9);
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+/* Submit Button */
+.modern-login-card .submit-btn,
+.modern-login-card .ui-btn {
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+  border: 2px solid rgba(99, 102, 241, 0.6);
+  border-radius: 1.125rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  text-transform: uppercase;
+  width: 100%;
+}
+
+.modern-login-card .submit-btn:hover,
+.modern-login-card .ui-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 12px 28px rgba(99, 102, 241, 0.5),
+    0 0 20px rgba(99, 102, 241, 0.3);
+  background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+  border-color: rgba(99, 102, 241, 0.8);
+}
+
+.modern-login-card .submit-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.modern-login-card .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Footer Links */
+.modern-login-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.25rem;
+}
+
+.footer-link-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footer-primary-text {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.footer-link {
+  color: #a78bfa !important;
+  font-weight: 700 !important;
+  transition: all var(--transition-base);
+  position: relative;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  display: inline !important;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.footer-link:hover {
+  color: #c4b5fd !important;
+  text-decoration: underline !important;
+}
+
+.footer-link:active {
+  color: #8b5cf6 !important;
+}
+
+.footer-link:focus {
+  outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
+
+/* Secondary Footer Links */
+.footer-secondary-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-secondary-link {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.footer-secondary-link:hover {
+  color: #a78bfa;
+  text-decoration: underline;
+}
+
+.footer-link-divider {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* Bottom Footer */
+.modern-login-page-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  padding: 1.5rem var(--space-4);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  z-index: 5;
+}
+
+.modern-login-page-footer p {
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .modern-login-card {
+    padding: 2.5rem 1.5rem;
+    border-radius: 2rem;
+  }
+
+  .modern-login-title {
+    font-size: 1.75rem;
+  }
+
+  .modern-login-subtitles {
+    font-size: 0.9rem;
+  }
+
+  .modern-cloud-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .modern-login-header {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .segment-btn {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .modern-login-container {
+    padding: var(--space-3);
+  }
+
+  .modern-login-page-footer {
+    font-size: 0.75rem;
+    padding: 1rem var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-login-card {
+    padding: 2rem 1.25rem;
+    border-radius: 1.5rem;
+    max-width: calc(100% - 2rem);
+  }
+
+  .modern-login-title {
+    font-size: 1.5rem;
+  }
+
+  .modern-login-footer {
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .modern-login-page {
+    display: none;
+  }
+}

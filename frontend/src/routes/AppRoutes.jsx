@@ -9,11 +9,12 @@ import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
+import CommunityLoginPage from "../pages/CommunityLoginPage";
 import DashboardPage from "../pages/DashboardPage";
 import FcscDashboardPage from "../pages/FcscDashboardPage";
 import FcscInformsPage from "../pages/FcscInformsPage";
 import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
+import ModernLoginPage from "../pages/ModernLoginPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
 import GpaHistoryPage from "../pages/GpaHistoryPage";
 import GpaTrendPage from "../pages/GpaTrendPage";
@@ -34,7 +35,8 @@ const AppRoutes = () => {
       <Routes location={location}>
         <Route element={<AuthLayout />}>
           <Route path={ROUTE_PATHS.home} element={<HomePage />} />
-          <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.login} element={<ModernLoginPage />} />
+          <Route path={ROUTE_PATHS.communityLogin} element={<CommunityLoginPage />} />
           <Route path={ROUTE_PATHS.fcscDashboard} element={<FcscDashboardPage />} />
           <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
           <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
