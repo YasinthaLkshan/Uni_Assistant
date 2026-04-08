@@ -1,12 +1,12 @@
 import api from "./api";
 
 export const listModules = async (filters = {}) => {
-  if (filters.semester) {
-    const { data } = await api.get(`/admin/modules/semester/${filters.semester}`);
-    return data;
-  }
+  const params = {};
+  if (filters.semester) params.semester = filters.semester;
+  if (filters.academicYear) params.academicYear = filters.academicYear;
+  if (filters.programme) params.programme = filters.programme;
 
-  const { data } = await api.get("/admin/modules");
+  const { data } = await api.get("/admin/modules", { params });
   return data;
 };
 

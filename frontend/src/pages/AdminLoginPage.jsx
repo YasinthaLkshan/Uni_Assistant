@@ -201,6 +201,10 @@ const AdminLoginPage = () => {
 						</div>
 
 						<div className="footer-secondary-links">
+							<Link to={ROUTE_PATHS.lecturerLogin} className="footer-secondary-link">
+								Lecturer Portal
+							</Link>
+							<span className="footer-link-divider">·</span>
 							<Link to={ROUTE_PATHS.login} className="footer-secondary-link">
 								Student Portal
 							</Link>

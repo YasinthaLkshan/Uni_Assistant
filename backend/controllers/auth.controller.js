@@ -99,7 +99,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   const isStudentIdIdentifier = /^IT\d{8}$/i.test(loginIdentifier);
 
   const userQuery = isEmailIdentifier
-    ? { email: normalizedIdentifier, role: "student" }
+    ? { email: normalizedIdentifier }
     : isStudentIdIdentifier
       ? { studentId: loginIdentifier.toUpperCase(), role: "student" }
       : { username: normalizedIdentifier, role: "admin" };
@@ -107,18 +107,22 @@ export const loginUser = asyncHandler(async (req, res) => {
   const user = await User.findOne(userQuery).select("+password");
 
   if (!user) {
-    const authErrorMessage = isEmailIdentifier || isStudentIdIdentifier
-      ? "Invalid student email/ID or password"
-      : "Invalid admin username or password";
+    const authErrorMessage = isEmailIdentifier
+      ? "Invalid email or password"
+      : isStudentIdIdentifier
+        ? "Invalid student ID or password"
+        : "Invalid admin username or password";
     throw new AppError(authErrorMessage, 401);
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
 
   if (!isPasswordValid) {
-    const authErrorMessage = isEmailIdentifier || isStudentIdIdentifier
-      ? "Invalid student email/ID or password"
-      : "Invalid admin username or password";
+    const authErrorMessage = isEmailIdentifier
+      ? "Invalid email or password"
+      : isStudentIdIdentifier
+        ? "Invalid student ID or password"
+        : "Invalid admin username or password";
     throw new AppError(authErrorMessage, 401);
   }
 
@@ -141,6 +145,45 @@ export const loginUser = asyncHandler(async (req, res) => {
         groupNumber: user.groupNumber,
         department: user.department,
         semester: user.semester,
+      },
+    },
+  });
+});
+
+export const registerLecturer = asyncHandler(async (req, res) => {
+  const { name, email, password, department } = req.body;
+
+  if (!name || !email || !password) {
+    throw new AppError("Name, email, and password are required", 400);
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
+  if (existingUser) {
+    throw new AppError("Email is already registered", 409);
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  const user = await User.create({
+    name: name.trim(),
+    email: normalizedEmail,
+    password: hashedPassword,
+    role: "lecturer",
+    department: department?.trim() || undefined,
+  });
+
+  res.status(201).json({
+    success: true,
+    message: "Lecturer account created successfully",
+    data: {
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        department: user.department,
       },
     },
   });

@@ -21,6 +21,22 @@ const assessmentCriteriaSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const lecturerAssignmentSchema = new mongoose.Schema(
+  {
+    group: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
+    lecturer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+  },
+  { _id: false }
+);
+
 const moduleSchema = new mongoose.Schema(
   {
     moduleCode: {
@@ -45,14 +61,24 @@ const moduleSchema = new mongoose.Schema(
     },
     academicYear: {
       type: Number,
-      enum: [ACADEMIC_YEAR],
+      enum: [1, 2, 3, 4],
       default: ACADEMIC_YEAR,
-      immutable: true,
     },
     semester: {
       type: Number,
       enum: ACADEMIC_SEMESTERS,
       required: [true, "Semester is required"],
+    },
+    programme: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Programme",
+      default: null,
+    },
+    credits: {
+      type: Number,
+      min: [1, "Credits must be at least 1"],
+      max: [10, "Credits cannot exceed 10"],
+      default: 3,
     },
     lectureHoursPerWeek: {
       type: Number,
@@ -68,6 +94,15 @@ const moduleSchema = new mongoose.Schema(
       type: Number,
       min: [0, "Lab hours cannot be negative"],
       default: 0,
+    },
+    lecturer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
+    lecturerAssignments: {
+      type: [lecturerAssignmentSchema],
+      default: [],
     },
     outline: {
       type: String,

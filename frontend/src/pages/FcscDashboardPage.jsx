@@ -15,7 +15,7 @@ const FcscDashboardPage = () => {
   const [events, setEvents] = useState([]);
   const [errors, setErrors] = useState({});
 
-  // Validation functions 
+  // Validation functions
   const validateEventName = (value) => {
     return value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 10);
   };

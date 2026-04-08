@@ -199,6 +199,9 @@ const DashboardPage = () => {
 					subtitle="Here is your academic pulse for today. Stay focused and ahead."
 					rightContent={
 						<div className="dashboard-head-actions">
+							<Link to={ROUTE_PATHS.fcscInforms} className="ui-btn is-ghost">
+								FCSC Informs
+							</Link>
 							<Link to={ROUTE_PATHS.gpaCalculator} className="ui-btn is-ghost">
 								Open GPA Calculator
 							</Link>
