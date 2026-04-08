@@ -17,9 +17,18 @@ const examPaperSchema = new mongoose.Schema(
     },
     academicYear: {
       type: Number,
-      enum: [ACADEMIC_YEAR],
+      enum: [1, 2, 3, 4],
       default: ACADEMIC_YEAR,
-      immutable: true,
+    },
+    programme: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Programme",
+      default: null,
+    },
+    module: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Module",
+      default: null,
     },
     semester: {
       type: Number,

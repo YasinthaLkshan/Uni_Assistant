@@ -22,6 +22,18 @@ import {
   updateCourseworkController,
   deleteCourseworkController,
 } from "../controllers/lecturer.controller.js";
+import {
+  getScheduleSummaryController,
+  getModuleScheduleController,
+  getFullScheduleController,
+  addSessionsController,
+  removeSessionController,
+  submitScheduleController,
+} from "../controllers/lectureSchedule.controller.js";
+import {
+  getPossibleExamDatesController,
+  validateExamDateController,
+} from "../controllers/examSchedule.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import lecturerMiddleware from "../middleware/lecturer.middleware.js";
 import {
@@ -55,10 +67,22 @@ router.post("/exams", uploadExamPaper, createExamPaperController);
 router.put("/exams/:id", uploadExamPaper, updateExamPaperController);
 router.delete("/exams/:id", deleteExamPaperController);
 
+// Exam Scheduling
+router.get("/exam-schedule/:moduleId/:group/possible-dates", getPossibleExamDatesController);
+router.post("/exam-schedule/:moduleId/:group/validate-date", validateExamDateController);
+
 // Coursework
 router.get("/coursework", getCourseworkController);
 router.post("/coursework", uploadCoursework, createCourseworkController);
 router.put("/coursework/:id", uploadCoursework, updateCourseworkController);
 router.delete("/coursework/:id", deleteCourseworkController);
+
+// Lecture Scheduling
+router.get("/schedule", getFullScheduleController);
+router.get("/schedule/:moduleId/:group", getModuleScheduleController);
+router.get("/schedule/:moduleId/:group/summary", getScheduleSummaryController);
+router.post("/schedule/:moduleId/:group", addSessionsController);
+router.post("/schedule/:moduleId/:group/submit", submitScheduleController);
+router.delete("/schedule/session/:sessionId", removeSessionController);
 
 export default router;

@@ -35,4 +35,12 @@ export const ROUTE_PATHS = {
   lecturerExamSubmission: "/lecturer/exam-submission",
   lecturerCoursework: "/lecturer/coursework",
   adminLecturers: "/admin/lecturers",
+  adminProgrammes: "/admin/programmes",
+  adminHolidays: "/admin/holidays",
+  adminChangeRequests: "/admin/change-requests",
+  adminVivaReview: "/admin/viva-review",
+  lecturerSchedule: "/lecturer/schedule",
+  lecturerChangeRequests: "/lecturer/change-requests",
+  lecturerExamSchedule: "/lecturer/exam-schedule",
+  lecturerVivas: "/lecturer/vivas",
 };

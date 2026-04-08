@@ -1,10 +1,13 @@
 import AcademicEvent from "../models/AcademicEvent.js";
 import Coursework from "../models/Coursework.js";
 import ExamPaper from "../models/ExamPaper.js";
+import LectureSchedule from "../models/LectureSchedule.js";
 import Material from "../models/Material.js";
 import Module from "../models/Module.js";
+import ScheduleChangeRequest from "../models/ScheduleChangeRequest.js";
 import StudentProfile from "../models/StudentProfile.js";
 import TimetableEntry from "../models/TimetableEntry.js";
+import VivaSchedule from "../models/VivaSchedule.js";
 import AppError from "../utils/appError.js";
 import fs from "fs";
 
@@ -25,17 +28,41 @@ const mapModuleFields = (mod) => ({
 });
 
 export const resolveLecturerModules = async (userId) => {
-  const modules = await Module.find({ lecturer: userId })
+  const modules = await Module.find({
+    $or: [
+      { lecturer: userId },
+      { "lecturerAssignments.lecturer": userId },
+    ],
+  })
+    .populate("programme", "programmeCode programmeName programmeType duration groups")
     .sort({ semester: 1, moduleCode: 1 })
     .lean();
 
-  return modules.map(mapModuleFields);
+  return modules.map((mod) => {
+    const mapped = mapModuleFields(mod);
+
+    // Determine which groups this lecturer is assigned to
+    const assignedGroups = (mod.lecturerAssignments || [])
+      .filter((a) => String(a.lecturer) === String(userId))
+      .map((a) => a.group);
+
+    if (assignedGroups.length > 0) {
+      mapped.assignedGroups = assignedGroups;
+    } else {
+      mapped.assignedGroups = mapped.groups;
+    }
+
+    return mapped;
+  });
 };
 
 export const verifyModuleOwnership = async (userId, moduleCode) => {
   const mod = await Module.findOne({
     moduleCode: moduleCode.trim().toUpperCase(),
-    lecturer: userId,
+    $or: [
+      { lecturer: userId },
+      { "lecturerAssignments.lecturer": userId },
+    ],
   }).lean();
 
   if (!mod) {
@@ -48,10 +75,19 @@ export const verifyModuleOwnership = async (userId, moduleCode) => {
 export const getLecturerDashboard = async (userId) => {
   const modules = await resolveLecturerModules(userId);
   const moduleCodes = modules.map((m) => m.moduleCode);
+  const moduleIds = modules.map((m) => m._id);
 
   const now = new Date();
 
-  const [totalEvents, upcomingEvents, totalStudents] = await Promise.all([
+  const [
+    totalEvents,
+    upcomingEvents,
+    totalStudents,
+    draftSessions,
+    pendingChangeRequests,
+    pendingVivas,
+    pendingExamPapers,
+  ] = await Promise.all([
     AcademicEvent.countDocuments({ moduleCode: { $in: moduleCodes } }),
     AcademicEvent.countDocuments({
       moduleCode: { $in: moduleCodes },
@@ -68,13 +104,37 @@ export const getLecturerDashboard = async (userId) => {
         $or: semesterGroups,
       });
     })(),
+    LectureSchedule.countDocuments({ lecturer: userId, status: "draft" }),
+    ScheduleChangeRequest.countDocuments({ lecturer: userId, status: "pending" }),
+    VivaSchedule.countDocuments({ lecturer: userId, status: "proposed" }),
+    ExamPaper.countDocuments({ lecturer: userId, status: "Pending" }),
   ]);
+
+  // Find modules that have no submitted schedule at all
+  const scheduledModuleGroups = await LectureSchedule.distinct("module", {
+    lecturer: userId,
+    status: { $in: ["draft", "submitted"] },
+  });
+  const scheduledModuleIdSet = new Set(scheduledModuleGroups.map((id) => String(id)));
+  const unscheduledModules = modules.filter((m) => !scheduledModuleIdSet.has(String(m._id)));
 
   return {
     modules: modules.length,
     totalEvents,
     upcomingEvents,
     totalStudents,
+    pendingTasks: {
+      draftSessions,
+      pendingChangeRequests,
+      pendingVivas,
+      pendingExamPapers,
+      unscheduledModules: unscheduledModules.length,
+      unscheduledModuleList: unscheduledModules.map((m) => ({
+        _id: m._id,
+        moduleCode: m.moduleCode,
+        title: m.title || m.moduleName,
+      })),
+    },
   };
 };
 
