@@ -68,6 +68,24 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Announcements",
+    path: ROUTE_PATHS.studentAnnouncements,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h2v2H7V9zm4 0h2v2h-2V9zm4 0h2v2h-2V9z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Messages",
+    path: ROUTE_PATHS.studentMessages,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
@@ -78,6 +96,8 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.myTimetable]: "My Timetable",
   [ROUTE_PATHS.myEvents]: "My Academic Events",
   [ROUTE_PATHS.gpaCalculator]: "GPA Calculator",
+  [ROUTE_PATHS.studentAnnouncements]: "Announcements",
+  [ROUTE_PATHS.studentMessages]: "Messages",
 };
 
 const MainLayout = () => {
@@ -106,7 +126,7 @@ const MainLayout = () => {
   }, [displayName]);
 
   return (
-    <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
+    <div className="app-shell app-grid main-layout main-layout-premium">
       <aside
         className={`sidebar main-sidebar ${isMobileMenuOpen ? "is-open" : ""}`}
       >

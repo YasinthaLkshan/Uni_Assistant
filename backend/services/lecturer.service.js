@@ -1,7 +1,11 @@
 import AcademicEvent from "../models/AcademicEvent.js";
+import Announcement from "../models/Announcement.js";
+import Message from "../models/Message.js";
 import Module from "../models/Module.js";
 import ScheduleChangeRequest from "../models/ScheduleChangeRequest.js";
 import TimetableEntry from "../models/TimetableEntry.js";
+import User from "../models/User.js";
+import AppError from "../utils/appError.js";
 
 const DAY_ORDER = {
   Monday: 1,
@@ -46,16 +50,17 @@ export const resolveLecturerModules = async (userId) => {
   });
 };
 
+// ─── Dashboard ──────────────────────────────────────────────────────────────
+
 export const getLecturerDashboard = async (userId) => {
   const modules = await resolveLecturerModules(userId);
   const moduleCodes = modules.map((m) => m.moduleCode);
 
-  const pendingChangeRequests = await ScheduleChangeRequest.countDocuments({
-    lecturer: userId,
-    status: "pending",
-  });
+  const [pendingChangeRequests, unreadMessages] = await Promise.all([
+    ScheduleChangeRequest.countDocuments({ lecturer: userId, status: "pending" }),
+    Message.countDocuments({ receiver: userId, isRead: false }),
+  ]);
 
-  // Get today's timetable entries
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const today = days[new Date().getDay()];
 
@@ -73,9 +78,12 @@ export const getLecturerDashboard = async (userId) => {
   return {
     modules: modules.length,
     pendingChangeRequests,
+    unreadMessages,
     todaySchedule: sortedToday,
   };
 };
+
+// ─── Timetable ──────────────────────────────────────────────────────────────
 
 export const getLecturerTimetable = async (userId) => {
   const modules = await resolveLecturerModules(userId);
@@ -95,6 +103,8 @@ export const getLecturerTimetable = async (userId) => {
   });
 };
 
+// ─── Notices ────────────────────────────────────────────────────────────────
+
 export const getLecturerNotices = async () => {
   const notices = await AcademicEvent.find({})
     .sort({ createdAt: -1 })
@@ -102,4 +112,118 @@ export const getLecturerNotices = async () => {
     .lean();
 
   return notices;
+};
+
+// ─── Announcements ──────────────────────────────────────────────────────────
+
+export const getLecturerAnnouncements = async (userId) => {
+  const announcements = await Announcement.find({ lecturer: userId })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return announcements;
+};
+
+export const createAnnouncement = async (userId, payload) => {
+  const { moduleCode, title, content, priority } = payload;
+
+  if (!moduleCode || !title || !content) {
+    throw new AppError("moduleCode, title, and content are required", 400);
+  }
+
+  // Verify lecturer owns this module
+  const modules = await resolveLecturerModules(userId);
+  const mod = modules.find((m) => m.moduleCode === moduleCode.trim().toUpperCase());
+
+  if (!mod) {
+    throw new AppError("You are not assigned to this module", 403);
+  }
+
+  const announcement = await Announcement.create({
+    lecturer: userId,
+    moduleCode: mod.moduleCode,
+    moduleName: mod.moduleName || mod.title || "",
+    title: title.trim(),
+    content: content.trim(),
+    priority: priority || "normal",
+  });
+
+  return announcement;
+};
+
+export const deleteAnnouncement = async (userId, announcementId) => {
+  const announcement = await Announcement.findOne({
+    _id: announcementId,
+    lecturer: userId,
+  });
+
+  if (!announcement) {
+    throw new AppError("Announcement not found or you don't have permission", 404);
+  }
+
+  await Announcement.findByIdAndDelete(announcementId);
+};
+
+// ─── Messages ───────────────────────────────────────────────────────────────
+
+export const getLecturerMessages = async (userId) => {
+  const messages = await Message.find({
+    $or: [{ sender: userId }, { receiver: userId }],
+  })
+    .populate("sender", "name email role")
+    .populate("receiver", "name email role")
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return messages;
+};
+
+export const sendMessage = async (userId, senderRole, payload) => {
+  const { receiverId, subject, content, parentMessage } = payload;
+
+  if (!receiverId || !subject || !content) {
+    throw new AppError("receiverId, subject, and content are required", 400);
+  }
+
+  const receiver = await User.findById(receiverId).select("role").lean();
+  if (!receiver) {
+    throw new AppError("Receiver not found", 404);
+  }
+
+  const message = await Message.create({
+    sender: userId,
+    receiver: receiverId,
+    senderRole,
+    receiverRole: receiver.role,
+    subject: subject.trim(),
+    content: content.trim(),
+    parentMessage: parentMessage || null,
+  });
+
+  return message;
+};
+
+export const markMessageRead = async (userId, messageId) => {
+  const message = await Message.findOne({
+    _id: messageId,
+    receiver: userId,
+  });
+
+  if (!message) {
+    throw new AppError("Message not found", 404);
+  }
+
+  message.isRead = true;
+  await message.save();
+};
+
+// ─── Admin List ─────────────────────────────────────────────────────────────
+
+export const getAdminList = async () => {
+  const admins = await User.find({ role: "admin" })
+    .select("name email")
+    .sort({ name: 1 })
+    .lean();
+
+  return admins;
 };

@@ -63,7 +63,39 @@ const LecturerDashboardPage = () => {
             </h3>
             <p>Pending Requests</p>
           </article>
+
+          <article className="admin-glass-card" style={{ flex: 1, textAlign: "center" }}>
+            <h3 style={{ fontSize: "2rem", margin: "0.5rem 0", color: "#3b82f6" }}>
+              {stats?.unreadMessages ?? 0}
+            </h3>
+            <p>Unread Messages</p>
+          </article>
         </div>
+
+        {stats?.unreadMessages > 0 ? (
+          <Link
+            to={ROUTE_PATHS.lecturerMessages}
+            className="admin-glass-card"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "0.8rem 1rem",
+              textDecoration: "none",
+              color: "inherit",
+              borderLeft: "3px solid #3b82f6",
+              marginTop: "1rem",
+            }}
+          >
+            <div>
+              <strong>{stats.unreadMessages} unread message(s) from students</strong>
+              <p style={{ fontSize: "0.8rem", opacity: 0.7, marginTop: "0.2rem" }}>
+                Click to view and reply
+              </p>
+            </div>
+            <span style={{ fontSize: "0.85rem", opacity: 0.6 }}>View &rarr;</span>
+          </Link>
+        ) : null}
 
         {stats?.pendingChangeRequests > 0 ? (
           <Link

@@ -89,9 +89,12 @@ p {
 
 /* Full-width layout for authenticated app (dashboard with sidebar) */
 .main-layout.app-shell {
-  width: min(1680px, 100%);
-  max-width: 1680px;
-  margin: clamp(1.1rem, 2vw, var(--space-5)) auto;
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .auth-home-layout {
@@ -105,8 +108,8 @@ p {
 .app-grid {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: var(--space-4);
-  align-items: stretch;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .topbar,
@@ -273,12 +276,17 @@ p {
 
 .sidebar {
   width: 245px;
-  border-radius: var(--radius-lg);
+  border-radius: 0;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1.05rem;
   transition: width 280ms ease, padding 280ms ease;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  border-right: 1px solid var(--line);
 }
 
 .sidebar.is-collapsed {
@@ -475,9 +483,12 @@ p {
 }
 
 .layout-content-wrap {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-3);
   min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .main-header {
@@ -602,9 +613,9 @@ p {
 }
 
 .content-shell {
-  border-radius: var(--radius-lg);
-  padding: 1.05rem;
-  min-height: 74vh;
+  border-radius: 0;
+  padding: 1.5rem;
+  flex: 1;
 }
 
 .hero-grid,
@@ -854,18 +865,26 @@ h3 {
 }
 
 .admin-shell {
-  width: min(1260px, 94vw);
-  margin: clamp(0.9rem, 2vw, 1.4rem) auto;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .admin-grid {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr);
-  gap: 1rem;
-  align-items: stretch;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.admin-sidebar,
+.admin-sidebar {
+  border: none;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--glass-strong), var(--glass));
+  backdrop-filter: blur(14px);
+  padding: 1.2rem;
+}
+
 .admin-header,
 .admin-glass-card {
   border: 1px solid var(--line);
@@ -877,12 +896,16 @@ h3 {
 }
 
 .admin-sidebar {
-  border-radius: 20px;
+  border-radius: 0;
   padding: 1rem 0.9rem;
   display: flex;
   flex-direction: column;
   gap: 1.05rem;
   transition: width 260ms ease;
+  height: 100vh;
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
 }
 
 .admin-sidebar.is-collapsed {
@@ -1111,9 +1134,12 @@ h3 {
 }
 
 .admin-content-wrap {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-3);
   min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .admin-header {
@@ -1195,9 +1221,9 @@ h3 {
 }
 
 .admin-main-content {
-  border-radius: 20px;
-  padding: 1.04rem;
-  min-height: 76vh;
+  border-radius: 0;
+  padding: 1.5rem;
+  flex: 1;
 }
 
 .admin-glass-card {
@@ -5205,10 +5231,14 @@ select.text-input {
 @media (max-width: 980px) {
   .app-grid {
     grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
   }
 
   .admin-grid {
     grid-template-columns: 1fr;
+    height: auto;
+    overflow: visible;
   }
 
   .admin-mobile-trigger {
@@ -5217,13 +5247,19 @@ select.text-input {
 
   .admin-sidebar {
     position: fixed;
-    top: 0.8rem;
-    left: 0.8rem;
-    bottom: 0.8rem;
+    top: 0;
+    left: 0;
+    bottom: 0;
     z-index: 21;
     width: min(330px, calc(100vw - 1.2rem));
     transform: translateX(-120%);
     transition: transform 280ms ease;
+    border-radius: 0;
+  }
+
+  .admin-content-wrap {
+    height: auto;
+    overflow-y: visible;
   }
 
   .admin-sidebar.is-open {
@@ -5252,7 +5288,7 @@ select.text-input {
   }
 
   .admin-main-content {
-    min-height: unset;
+    min-height: auto;
   }
 
   .admin-overview-metrics,
@@ -5286,13 +5322,24 @@ select.text-input {
 
   .main-sidebar {
     position: fixed;
-    top: 0.8rem;
-    left: 0.8rem;
-    bottom: 0.8rem;
+    top: 0;
+    left: 0;
+    bottom: 0;
     z-index: 18;
     width: min(320px, calc(100vw - 1.2rem));
     transform: translateX(-120%);
     transition: transform 280ms ease;
+    border-radius: 0;
+  }
+
+  .layout-content-wrap {
+    height: auto;
+    overflow-y: visible;
+  }
+
+  .main-layout.app-shell {
+    height: auto;
+    overflow: visible;
   }
 
   .main-sidebar.is-open {
@@ -5496,7 +5543,9 @@ select.text-input {
 
   .admin-shell {
     width: 100%;
-    padding: 0 var(--space-2);
+    height: auto;
+    overflow: visible;
+    padding: 0;
   }
 
   .admin-summary-grid,
@@ -8144,11 +8193,15 @@ select.text-input {
 
 /* Dashboard Body Width Expansion */
 .main-layout.main-layout-premium {
-  width: min(1665px, 88vw);
+  width: 100%;
+  max-width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .app-shell,
-.admin-shell,
 .landing-app-shell {
   width: min(1665px, 88vw);
 }
@@ -8156,7 +8209,6 @@ select.text-input {
 @media (min-width: 1800px) {
   .main-layout.main-layout-premium,
   .app-shell,
-  .admin-shell,
   .landing-app-shell {
     width: min(1845px, 89vw);
   }

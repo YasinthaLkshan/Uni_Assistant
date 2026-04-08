@@ -9,6 +9,7 @@ import academicEventRoutes from "./routes/academicEventRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import adminAcademicRoutes from "./routes/adminAcademicRoutes.js";
 import adminLecturerRoutes from "./routes/adminLecturerRoutes.js";
+import adminMessageRoutes from "./routes/adminMessageRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import lecturerRoutes from "./routes/lecturerRoutes.js";
 import moduleRoutes from "./routes/moduleRoutes.js";
@@ -83,6 +84,7 @@ app.use("/api/recommendation", recommendationRoutes);
 app.use("/api/student", studentAcademicRoutes);
 app.use("/api/lecturer", lecturerRoutes);
 app.use("/api/admin/lecturers", adminLecturerRoutes);
+app.use("/api/admin/messages", adminMessageRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFound);

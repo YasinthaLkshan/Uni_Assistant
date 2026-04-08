@@ -11,6 +11,7 @@ import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPag
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
 import AdminChangeRequestsPage from "../pages/admin/AdminChangeRequestsPage";
+import AdminMessagesPage from "../pages/admin/AdminMessagesPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import AdminStudentProfilesPage from "../pages/admin/AdminStudentProfilesPage";
@@ -28,6 +29,9 @@ import LecturerDashboardPage from "../pages/lecturer/LecturerDashboardPage";
 import LecturerTimetablePage from "../pages/lecturer/LecturerTimetablePage";
 import LecturerChangeRequestsPage from "../pages/lecturer/LecturerChangeRequestsPage";
 import LecturerNoticesPage from "../pages/lecturer/LecturerNoticesPage";
+import LecturerAnnouncementsPage from "../pages/lecturer/LecturerAnnouncementsPage";
+import LecturerContactAdminPage from "../pages/lecturer/LecturerContactAdminPage";
+import LecturerMessagesPage from "../pages/lecturer/LecturerMessagesPage";
 import LoginPage from "../pages/LoginPage";
 import StudyAssistantPage from "../pages/StudyAssistantPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
@@ -36,6 +40,8 @@ import MyAcademicEventsPage from "../pages/MyAcademicEventsPage";
 import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
 import RegisterPage from "../pages/RegisterPage";
+import StudentAnnouncementsPage from "../pages/StudentAnnouncementsPage";
+import StudentMessagesPage from "../pages/StudentMessagesPage";
 import TasksPage from "../pages/TasksPage";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import LecturerProtectedRoute from "./LecturerProtectedRoute";
@@ -73,6 +79,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.adminExams} element={<AdminExamsPage />} />
             <Route path={ROUTE_PATHS.adminFcscInforms} element={<AdminFcscInformsPage />} />
             <Route path={ROUTE_PATHS.adminChangeRequests} element={<AdminChangeRequestsPage />} />
+            <Route path={ROUTE_PATHS.adminMessages} element={<AdminMessagesPage />} />
           </Route>
         </Route>
 
@@ -82,6 +89,9 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.lecturerTimetable} element={<LecturerTimetablePage />} />
             <Route path={ROUTE_PATHS.lecturerChangeRequests} element={<LecturerChangeRequestsPage />} />
             <Route path={ROUTE_PATHS.lecturerNotices} element={<LecturerNoticesPage />} />
+            <Route path={ROUTE_PATHS.lecturerAnnouncements} element={<LecturerAnnouncementsPage />} />
+            <Route path={ROUTE_PATHS.lecturerContactAdmin} element={<LecturerContactAdminPage />} />
+            <Route path={ROUTE_PATHS.lecturerMessages} element={<LecturerMessagesPage />} />
           </Route>
         </Route>
 
@@ -96,6 +106,8 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.tasks} element={<TasksPage />} />
             <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
             <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
+            <Route path={ROUTE_PATHS.studentAnnouncements} element={<StudentAnnouncementsPage />} />
+            <Route path={ROUTE_PATHS.studentMessages} element={<StudentMessagesPage />} />
           </Route>
         </Route>
 

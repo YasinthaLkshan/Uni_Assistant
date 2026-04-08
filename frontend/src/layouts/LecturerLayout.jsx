@@ -33,6 +33,33 @@ const LECTURER_MENU_ITEMS = [
     ),
   },
   {
+    label: "Announcements",
+    path: ROUTE_PATHS.lecturerAnnouncements,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h2v2H7V9zm4 0h2v2h-2V9zm4 0h2v2h-2V9z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Student Messages",
+    path: ROUTE_PATHS.lecturerMessages,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Contact Admin",
+    path: ROUTE_PATHS.lecturerContactAdmin,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 12c2.76 0 5-2.24 5-5S14.76 2 12 2 7 4.24 7 7s2.24 5 5 5zm0 2c-4.42 0-8 1.79-8 4v2h16v-2c0-2.21-3.58-4-8-4z" />
+      </svg>
+    ),
+  },
+  {
     label: "Notices",
     path: ROUTE_PATHS.lecturerNotices,
     icon: (
@@ -47,6 +74,9 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.lecturerDashboard]: "Lecturer Dashboard",
   [ROUTE_PATHS.lecturerTimetable]: "Timetable",
   [ROUTE_PATHS.lecturerChangeRequests]: "Change Requests",
+  [ROUTE_PATHS.lecturerAnnouncements]: "Announcements",
+  [ROUTE_PATHS.lecturerMessages]: "Student Messages",
+  [ROUTE_PATHS.lecturerContactAdmin]: "Contact Admin",
   [ROUTE_PATHS.lecturerNotices]: "Notices",
 };
 
@@ -63,7 +93,7 @@ const LecturerLayout = () => {
   };
 
   return (
-    <div className="admin-shell admin-grid page-fade-in">
+    <div className="admin-shell admin-grid">
       <aside
         className={`admin-sidebar ${isSidebarCollapsed ? "is-collapsed" : ""} ${
           isMobileMenuOpen ? "is-open" : ""
