@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
 
+const isApprovedEventExpired = (eventDate) => {
+  if (!eventDate) {
+    return false;
+  }
+
+  const parsedDate = new Date(eventDate);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return false;
+  }
+
+  parsedDate.setHours(23, 59, 59, 999);
+  return parsedDate.getTime() < Date.now();
+};
+
 const FcscInformsPage = () => {
   const [approvedEvents, setApprovedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +25,14 @@ const FcscInformsPage = () => {
   const loadApprovedEvents = () => {
     const approved = localStorage.getItem("fcsc_approved_events");
     if (approved) {
-      setApprovedEvents(JSON.parse(approved));
+      const parsedApproved = JSON.parse(approved);
+      const activeApproved = parsedApproved.filter((evt) => !isApprovedEventExpired(evt.date));
+
+      if (activeApproved.length !== parsedApproved.length) {
+        localStorage.setItem("fcsc_approved_events", JSON.stringify(activeApproved));
+      }
+
+      setApprovedEvents(activeApproved);
     }
     setLoading(false);
   };

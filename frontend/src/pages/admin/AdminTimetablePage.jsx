@@ -235,8 +235,8 @@ const AdminTimetablePage = () => {
   };
 
   return (
-    <section className="admin-page-grid section-entrance">
-      <article className="admin-glass-card admin-module-card">
+    <section className="admin-page-grid section-entrance admin-timetable-clean">
+      <article className="admin-glass-card admin-module-card admin-timetable-card">
         <p className="eyebrow">Admin Module</p>
         <h2>Timetable Management</h2>
         <p>Plan weekly timetable entries for each semester and group.</p>

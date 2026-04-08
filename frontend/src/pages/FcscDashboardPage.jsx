@@ -5,6 +5,20 @@ import { ROUTE_PATHS } from "../routes/routePaths";
 
 const FCSC_AUTH_KEY = "uni_assistant_fcsc_auth";
 
+const isApprovedEventExpired = (eventDate) => {
+  if (!eventDate) {
+    return false;
+  }
+
+  const parsedDate = new Date(eventDate);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return false;
+  }
+
+  parsedDate.setHours(23, 59, 59, 999);
+  return parsedDate.getTime() < Date.now();
+};
+
 const FcscDashboardPage = () => {
   const navigate = useNavigate();
   const [eventTitle, setEventTitle] = useState("");
@@ -69,11 +83,16 @@ const FcscDashboardPage = () => {
   const loadSubmittedEvents = () => {
     const pending = JSON.parse(localStorage.getItem("fcsc_pending_events") || "[]");
     const approved = JSON.parse(localStorage.getItem("fcsc_approved_events") || "[]");
+    const activeApproved = approved.filter((evt) => !isApprovedEventExpired(evt.date));
+
+    if (activeApproved.length !== approved.length) {
+      localStorage.setItem("fcsc_approved_events", JSON.stringify(activeApproved));
+    }
     
     // Combine with status
     const allEvents = [
-      ...pending.map(evt => ({ ...evt, status: "pending" })),
-      ...approved.map(evt => ({ ...evt, status: "approved" }))
+      ...pending.map((evt) => ({ ...evt, status: "pending" })),
+      ...activeApproved.map((evt) => ({ ...evt, status: "approved" }))
     ];
     
     setEvents(allEvents);

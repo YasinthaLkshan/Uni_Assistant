@@ -53,11 +53,11 @@ const HomePage = () => {
             <Link to={isAuthenticated ? ROUTE_PATHS.dashboard : ROUTE_PATHS.register} className="btn-primary">
               Get Started
             </Link>
-            <Link to={ROUTE_PATHS.dashboard} className="btn-secondary">
-              View Dashboard
+            <Link to={ROUTE_PATHS.fcscInforms} className="btn-secondary">
+              FCSC Informs
             </Link>
             {isAuthenticated ? (
-              <button type="button" className="btn-secondary" onClick={handleLogout}>
+              <button type="button" className="btn-danger" onClick={handleLogout}>
                 Logout
               </button>
             ) : null}
@@ -107,7 +107,6 @@ const HomePage = () => {
       {/* Footer */}
       <footer className="landing-footer-modern">
         <div className="footer-content">
-          <p className="footer-brand">Uni Assistant</p>
           <nav className="footer-links" aria-label="Footer navigation">
             <a href="#home">Home</a>
             <a href="#features">Features</a>

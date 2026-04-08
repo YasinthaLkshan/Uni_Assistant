@@ -215,7 +215,11 @@ const DashboardPage = () => {
 			<GlassCard className="section-entrance dashboard-welcome-card" style={{ animationDelay: "40ms" }}>
 				<PageHeader
 					eyebrow="Welcome Back"
-					title={`Hello, ${user?.name || "Student"}`}
+					title={(
+						<>
+							Hello, <span className="dashboard-name-highlight">{user?.name || "Student"}</span>
+						</>
+					)}
 					subtitle="Your daily plan is ready. Stay focused with simple, clear priorities."
 					rightContent={
 						<div className="dashboard-head-actions">

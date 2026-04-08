@@ -418,6 +418,15 @@ html, body {
   z-index: 2;
 }
 
+/* Keep non-dashboard pages level with the sidebar top edge */
+.admin-content-wrap:not(:has(.admin-header)) .admin-main-content {
+  padding-top: 1.5rem;
+}
+
+.admin-main-content.admin-main-content-no-header {
+  padding-top: 1.5rem;
+}
+
 .admin-dash-shell {
   display: flex;
   flex-direction: column;

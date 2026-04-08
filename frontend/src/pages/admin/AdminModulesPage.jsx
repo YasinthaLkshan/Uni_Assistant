@@ -336,8 +336,8 @@ const AdminModulesPage = () => {
   };
 
   return (
-    <section className="admin-page-grid section-entrance">
-      <article className="admin-glass-card admin-module-card">
+    <section className="admin-page-grid section-entrance admin-modules-clean">
+      <article className="admin-glass-card admin-module-card admin-modules-card">
         <p className="eyebrow">Admin Module</p>
         <h2>Modules Management</h2>
         <p>Manage modules with programme assignment, credits, hours, and per-group lecturer assignment.</p>
