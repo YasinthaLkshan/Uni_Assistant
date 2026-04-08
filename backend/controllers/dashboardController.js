@@ -2,6 +2,7 @@ import Notification from "../models/Notification.js";
 import Task from "../models/Task.js";
 import WorkloadReport from "../models/WorkloadReport.js";
 import { getBestTaskRecommendation } from "../services/recommendationService.js";
+import { generateEnhancedWorkloadReportForUser } from "../services/workloadService.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import { getStudySuggestion } from "../utils/workloadUtils.js";
 
@@ -16,8 +17,8 @@ const getTodayRange = () => {
   return { start, end };
 };
 
-const buildWorkloadSummary = (latestReport) => {
-  if (!latestReport) {
+const buildWorkloadSummary = (enhancedAnalysis) => {
+  if (!enhancedAnalysis) {
     return {
       workloadScore: 0,
       workloadLevel: "Low",
@@ -30,14 +31,21 @@ const buildWorkloadSummary = (latestReport) => {
     };
   }
 
+  const { metrics, workloadAnalysis, studySuggestion } = enhancedAnalysis;
+
   return {
-    workloadScore: latestReport.workloadScore,
-    workloadLevel: latestReport.workloadLevel,
-    studySuggestion: getStudySuggestion(latestReport.workloadLevel),
+    workloadScore: metrics.workloadScore,
+    workloadLevel: workloadAnalysis.level,
+    studySuggestion,
     breakdown: {
-      totalTasks: latestReport.totalTasks,
-      urgentTasks: latestReport.urgentTasks,
-      examsNear: latestReport.examsNear,
+      totalTasks: metrics.totalEvents,
+      urgentTasks: metrics.criticalEvents + metrics.highUrgencyEvents,
+      examsNear: metrics.criticalEvents,
+    },
+    analysis: {
+      intensity: workloadAnalysis.intensity,
+      recommendation: workloadAnalysis.recommendation,
+      complexity: metrics.complexity,
     },
   };
 };
@@ -47,7 +55,10 @@ export const getDashboardSummary = asyncHandler(async (req, res) => {
   const now = new Date();
   const { start, end } = getTodayRange();
 
-  const [todayTasks, upcomingTasksCount, latestWorkloadReport, smartRecommendation, unreadNotificationCount] =
+  // Calculate date range for preparation tasks (next 7 days or until nearest event)
+  const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+  const [todayTasks, upcomingTasksCount, enhancedWorkloadAnalysis, unreadNotificationCount, upcomingTasks] =
     await Promise.all([
       Task.find({
         user: userId,
@@ -59,20 +70,58 @@ export const getDashboardSummary = asyncHandler(async (req, res) => {
       Task.countDocuments({
         user: userId,
         status: { $ne: "Completed" },
-        deadline: { $gte: now },
+        deadline: { $gt: now },
       }),
-      WorkloadReport.findOne({ user: userId }).sort({ calculatedAt: -1, createdAt: -1 }).lean(),
-      getBestTaskRecommendation(userId),
+      generateEnhancedWorkloadReportForUser(userId).catch(() => null),
       Notification.countDocuments({ user: userId, isRead: false }),
+      // Fetch preparation tasks: urgent tasks within 7 days or until nearest event
+      Task.find({
+        user: userId,
+        status: { $ne: "Completed" },
+        deadline: { $gt: now, $lte: sevenDaysFromNow },
+        urgencyLevel: { $in: ["High", "Medium"] },
+      })
+        .sort({ deadline: 1 })
+        .limit(5)
+        .lean(),
     ]);
+
+  // Build smart recommendation from most urgent event
+  let smartRecommendation = {
+    taskId: null,
+    title: "No recommendation yet",
+    type: "general",
+    urgencyLevel: "Low",
+    deadline: null,
+    daysLeft: null,
+    message: "Create tasks to receive a smart recommendation.",
+  };
+
+  if (enhancedWorkloadAnalysis?.mostUrgentEvent) {
+    const event = enhancedWorkloadAnalysis.mostUrgentEvent;
+    smartRecommendation = {
+      taskId: event.taskId,
+      title: event.title,
+      type: event.type,
+      urgencyLevel: event.urgencyLevel,
+      deadline: event.deadline,
+      daysLeft: event.daysLeft,
+      message: `${event.daysLeft} day(s) until ${event.type}. Start preparation now.`,
+    };
+  }
+
+  // Determine which tasks to display
+  // If there are tasks due today, show them; otherwise show preparation tasks
+  const displayTasks = todayTasks.length > 0 ? todayTasks : upcomingTasks;
 
   res.status(200).json({
     success: true,
     message: "Dashboard summary fetched successfully",
     data: {
-      todaysTasks: todayTasks,
+      todaysTasks: displayTasks,
+      todaysCount: todayTasks.length,
       upcomingTasksCount,
-      workloadSummary: buildWorkloadSummary(latestWorkloadReport),
+      workloadSummary: buildWorkloadSummary(enhancedWorkloadAnalysis),
       smartRecommendation,
       unreadNotificationCount,
     },

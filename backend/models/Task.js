@@ -66,6 +66,16 @@ const taskSchema = new mongoose.Schema(
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address"],
       default: "",
     },
+    academicEvent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "AcademicEvent",
+      default: null,
+    },
+    module: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Module",
+      default: null,
+    },
   },
   {
     timestamps: true,

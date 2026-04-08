@@ -47,9 +47,12 @@ export const getBestTaskRecommendation = async (userId) => {
     throw new AppError("A valid user id is required", 400);
   }
 
+  const now = new Date();
+
   const activeTasks = await Task.find({
     user: userId,
     status: { $ne: "Completed" },
+    deadline: { $gt: now }, // Filter out tasks with past deadlines
   })
     .select("title type urgencyLevel deadline")
     .lean();

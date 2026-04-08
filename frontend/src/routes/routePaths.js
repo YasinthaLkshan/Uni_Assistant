@@ -1,6 +1,7 @@
 export const ROUTE_PATHS = {
   home: "/",
   login: "/login",
+  communityLogin: "/community/login",
   fcscDashboard: "/fcsc/dashboard",
   adminLogin: "/admin/login",
   register: "/register",
@@ -24,4 +25,5 @@ export const ROUTE_PATHS = {
   tasks: "/tasks",
   gpaCalculator: "/gpa-calculator",
   gpaHistory: "/gpa-history",
+  gpaTrendHistory: "/gpa-trend",
 };

@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const AuthForm = ({ 
   mode = "login",
   onSubmit,
   loading = false,
-  error = ""
+  error = "",
+  isAdmin = false
 }) => {
   const [form, setForm] = useState({
     studentId: "",
@@ -17,10 +18,28 @@ const AuthForm = ({
     confirmPassword: "",
   });
 
+  const formRef = useRef(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const isRegister = mode === "register";
+
+  // Clear form on mount and prevent autofill
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.reset();
+    }
+    setForm({
+      studentId: "",
+      name: "",
+      academicYear: "",
+      semester: "",
+      groupNumber: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -41,7 +60,7 @@ const AuthForm = ({
   };
 
   return (
-    <form className="auth-form" onSubmit={handleSubmit}>
+    <form ref={formRef} className="auth-form" onSubmit={handleSubmit} autoComplete="off">
       {isRegister && (
         <div className="form-group">
           <label htmlFor="studentId" className="form-label">
@@ -93,44 +112,44 @@ const AuthForm = ({
       )}
 
       {isRegister && (
-        <div className="form-group">
-          <label htmlFor="academicYear" className="form-label">
-            Academic Year
-          </label>
-          <div className="form-input-wrapper">
-            <select
-              id="academicYear"
-              name="academicYear"
-              value={form.academicYear}
-              onChange={handleChange}
-              className="form-input"
-              required
-            >
-              <option value="">Select year</option>
-              <option value="3">Year 3</option>
-            </select>
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="academicYear" className="form-label">
+              Academic Year
+            </label>
+            <div className="form-input-wrapper">
+              <select
+                id="academicYear"
+                name="academicYear"
+                value={form.academicYear}
+                onChange={handleChange}
+                className="form-input"
+                required
+              >
+                <option value="">Select year</option>
+                <option value="3">Year 3</option>
+              </select>
+            </div>
           </div>
-        </div>
-      )}
 
-      {isRegister && (
-        <div className="form-group">
-          <label htmlFor="semester" className="form-label">
-            Semester
-          </label>
-          <div className="form-input-wrapper">
-            <select
-              id="semester"
-              name="semester"
-              value={form.semester}
-              onChange={handleChange}
-              className="form-input"
-              required
-            >
-              <option value="">Select semester</option>
-              <option value="1">Semester 1</option>
-              <option value="2">Semester 2</option>
-            </select>
+          <div className="form-group">
+            <label htmlFor="semester" className="form-label">
+              Semester
+            </label>
+            <div className="form-input-wrapper">
+              <select
+                id="semester"
+                name="semester"
+                value={form.semester}
+                onChange={handleChange}
+                className="form-input"
+                required
+              >
+                <option value="">Select semester</option>
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+              </select>
+            </div>
           </div>
         </div>
       )}
@@ -160,7 +179,7 @@ const AuthForm = ({
 
       <div className="form-group">
         <label htmlFor="email" className="form-label">
-          {isRegister ? "Email Address" : "Email or Student ID"}
+          {isRegister ? "Email Address" : isAdmin ? "Admin Email" : "Email or Student ID"}
         </label>
         <div className="form-input-wrapper">
           <svg className="form-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -172,8 +191,8 @@ const AuthForm = ({
             name="email"
             value={form.email}
             onChange={handleChange}
-            placeholder={isRegister ? "student@university.edu" : "student@university.edu or IT12345678"}
-            autoComplete={isRegister ? "email" : "username"}
+            placeholder={isRegister ? "student@university.edu" : isAdmin ? "admin@university.edu" : "student@university.edu or IT12345678"}
+            autoComplete="off"
             className="form-input"
             required
           />
@@ -195,7 +214,7 @@ const AuthForm = ({
             value={form.password}
             onChange={handleChange}
             placeholder="Minimum 6 characters"
-            autoComplete={isRegister ? "new-password" : "current-password"}
+            autoComplete="off"
             minLength={6}
             className="form-input"
             required
@@ -236,7 +255,7 @@ const AuthForm = ({
               value={form.confirmPassword}
               onChange={handleChange}
               placeholder="Re-enter your password"
-              autoComplete="new-password"
+              autoComplete="off"
               minLength={6}
               className="form-input"
               required
