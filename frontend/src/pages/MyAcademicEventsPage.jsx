@@ -60,7 +60,18 @@ const MyAcademicEventsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const upcomingCount = useMemo(() => events.filter((event) => getUpcomingCategory(event.eventDate)).length, [events]);
+  // Filter out past events - only show future/upcoming events
+  const upcomingEvents = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return events.filter((event) => {
+      const eventDate = new Date(event.eventDate);
+      eventDate.setHours(0, 0, 0, 0);
+      return eventDate >= today;
+    });
+  }, [events]);
+
+  const upcomingCount = useMemo(() => upcomingEvents.filter((event) => getUpcomingCategory(event.eventDate)).length, [upcomingEvents]);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -114,9 +125,16 @@ const MyAcademicEventsPage = () => {
           />
         ) : null}
 
-        {!loading && events.length ? (
+        {!loading && events.length && !upcomingEvents.length ? (
+          <EmptyStateCard
+            title="No upcoming events"
+            description="All your academic events have already passed."
+          />
+        ) : null}
+
+        {!loading && upcomingEvents.length ? (
           <div className="student-grid-cards">
-            {events.map((event) => {
+            {upcomingEvents.map((event) => {
               const upcomingCategory = getUpcomingCategory(event.eventDate);
               return (
                 <article

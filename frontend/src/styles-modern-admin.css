@@ -1294,15 +1294,6 @@ html, body {
     align-self: flex-start;
   }
 }
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 /* ============================================
    RESPONSIVE
@@ -1418,4 +1409,54 @@ html, body {
   .title-area .page-title {
     font-size: 1.125rem;
   }
+}
+
+/* Student dashboard: keep header action buttons readable on light cards */
+.dashboard-student-clean .dashboard-head-actions .ui-btn {
+  opacity: 1 !important;
+}
+
+.dashboard-student-clean .dashboard-head-actions .ui-btn.is-ghost {
+  color: #27406f !important;
+  background: #eff4ff !important;
+  border: 1px solid #cddcf6 !important;
+  box-shadow: 0 2px 8px rgba(38, 67, 130, 0.08) !important;
+}
+
+.dashboard-student-clean .dashboard-head-actions .ui-btn.is-ghost:hover {
+  color: #1f345b !important;
+  background: #e5eeff !important;
+  border-color: #b7c9eb !important;
+}
+
+.dashboard-student-clean .dashboard-head-actions .ui-btn.is-primary {
+  color: #ffffff !important;
+  background: linear-gradient(145deg, #4f78dd, #3f65c4) !important;
+  border: 1px solid #2f57b7 !important;
+}
+
+/* Ensure sidebar logout label stays white over global ghost button styles */
+.main-layout-premium .sidebar-logout,
+.main-layout-premium .sidebar-logout:hover,
+.main-layout-premium .sidebar-logout:focus-visible,
+.main-layout-premium .sidebar-logout:active,
+.main-layout-premium .sidebar-logout span,
+.main-layout-premium .sidebar-logout .sidebar-logout-icon {
+  color: #ffffff !important;
+}
+
+/* Student main layout: keep top header title readable on light surfaces */
+.main-layout-premium .title-area,
+.main-layout-premium .title-area .page-title,
+.main-layout-premium .title-area .eyebrow,
+.main-layout-premium .title-area .icon-btn {
+  color: #253f6c !important;
+  text-shadow: none !important;
+}
+
+/* Student layout should never inherit admin dark purple page background */
+html:has(.main-layout-premium),
+body:has(.main-layout-premium) {
+  background: linear-gradient(140deg, #e7f8ff 0%, #eaf4ff 48%, #f2f8ff 100%) !important;
+  background-attachment: fixed !important;
 }
