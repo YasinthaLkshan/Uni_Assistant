@@ -20,6 +20,7 @@ import { ROUTE_PATHS } from "../routes/routePaths";
 
 const DEFAULT_SUMMARY = {
 	todaysTasks: [],
+	todaysCount: 0,
 	upcomingTasksCount: 0,
 	workloadSummary: {
 		workloadScore: 0,
@@ -50,24 +51,35 @@ const normalizeSummary = (data = {}) => {
 
 	return {
 		todaysTasks: Array.isArray(data.todaysTasks) ? data.todaysTasks : [],
+		todaysCount: Number(data.todaysCount || 0),
 		upcomingTasksCount: Number(data.upcomingTasksCount || 0),
 		workloadSummary: {
 			workloadScore: Number(workloadSummary.workloadScore || 0),
 			workloadLevel: workloadSummary.workloadLevel || "Low",
 			studySuggestion: {
+				level: studySuggestion.level || "Low",
 				suggestedStudyHoursPerDay: studySuggestion.suggestedStudyHoursPerDay || "1 hour/day",
+				focus: studySuggestion.focus || "Maintain long-term learning goals",
+				strategy: studySuggestion.strategy || "Regular class notes review",
 			},
 			breakdown: {
 				totalTasks: Number(breakdown.totalTasks || 0),
 				urgentTasks: Number(breakdown.urgentTasks || 0),
 				examsNear: Number(breakdown.examsNear || 0),
 			},
+			analysis: workloadSummary.analysis || {
+				intensity: "Manageable",
+				recommendation: "Focus on long-term preparation",
+				complexity: 0,
+			},
 		},
 		smartRecommendation: {
+			taskId: smartRecommendation.taskId || null,
 			title: smartRecommendation.title || "No recommendation yet",
 			type: smartRecommendation.type || "general",
 			urgencyLevel: smartRecommendation.urgencyLevel || "Low",
 			deadline: smartRecommendation.deadline || null,
+			daysLeft: smartRecommendation.daysLeft || null,
 			message: smartRecommendation.message || "Focus on this task first",
 		},
 		unreadNotificationCount: Number(data.unreadNotificationCount || 0),
@@ -228,6 +240,7 @@ const DashboardPage = () => {
 					type={summary.smartRecommendation.type || "N/A"}
 					urgencyLevel={summary.smartRecommendation.urgencyLevel || "Low"}
 					deadline={summary.smartRecommendation.deadline}
+					daysLeft={summary.smartRecommendation.daysLeft}
 					message={summary.smartRecommendation.message}
 				/>
 
@@ -235,7 +248,7 @@ const DashboardPage = () => {
 					<p className="eyebrow">Study Suggestion</p>
 					<h3 className="study-hours-value">{summary.workloadSummary.studySuggestion?.suggestedStudyHoursPerDay || "1 hour/day"}</h3>
 					<p className="study-suggestion-copy">
-						Recommended daily focus time based on your current workload profile.
+						{summary.workloadSummary.studySuggestion?.focus || "Recommended daily focus time based on your current workload profile."}
 					</p>
 
 					<div className="study-suggestion-visual" aria-hidden="true">
@@ -245,32 +258,63 @@ const DashboardPage = () => {
 						<span className="study-suggestion-dot" />
 					</div>
 
-					<StatusBadge level="success" label="Consistency beats intensity" />
+					<StatusBadge level="success" label={summary.workloadSummary.studySuggestion?.strategy || "Consistency beats intensity"} />
 				</GlassCard>
 			</div>
 
 			<GlassCard as="section" className="ui-section section-entrance dashboard-tasks" style={{ animationDelay: "260ms" }}>
 				<SectionTitle
-					eyebrow="Today's Tasks"
-					rightContent={<StatusBadge level="low" label={`${summary.todaysTasks.length} Due Today`} />}
+					eyebrow={summary.todaysCount > 0 ? "Today's Tasks" : "Preparation Tasks"}
+					rightContent={
+						<StatusBadge 
+							level="low" 
+							label={summary.todaysCount > 0 ? `${summary.todaysTasks.length} Due Today` : `${summary.todaysTasks.length} Next Priority`} 
+						/>
+					}
 					className="dashboard-tasks-head"
 				/>
 
 				{summary.todaysTasks.length ? (
-					<div className="task-list">
-						{summary.todaysTasks.map((task) => (
-							<article key={task._id} className="task-item">
-								<div>
-									<h4>{task.title}</h4>
-									<p>{task.type}</p>
-								</div>
-								<StatusBadge
-									level={getLevelBadgeClass(task.urgencyLevel)}
-									label={task.urgencyLevel || "Low"}
-								/>
-							</article>
-						))}
-					</div>
+					<>
+						{summary.todaysCount === 0 && summary.smartRecommendation.title !== "No recommendation yet" && (
+							<div className="preparation-context-banner">
+								<p>
+									<strong>No tasks due today.</strong> Here are priority tasks to help you prepare for <strong>{summary.smartRecommendation.title}</strong> coming in <strong>{summary.smartRecommendation.daysLeft} day(s)</strong>.
+								</p>
+							</div>
+						)}
+						<div className="task-list">
+							{summary.todaysTasks.map((task) => {
+								const taskDate = task.deadline ? new Date(task.deadline) : null;
+								const today = new Date();
+								const isToday = taskDate && 
+									taskDate.getDate() === today.getDate() &&
+									taskDate.getMonth() === today.getMonth() &&
+									taskDate.getFullYear() === today.getFullYear();
+								const daysUntil = taskDate ? Math.ceil((taskDate - today) / (1000 * 60 * 60 * 24)) : null;
+
+								return (
+									<article key={task._id} className="task-item">
+										<div>
+											<h4>{task.title}</h4>
+											<div className="task-meta">
+												<span className="task-type">{task.type}</span>
+												{isToday ? (
+													<span className="task-timing due-today">Due Today</span>
+												) : daysUntil !== null && daysUntil > 0 ? (
+													<span className="task-timing">{daysUntil} day{daysUntil > 1 ? 's' : ''} left</span>
+												) : null}
+											</div>
+										</div>
+										<StatusBadge
+											level={getLevelBadgeClass(task.urgencyLevel)}
+											label={task.urgencyLevel || "Low"}
+										/>
+									</article>
+								);
+							})}
+						</div>
+					</>
 				) : (
 					<div className="dashboard-empty-state">
 						<div className="dashboard-empty-visual" aria-hidden="true">
@@ -280,8 +324,8 @@ const DashboardPage = () => {
 							<span className="dashboard-empty-line is-2" />
 							<span className="dashboard-empty-spark" />
 						</div>
-						<h3>No tasks due today</h3>
-						<p>Great progress. You are currently clear for today.</p>
+						<h3>No tasks to prepare</h3>
+						<p>All caught up! Create tasks to organize your study plan.</p>
 					</div>
 				)}
 			</GlassCard>

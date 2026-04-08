@@ -19,11 +19,13 @@ const RecommendationCard = ({
 	type = "N/A",
 	urgencyLevel = "Low",
 	deadline,
+	daysLeft = null,
 	message = "Focus on this task first",
 	className = "",
 	style,
 }) => {
 	const deadlineText = deadline ? new Date(deadline).toLocaleString() : "N/A";
+	const daysLeftText = daysLeft !== null && daysLeft !== undefined ? `${daysLeft} day(s) left` : "";
 
 	return (
 		<GlassCard as="article" className={`recommendation-card ${className}`.trim()} style={style}>
@@ -46,6 +48,7 @@ const RecommendationCard = ({
 			<div className="metric-stack">
 				<p className="metric-line"><strong>Type:</strong> {type || "N/A"}</p>
 				<p className="metric-line"><strong>Deadline:</strong> {deadlineText}</p>
+				{daysLeftText && <p className="metric-line"><strong>Time Left:</strong> {daysLeftText}</p>}
 			</div>
 
 			<StatusBadge level={toBadgeLevel(urgencyLevel)} label={`Urgency: ${urgencyLevel || "Low"}`} />

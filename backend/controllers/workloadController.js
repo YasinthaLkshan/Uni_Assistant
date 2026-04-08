@@ -1,5 +1,5 @@
 import WorkloadReport from "../models/WorkloadReport.js";
-import { generateWorkloadReportForUser } from "../services/workloadService.js";
+import { generateWorkloadReportForUser, generateEnhancedWorkloadReportForUser } from "../services/workloadService.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/appError.js";
 import { getStudySuggestion } from "../utils/workloadUtils.js";
@@ -41,5 +41,15 @@ export const getLatestWorkload = asyncHandler(async (req, res) => {
     success: true,
     message: "Latest workload report fetched successfully",
     data: formatWorkloadPayload(latestReport, studySuggestion),
+  });
+});
+
+export const getEnhancedWorkloadAnalysis = asyncHandler(async (req, res) => {
+  const workloadAnalysis = await generateEnhancedWorkloadReportForUser(req.user._id);
+
+  res.status(200).json({
+    success: true,
+    message: "Enhanced workload analysis generated successfully",
+    data: workloadAnalysis,
   });
 });

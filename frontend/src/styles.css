@@ -4463,6 +4463,57 @@ select.text-input {
   text-transform: capitalize;
 }
 
+.task-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.45rem;
+  align-items: center;
+}
+
+.task-type {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  background: rgba(122, 124, 241, 0.12);
+  border-radius: 0.36rem;
+  font-size: 0.85rem;
+  color: #5a67d8;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.task-timing {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.6rem;
+  background: rgba(255, 180, 77, 0.15);
+  border-radius: 0.36rem;
+  font-size: 0.80rem;
+  color: #f59e0b;
+  font-weight: 500;
+}
+
+.task-timing.due-today {
+  background: rgba(244, 63, 94, 0.15);
+  color: #ef4444;
+}
+
+.preparation-context-banner {
+  padding: 0.9rem 0.95rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(59, 130, 246, 0.08);
+  margin-bottom: 0.9rem;
+}
+
+.preparation-context-banner p {
+  margin: 0;
+  color: #1e40af;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
 .dashboard-tasks {
   padding: 1.08rem;
 }
