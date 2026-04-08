@@ -1945,7 +1945,9 @@ h3 {
 }
 
 .admin-filter-grid-events {
-  display: contents;
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 1.25rem !important;
 }
 
 .admin-events-form-grid {
@@ -2853,27 +2855,28 @@ h3 {
 }
 
 .fcsc-event-item {
-  padding: 1.2rem;
+  padding: 1rem;
   border-radius: 12px;
-  border: 1px solid rgba(79, 70, 229, 0.08);
-  background: rgba(248, 250, 255, 0.8);
+  border: 1px solid rgba(138, 165, 255, 0.4);
+  background: rgba(15, 30, 75, 0.95);
   transition: all var(--transition-base);
+  backdrop-filter: blur(8px);
 }
 
 .fcsc-event-item:hover {
-  background: rgba(248, 250, 255, 1);
-  border-color: rgba(79, 70, 229, 0.15);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08);
+  border-color: rgba(138, 165, 255, 0.6);
+  background: rgba(20, 40, 90, 1);
+  box-shadow: 0 8px 24px rgba(138, 165, 255, 0.3);
 }
 
 .fcsc-event-item.fcsc-event-pending {
-  border-color: rgba(255, 193, 7, 0.2);
-  background: rgba(255, 248, 225, 0.6);
+  border-color: rgba(255, 193, 7, 0.5);
+  background: rgba(45, 40, 65, 0.95);
 }
 
 .fcsc-event-item.fcsc-event-approved {
-  border-color: rgba(76, 175, 80, 0.2);
-  background: rgba(248, 255, 250, 0.8);
+  border-color: rgba(76, 175, 80, 0.5);
+  background: rgba(25, 50, 50, 0.95);
 }
 
 .fcsc-event-status {
@@ -2897,29 +2900,29 @@ h3 {
 
 .fcsc-status-badge {
   display: inline-block;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  background: rgba(255, 193, 7, 0.15);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .fcsc-status-badge.status-pending {
   background: rgba(255, 193, 7, 0.15);
-  color: #e8a623;
-  font-weight: 700;
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
 }
 
 .fcsc-status-badge.status-approved {
   background: rgba(76, 175, 80, 0.15);
-  color: #2e7d32;
-  font-weight: 700;
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .fcsc-event-title {
   margin: 0 0 0.5rem 0;
-  color: #1a2333;
+  color: #ffffff;
   font-size: 1.1rem;
   font-weight: 700;
 }
@@ -2928,7 +2931,7 @@ h3 {
 .fcsc-event-venue,
 .fcsc-event-description {
   margin: 0.4rem 0 0 0;
-  color: #4b5563;
+  color: rgba(220, 230, 255, 0.85);
   font-size: 0.9rem;
 }
 

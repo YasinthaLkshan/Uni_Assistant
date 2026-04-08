@@ -30,8 +30,6 @@ const holidaySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-holidaySchema.index({ date: 1 });
-
 export const HOLIDAY_TYPES_LIST = HOLIDAY_TYPES;
 
 const Holiday = mongoose.model("Holiday", holidaySchema);

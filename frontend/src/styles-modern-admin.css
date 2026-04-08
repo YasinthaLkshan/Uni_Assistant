@@ -783,6 +783,519 @@ html, body {
 @keyframes fadeInDash {
   from {
     opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   FCSC DASHBOARD - Glassmorphism Design
+   Matches Admin Dashboard & Login Page
+   ============================================ */
+
+.fcsc-dash-shell {
+  display: grid;
+  gap: 2rem;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(20, 24, 50, 0.95) 0%, rgba(25, 35, 70, 0.98) 100%),
+              radial-gradient(circle at 20% 50%, rgba(138, 154, 245, 0.15), transparent 50%),
+              radial-gradient(circle at 80% 80%, rgba(102, 126, 234, 0.15), transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Card Base Styles */
+.fcsc-dash-card {
+  border-radius: 20px;
+  border: 1px solid rgba(138, 165, 255, 0.2);
+  background: rgba(30, 50, 100, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Hero Card */
+.fcsc-dash-hero {
+  background: linear-gradient(135deg, rgba(30, 50, 100, 0.5) 0%, rgba(40, 60, 120, 0.4) 100%);
+  border: 1px solid rgba(138, 165, 255, 0.25);
+  padding: 3rem;
+}
+
+.fcsc-dash-hero p {
+  color: rgba(200, 210, 255, 0.7);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+}
+
+.fcsc-dash-hero h1 {
+  color: #e8f1ff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 1rem 0;
+  background: linear-gradient(135deg, #ffffff 0%, #c8d2ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.fcsc-dash-copy {
+  color: rgba(200, 210, 255, 0.8);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
+}
+
+.fcsc-dash-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.fcsc-dash-actions .primary-btn,
+.fcsc-dash-actions .ghost-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.fcsc-dash-actions svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.fcsc-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255, 71, 87, 0.5);
+  background: rgba(255, 71, 87, 0.15);
+  color: #ff4757;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 300ms ease;
+}
+
+.fcsc-logout-btn:hover {
+  background: rgba(255, 71, 87, 0.25);
+  border-color: rgba(255, 71, 87, 0.7);
+  box-shadow: 0 0 20px rgba(255, 71, 87, 0.3);
+  transform: translateY(-2px);
+}
+
+.fcsc-logout-btn:active {
+  transform: translateY(0);
+}
+
+.fcsc-logout-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Stats Grid */
+.fcsc-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.fcsc-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  background: rgba(40, 60, 120, 0.3);
+  border: 1px solid rgba(138, 165, 255, 0.15);
+}
+
+.fcsc-stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(148, 112, 255, 0.2), rgba(96, 165, 250, 0.15));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(148, 112, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.fcsc-stat-icon svg {
+  width: 32px;
+  height: 32px;
+  fill: rgba(148, 112, 255, 0.8);
+}
+
+.fcsc-stat-content {
+  flex: 1;
+}
+
+.fcsc-stat-label {
+  color: rgba(200, 210, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+}
+
+.fcsc-stat-number {
+  color: #ffffff;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Content Grid */
+.fcsc-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .fcsc-content-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section Styles */
+.fcsc-section-header {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(138, 165, 255, 0.15);
+}
+
+.fcsc-section-header p {
+  color: rgba(148, 112, 255, 0.8);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin: 0 0 0.5rem 0;
+}
+
+.fcsc-section-header h3 {
+  color: #e8f1ff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Form Section */
+.fcsc-form-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.fcsc-event-form-modern {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.fcsc-form-group {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.fcsc-form-label {
+  color: rgba(200, 210, 255, 0.9);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.fcsc-form-input {
+  padding: 0.9rem 1.2rem;
+  border-radius: 10px;
+  border: 1.5px solid rgba(138, 165, 255, 0.2);
+  background: rgba(20, 30, 70, 0.5);
+  color: #e8f1ff;
+  font-size: 0.95rem;
+  transition: all 300ms ease;
+}
+
+.fcsc-form-input::placeholder {
+  color: rgba(200, 210, 255, 0.5);
+}
+
+.fcsc-form-input:focus {
+  outline: none;
+  border-color: rgba(148, 112, 255, 0.5);
+  background: rgba(20, 30, 70, 0.7);
+  box-shadow: 0 0 20px rgba(148, 112, 255, 0.2);
+}
+
+.fcsc-textarea {
+  resize: vertical;
+  min-height: 100px;
+  font-family: inherit;
+}
+
+.fcsc-form-error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 107, 107, 0.15);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 8px;
+}
+
+.fcsc-char-count {
+  color: rgba(200, 210, 255, 0.6);
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.fcsc-form-submit-btn {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem !important;
+  font-size: 0.95rem !important;
+  gap: 0.5rem !important;
+}
+
+.fcsc-form-submit-btn svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Events Section */
+.fcsc-events-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.fcsc-events-list {
+  display: grid;
+  gap: 1.2rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.fcsc-events-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.fcsc-events-list::-webkit-scrollbar-track {
+  background: rgba(138, 165, 255, 0.1);
+  border-radius: 10px;
+}
+
+.fcsc-events-list::-webkit-scrollbar-thumb {
+  background: rgba(148, 112, 255, 0.4);
+  border-radius: 10px;
+}
+
+.fcsc-events-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 112, 255, 0.6);
+}
+
+.fcsc-event-item {
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(138, 165, 255, 0.3);
+  background: rgba(20, 35, 80, 0.8);
+  transition: all 300ms ease;
+  backdrop-filter: blur(8px);
+}
+
+.fcsc-event-item:hover {
+  border-color: rgba(138, 165, 255, 0.5);
+  background: rgba(25, 45, 95, 0.9);
+  box-shadow: 0 8px 24px rgba(138, 165, 255, 0.25);
+}
+
+.fcsc-event-pending {
+  border-color: rgba(255, 193, 7, 0.4);
+  background: rgba(50, 45, 60, 0.8);
+}
+
+.fcsc-event-approved {
+  border-color: rgba(76, 175, 80, 0.4);
+  background: rgba(30, 55, 50, 0.8);
+}
+
+.fcsc-event-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(138, 165, 255, 0.1);
+}
+
+.fcsc-event-meta h4 {
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.fcsc-event-meta p {
+  color: rgba(200, 210, 255, 0.85);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.fcsc-status-badge {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fcsc-badge-pending {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.fcsc-badge-approved {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4caf50;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.fcsc-event-details {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.fcsc-event-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(220, 230, 255, 0.95);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.fcsc-event-detail-row svg {
+  width: 18px;
+  height: 18px;
+  fill: rgba(148, 112, 255, 0.6);
+  flex-shrink: 0;
+}
+
+.fcsc-event-description-text {
+  color: rgba(220, 230, 255, 0.85);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Empty State */
+.fcsc-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  text-align: center;
+  padding: 2rem;
+}
+
+.fcsc-empty-state svg {
+  width: 48px;
+  height: 48px;
+  fill: rgba(148, 112, 255, 0.4);
+  margin-bottom: 1rem;
+}
+
+.fcsc-empty-state p {
+  color: #e8f1ff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.fcsc-empty-state span {
+  color: rgba(200, 210, 255, 0.7);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .fcsc-dash-shell {
+    gap: 1.5rem;
+    padding: 1rem;
+  }
+
+  .fcsc-dash-card {
+    padding: 1.5rem;
+  }
+
+  .fcsc-dash-hero {
+    padding: 2rem 1.5rem;
+  }
+
+  .fcsc-dash-hero h1 {
+    font-size: 2rem;
+  }
+
+  .fcsc-dash-actions {
+    gap: 0.75rem;
+  }
+
+  .fcsc-dash-actions .primary-btn,
+  .fcsc-dash-actions .ghost-btn {
+    font-size: 0.9rem;
+    padding: 0.7rem 1.2rem;
+  }
+
+  .fcsc-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .fcsc-stat-card {
+    gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .fcsc-stat-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .fcsc-stat-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .fcsc-stat-number {
+    font-size: 1.75rem;
+  }
+
+  .fcsc-event-item {
+    padding: 1.25rem;
+  }
+
+  .fcsc-event-header {
+    flex-direction: column;
+  }
+
+  .fcsc-status-badge {
+    align-self: flex-start;
+  }
+}
+  from {
+    opacity: 0;
     transform: translateY(20px);
   }
   to {

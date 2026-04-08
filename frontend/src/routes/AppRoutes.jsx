@@ -14,7 +14,6 @@ import AdminLecturersPage from "../pages/admin/AdminLecturersPage";
 import AdminChangeRequestsPage from "../pages/admin/AdminChangeRequestsPage";
 import AdminHolidaysPage from "../pages/admin/AdminHolidaysPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
-import AdminProgrammesPage from "../pages/admin/AdminProgrammesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import AdminStudentProfilesPage from "../pages/admin/AdminStudentProfilesPage";
 import AdminStudentGroupsPage from "../pages/admin/AdminStudentGroupsPage";
@@ -67,7 +66,6 @@ const AppRoutes = () => {
           <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
           <Route path={ROUTE_PATHS.communityLogin} element={<CommunityLoginPage />} />
           <Route path={ROUTE_PATHS.lecturerLogin} element={<LecturerLoginPage />} />
-          <Route path={ROUTE_PATHS.communityLogin} element={<CommunityLoginPage />} />
           <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
         </Route>
 
@@ -121,10 +119,6 @@ const AppRoutes = () => {
             <Route
               path={ROUTE_PATHS.adminLecturers}
               element={<AdminLecturersPage />}
-            />
-            <Route
-              path={ROUTE_PATHS.adminProgrammes}
-              element={<AdminProgrammesPage />}
             />
             <Route
               path={ROUTE_PATHS.adminHolidays}

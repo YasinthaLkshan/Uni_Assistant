@@ -15,15 +15,6 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
-    label: "Programmes",
-    path: ROUTE_PATHS.adminProgrammes,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zm-7 9.18V17l7 3.82L19 17v-4.82l-7 3.82-7-3.82z" />
-      </svg>
-    ),
-  },
-  {
     label: "Modules",
     path: ROUTE_PATHS.adminModules,
     icon: (
@@ -96,7 +87,6 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.adminAcademicEvents]: "Academic Events",
   [ROUTE_PATHS.adminFcscInforms]: "FCSC Informs",
   [ROUTE_PATHS.adminLecturers]: "Lecturers",
-  [ROUTE_PATHS.adminProgrammes]: "Programmes",
   [ROUTE_PATHS.adminHolidays]: "Holidays",
   [ROUTE_PATHS.adminChangeRequests]: "Change Requests",
   [ROUTE_PATHS.adminVivaReview]: "Viva Review",
