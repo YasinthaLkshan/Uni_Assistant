@@ -1966,7 +1966,9 @@ h3 {
 }
 
 .admin-filter-grid-events {
-  display: contents;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
 }
 
 .admin-events-form-grid {
