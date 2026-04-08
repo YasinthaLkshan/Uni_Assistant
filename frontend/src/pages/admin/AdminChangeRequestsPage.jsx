@@ -63,7 +63,7 @@ const AdminChangeRequestsPage = () => {
       setError("");
       setSuccess("");
       await approveChangeRequest(requestId, remarks[requestId] || "");
-      setSuccess("Request approved — schedule updated");
+      setSuccess("Request approved");
       setRemarks((prev) => ({ ...prev, [requestId]: "" }));
       await loadRequests();
     } catch (err) {
@@ -93,8 +93,8 @@ const AdminChangeRequestsPage = () => {
     <section className="admin-page-grid section-entrance">
       <article className="admin-glass-card admin-module-card">
         <p className="eyebrow">Admin Review</p>
-        <h2>Schedule Change Requests</h2>
-        <p>Review and process lecturer requests to reschedule submitted sessions.</p>
+        <h2>Timetable Change Requests</h2>
+        <p>Review and process lecturer requests to reschedule timetable entries.</p>
 
         <h3 className="admin-subsection-title">Filters</h3>
 
@@ -141,15 +141,15 @@ const AdminChangeRequestsPage = () => {
                   return (
                     <tr key={r._id}>
                       <td>{r.lecturer?.name || "-"}</td>
-                      <td>{r.module?.moduleCode || "-"}</td>
+                      <td>{r.moduleCode || r.module?.moduleCode || "-"}</td>
                       <td>G{r.group}</td>
                       <td>
-                        {formatDate(r.currentDate)}<br />
-                        Slot {r.currentSlot} ({r.currentType})
+                        {r.currentDay}<br />
+                        {r.currentTime}
                       </td>
                       <td>
                         {formatDate(r.proposedDate)}<br />
-                        Slot {r.proposedSlot}
+                        {r.proposedTime}
                       </td>
                       <td><p className="admin-inline-note">{r.reason}</p></td>
                       <td>

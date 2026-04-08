@@ -1,68 +1,51 @@
 import mongoose from "mongoose";
 
 import ScheduleChangeRequest from "../models/ScheduleChangeRequest.js";
-import LectureSchedule, { TIME_SLOTS } from "../models/LectureSchedule.js";
-import { isHoliday } from "./holiday.service.js";
-import { checkConflicts } from "./lectureSchedule.service.js";
+import TimetableEntry from "../models/TimetableEntry.js";
 import AppError from "../utils/appError.js";
-
-const getSlotTimes = (slotNumber) => {
-  const found = TIME_SLOTS.find((s) => s.slot === slotNumber);
-  if (!found) throw new AppError("Invalid slot number", 400);
-  return found;
-};
-
-const getDayOfWeek = (date) => {
-  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  return days[new Date(date).getDay()];
-};
 
 // ─── Lecturer Operations ────────────────────────────────────────────────────
 
 /**
- * File a new change request.
+ * File a new change request for a timetable entry on a specific date.
  */
 export const fileChangeRequest = async (lecturerId, payload) => {
-  const { sessionId, proposedDate, proposedSlot, reason } = payload;
+  const { timetableEntryId, proposedDate, proposedTime, reason } = payload;
 
-  if (!sessionId || !proposedDate || !proposedSlot || !reason) {
-    throw new AppError("sessionId, proposedDate, proposedSlot, and reason are required", 400);
+  if (!timetableEntryId || !proposedDate || !proposedTime || !reason) {
+    throw new AppError("timetableEntryId, proposedDate, proposedTime, and reason are required", 400);
   }
 
-  if (!mongoose.Types.ObjectId.isValid(sessionId)) {
-    throw new AppError("Invalid session id", 400);
+  if (!mongoose.Types.ObjectId.isValid(timetableEntryId)) {
+    throw new AppError("Invalid timetable entry id", 400);
   }
 
-  const session = await LectureSchedule.findOne({
-    _id: sessionId,
-    lecturer: lecturerId,
-    status: "submitted",
-  });
-
-  if (!session) {
-    throw new AppError("Session not found or not yet submitted", 404);
+  const entry = await TimetableEntry.findById(timetableEntryId);
+  if (!entry) {
+    throw new AppError("Timetable entry not found", 404);
   }
 
-  // Check for existing pending request on same session
+  // Check for existing pending request on same entry for same date
   const existingRequest = await ScheduleChangeRequest.findOne({
-    session: sessionId,
+    timetableEntry: timetableEntryId,
+    proposedDate: new Date(proposedDate),
     status: "pending",
   });
 
   if (existingRequest) {
-    throw new AppError("A pending change request already exists for this session", 409);
+    throw new AppError("A pending change request already exists for this entry", 409);
   }
 
   const created = await ScheduleChangeRequest.create({
     lecturer: lecturerId,
-    session: sessionId,
-    module: session.module,
-    group: session.group,
-    currentDate: session.date,
-    currentSlot: session.slot,
-    currentType: session.type,
+    timetableEntry: timetableEntryId,
+    module: entry.module,
+    moduleCode: entry.moduleCode,
+    group: entry.groupNumber,
+    currentDay: entry.dayOfWeek,
+    currentTime: `${entry.startTime} - ${entry.endTime}`,
     proposedDate: new Date(proposedDate),
-    proposedSlot: Number(proposedSlot),
+    proposedTime: String(proposedTime).trim(),
     reason: String(reason).trim(),
   });
 
@@ -100,7 +83,7 @@ export const getAllRequests = async (filters = {}) => {
 };
 
 /**
- * Approve a change request — perform the actual reschedule.
+ * Approve a change request.
  */
 export const approveRequest = async (requestId, adminId, remarks = "") => {
   if (!mongoose.Types.ObjectId.isValid(requestId)) {
@@ -114,46 +97,6 @@ export const approveRequest = async (requestId, adminId, remarks = "") => {
     throw new AppError(`Request already ${request.status}`, 400);
   }
 
-  const session = await LectureSchedule.findById(request.session);
-  if (!session) throw new AppError("Original session no longer exists", 404);
-
-  // Validate proposed date
-  const proposedDay = getDayOfWeek(request.proposedDate);
-
-  const holiday = await isHoliday(request.proposedDate);
-  if (holiday) {
-    throw new AppError(`Proposed date is a holiday — ${holiday.name}`, 400);
-  }
-
-  // Check conflicts for the new date/slot
-  const conflicts = await checkConflicts(
-    session.lecturer,
-    request.proposedDate,
-    request.proposedSlot,
-    session.programme,
-    session.academicYear,
-    session.group,
-    session._id // exclude the session being moved
-  );
-
-  if (conflicts.length > 0) {
-    throw new AppError(
-      `Cannot reschedule — ${conflicts.map((c) => c.message).join("; ")}`,
-      409
-    );
-  }
-
-  // Perform the reschedule
-  const slotTimes = getSlotTimes(request.proposedSlot);
-
-  session.date = request.proposedDate;
-  session.dayOfWeek = proposedDay;
-  session.slot = request.proposedSlot;
-  session.startTime = slotTimes.startTime;
-  session.endTime = slotTimes.endTime;
-  await session.save();
-
-  // Update the request
   request.status = "approved";
   request.adminRemarks = String(remarks).trim();
   request.reviewedBy = adminId;

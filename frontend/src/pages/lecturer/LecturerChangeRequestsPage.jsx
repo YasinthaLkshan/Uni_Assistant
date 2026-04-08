@@ -1,17 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { getFullSchedule } from "../../services/lectureScheduleService";
+import api from "../../services/api";
 import {
   fileChangeRequest,
   getMyChangeRequests,
 } from "../../services/scheduleChangeRequestService";
 import { extractApiErrorMessage } from "../../utils/error";
-
-const TIME_SLOTS = [
-  { slot: 1, label: "9:00 AM – 11:00 AM" },
-  { slot: 2, label: "11:30 AM – 1:30 PM" },
-  { slot: 3, label: "2:00 PM – 4:00 PM" },
-];
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
@@ -28,14 +22,14 @@ const STATUS_STYLES = {
 };
 
 const EMPTY_FORM = {
-  sessionId: "",
+  timetableEntryId: "",
   proposedDate: "",
-  proposedSlot: "",
+  proposedTime: "",
   reason: "",
 };
 
 const LecturerChangeRequestsPage = () => {
-  const [sessions, setSessions] = useState([]);
+  const [timetableEntries, setTimetableEntries] = useState([]);
   const [requests, setRequests] = useState([]);
   const [form, setForm] = useState(EMPTY_FORM);
   const [loading, setLoading] = useState(false);
@@ -47,13 +41,11 @@ const LecturerChangeRequestsPage = () => {
     try {
       setLoading(true);
       setError("");
-      const [scheduleRes, requestsRes] = await Promise.all([
-        getFullSchedule(),
+      const [timetableRes, requestsRes] = await Promise.all([
+        api.get("/lecturer/my-timetable"),
         getMyChangeRequests(),
       ]);
-      // Only submitted sessions can have change requests
-      const submitted = (scheduleRes.data || []).filter((s) => s.status === "submitted");
-      setSessions(submitted);
+      setTimetableEntries(timetableRes.data.data || []);
       setRequests(requestsRes.data || []);
     } catch (err) {
       setError(extractApiErrorMessage(err));
@@ -66,7 +58,7 @@ const LecturerChangeRequestsPage = () => {
     loadData();
   }, []);
 
-  const selectedSession = sessions.find((s) => s._id === form.sessionId) || null;
+  const selectedEntry = timetableEntries.find((e) => e._id === form.timetableEntryId) || null;
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -82,16 +74,16 @@ const LecturerChangeRequestsPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (!form.sessionId) {
-      setError("Please select a session");
+    if (!form.timetableEntryId) {
+      setError("Please select a timetable entry");
       return;
     }
     if (!form.proposedDate) {
       setError("Proposed date is required");
       return;
     }
-    if (!form.proposedSlot) {
-      setError("Proposed time slot is required");
+    if (!form.proposedTime) {
+      setError("Proposed time is required");
       return;
     }
     if (!form.reason.trim()) {
@@ -105,13 +97,13 @@ const LecturerChangeRequestsPage = () => {
       setSuccess("");
 
       await fileChangeRequest({
-        sessionId: form.sessionId,
+        timetableEntryId: form.timetableEntryId,
         proposedDate: form.proposedDate,
-        proposedSlot: Number(form.proposedSlot),
+        proposedTime: form.proposedTime.trim(),
         reason: form.reason.trim(),
       });
 
-      setSuccess("Change request filed successfully");
+      setSuccess("Change request submitted successfully");
       resetForm();
       await loadData();
     } catch (err) {
@@ -124,26 +116,26 @@ const LecturerChangeRequestsPage = () => {
   return (
     <section className="admin-page-grid section-entrance">
       <article className="admin-glass-card admin-module-card">
-        <p className="eyebrow">Schedule Changes</p>
-        <h2>Schedule Change Requests</h2>
-        <p>File a request to reschedule a submitted lecture session. Admin will review and approve or reject.</p>
+        <p className="eyebrow">Timetable Changes</p>
+        <h2>Request a Timetable Change</h2>
+        <p>Select a timetable entry and propose a new date/time. Admin will review and approve or reject your request.</p>
 
-        <h3 className="admin-subsection-title">File a Change Request</h3>
+        <h3 className="admin-subsection-title">Submit a Request</h3>
 
         <form className="admin-form-grid admin-module-form-grid" onSubmit={handleSubmit}>
           <label className="admin-form-span-full">
-            Select Session to Change
-            <select name="sessionId" value={form.sessionId} onChange={handleInputChange} required>
-              <option value="">Select a session</option>
-              {sessions.map((s) => (
-                <option key={s._id} value={s._id}>
-                  {s.module?.moduleCode || "?"} — G{s.group} — {formatDate(s.date)} {s.dayOfWeek} Slot {s.slot} ({s.startTime}–{s.endTime}) [{s.type}]
+            Select Timetable Entry
+            <select name="timetableEntryId" value={form.timetableEntryId} onChange={handleInputChange} required>
+              <option value="">Select an entry</option>
+              {timetableEntries.map((e) => (
+                <option key={e._id} value={e._id}>
+                  {e.moduleCode} — {e.dayOfWeek} {e.startTime}-{e.endTime} — G{e.groupNumber} — {e.activityType} — {e.venue}
                 </option>
               ))}
             </select>
           </label>
 
-          {selectedSession ? (
+          {selectedEntry ? (
             <div className="admin-form-span-full" style={{
               padding: "0.6rem 0.8rem",
               borderRadius: "6px",
@@ -152,7 +144,7 @@ const LecturerChangeRequestsPage = () => {
               fontSize: "0.85rem",
               marginBottom: "0.3rem",
             }}>
-              <strong>Current:</strong> {selectedSession.module?.moduleName || selectedSession.module?.moduleCode} — Group {selectedSession.group} — {formatDate(selectedSession.date)} {selectedSession.dayOfWeek}, Slot {selectedSession.slot} ({selectedSession.startTime}–{selectedSession.endTime}), {selectedSession.type}
+              <strong>Current:</strong> {selectedEntry.moduleName || selectedEntry.moduleCode} — {selectedEntry.dayOfWeek}, {selectedEntry.startTime}-{selectedEntry.endTime}, Group {selectedEntry.groupNumber}, {selectedEntry.activityType}, {selectedEntry.venue}
             </div>
           ) : null}
 
@@ -168,13 +160,15 @@ const LecturerChangeRequestsPage = () => {
           </label>
 
           <label>
-            Proposed Time Slot
-            <select name="proposedSlot" value={form.proposedSlot} onChange={handleInputChange} required>
-              <option value="">Select Slot</option>
-              {TIME_SLOTS.map((ts) => (
-                <option key={ts.slot} value={ts.slot}>Slot {ts.slot}: {ts.label}</option>
-              ))}
-            </select>
+            Proposed New Time
+            <input
+              type="text"
+              name="proposedTime"
+              value={form.proposedTime}
+              onChange={handleInputChange}
+              placeholder="e.g. 09:00 - 11:00"
+              required
+            />
           </label>
 
           <label className="admin-form-span-full">
@@ -184,14 +178,14 @@ const LecturerChangeRequestsPage = () => {
               value={form.reason}
               onChange={handleInputChange}
               rows={3}
-              placeholder="Explain why you need to reschedule this session"
+              placeholder="Explain why you need to change this timetable entry"
               required
             />
           </label>
 
           <div className="admin-form-actions admin-form-span-full">
             <button type="submit" className="primary-btn" disabled={submitting}>
-              {submitting ? "Filing..." : "File Change Request"}
+              {submitting ? "Submitting..." : "Submit Change Request"}
             </button>
             <button type="button" className="ghost-btn" onClick={resetForm}>
               Clear
@@ -206,7 +200,7 @@ const LecturerChangeRequestsPage = () => {
 
         <div className="admin-data-table-wrap">
           {loading ? <p>Loading...</p> : null}
-          {!loading && requests.length === 0 ? <p>No change requests filed yet.</p> : null}
+          {!loading && requests.length === 0 ? <p>No change requests submitted yet.</p> : null}
 
           {!loading && requests.length > 0 ? (
             <table className="admin-data-table">
@@ -226,10 +220,10 @@ const LecturerChangeRequestsPage = () => {
                   const style = STATUS_STYLES[r.status] || {};
                   return (
                     <tr key={r._id}>
-                      <td>{r.module?.moduleCode || "-"}</td>
+                      <td>{r.moduleCode || r.module?.moduleCode || "-"}</td>
                       <td>G{r.group}</td>
-                      <td>{formatDate(r.currentDate)} Slot {r.currentSlot}</td>
-                      <td>{formatDate(r.proposedDate)} Slot {r.proposedSlot}</td>
+                      <td>{r.currentDay} {r.currentTime}</td>
+                      <td>{formatDate(r.proposedDate)} {r.proposedTime}</td>
                       <td><p className="admin-inline-note">{r.reason}</p></td>
                       <td>
                         <span style={{

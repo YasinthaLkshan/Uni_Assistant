@@ -9,15 +9,20 @@ const scheduleChangeRequestSchema = new mongoose.Schema(
       ref: "User",
       required: [true, "Lecturer is required"],
     },
-    session: {
+    timetableEntry: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "LectureSchedule",
-      required: [true, "Session reference is required"],
+      ref: "TimetableEntry",
+      required: [true, "Timetable entry reference is required"],
     },
     module: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Module",
       required: true,
+    },
+    moduleCode: {
+      type: String,
+      required: true,
+      trim: true,
     },
     group: {
       type: Number,
@@ -25,18 +30,12 @@ const scheduleChangeRequestSchema = new mongoose.Schema(
       min: 1,
     },
     // Current schedule details (snapshot at time of request)
-    currentDate: {
-      type: Date,
-      required: true,
-    },
-    currentSlot: {
-      type: Number,
-      enum: [1, 2, 3],
-      required: true,
-    },
-    currentType: {
+    currentDay: {
       type: String,
-      enum: ["theory", "lab"],
+      required: true,
+    },
+    currentTime: {
+      type: String,
       required: true,
     },
     // Proposed reschedule
@@ -44,10 +43,9 @@ const scheduleChangeRequestSchema = new mongoose.Schema(
       type: Date,
       required: [true, "Proposed date is required"],
     },
-    proposedSlot: {
-      type: Number,
-      enum: [1, 2, 3],
-      required: [true, "Proposed slot is required"],
+    proposedTime: {
+      type: String,
+      required: [true, "Proposed time is required"],
     },
     // Reason from lecturer
     reason: {
