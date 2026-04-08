@@ -4,6 +4,7 @@ import AdminLayout from "../layouts/AdminLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import MainLayout from "../layouts/MainLayout";
 import AdminLoginPage from "../pages/AdminLoginPage";
+import CommunityLoginPage from "../pages/CommunityLoginPage";
 import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPage";
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
@@ -41,8 +42,9 @@ const AppRoutes = () => {
         <Route element={<AuthLayout />}>
           <Route path={ROUTE_PATHS.home} element={<HomePage />} />
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
-          <Route path={ROUTE_PATHS.fcscDashboard} element={<FcscDashboardPage />} />
           <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
+          <Route path={ROUTE_PATHS.communityLogin} element={<CommunityLoginPage />} />
+          <Route path={ROUTE_PATHS.fcscDashboard} element={<FcscDashboardPage />} />
           <Route path={ROUTE_PATHS.register} element={<RegisterPage />} />
         </Route>
 
