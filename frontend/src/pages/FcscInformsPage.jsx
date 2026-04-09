@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { exportFcscApprovedEventsPdf } from "../utils/fcscInformsPdf";
+
 const isApprovedEventExpired = (eventDate) => {
   if (!eventDate) {
     return false;
@@ -37,6 +39,14 @@ const FcscInformsPage = () => {
     setLoading(false);
   };
 
+  const handleDownloadPdf = () => {
+    if (!approvedEvents.length) {
+      return;
+    }
+
+    exportFcscApprovedEventsPdf({ events: approvedEvents });
+  };
+
   if (loading) {
     return (
       <section className="fcsc-informs-page">
@@ -49,10 +59,28 @@ const FcscInformsPage = () => {
     <section className="fcsc-informs-page">
       <div className="fcsc-informs-container">
         <div className="fcsc-informs-header">
-          <h1 className="fcsc-informs-title">FCSC Approved Events</h1>
+          <div className="fcsc-informs-header-top">
+            <span className="fcsc-informs-eyebrow">Community Noticeboard</span>
+            <span className="fcsc-informs-count-chip">{approvedEvents.length} Approved</span>
+          </div>
+
+          <h1 className="fcsc-informs-title">
+            FCSC <span>Approved Events</span>
+          </h1>
           <p className="fcsc-informs-subtitle">
             View all approved FCSC events and announcements
           </p>
+
+          <div className="fcsc-informs-header-actions">
+            <button
+              type="button"
+              className="fcsc-informs-download-btn"
+              onClick={handleDownloadPdf}
+              disabled={!approvedEvents.length}
+            >
+              Download PDF
+            </button>
+          </div>
         </div>
 
         {approvedEvents.length === 0 ? (

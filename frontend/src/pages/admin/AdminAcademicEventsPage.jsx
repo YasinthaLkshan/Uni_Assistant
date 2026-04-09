@@ -255,8 +255,8 @@ const AdminAcademicEventsPage = () => {
     <section className="admin-page-grid section-entrance admin-events-clean">
       <article className="admin-glass-card admin-module-card admin-events-card">
         <p className="eyebrow">Admin Module</p>
-        <h2>Academic Events Management</h2>
-        <p>Manage IT Year 3 academic events with strong filtering and clear scheduling details.</p>
+        <h2 className="admin-events-hero-title">Academic Events Management</h2>
+        <p className="admin-events-lead">Manage IT Year 3 academic events with strong filtering and clear scheduling details.</p>
         <p className="admin-scope-note">Scope: IT Faculty • Year 3 • Semester 1/2 • Groups 1/2/3</p>
 
         <h3 className="admin-subsection-title">Filters</h3>
