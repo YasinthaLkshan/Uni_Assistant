@@ -121,7 +121,7 @@ const DashboardPage = () => {
 		{
 			label: "Urgent Load",
 			value: `${summary.workloadSummary.breakdown.urgentTasks || 0} urgent task(s)`,
-			note: `${summary.workloadSummary.breakdown.totalTasks || summary.upcomingTasksCount} total active task(s)`,
+			note: `${summary.workloadSummary.breakdown.totalTasks ?? summary.upcomingTasksCount} total active task(s)`,
 		},
 	];
 
@@ -271,7 +271,7 @@ const DashboardPage = () => {
 					style={{ animationDelay: "80ms" }}
 					workloadScore={summary.workloadSummary.workloadScore}
 					workloadLevel={summary.workloadSummary.workloadLevel}
-					totalTasks={summary.workloadSummary.breakdown.totalTasks || summary.upcomingTasksCount}
+					totalTasks={summary.workloadSummary.breakdown.totalTasks ?? summary.upcomingTasksCount}
 					urgentTasks={summary.workloadSummary.breakdown.urgentTasks}
 					examsNear={summary.workloadSummary.breakdown.examsNear}
 					studySuggestion={summary.workloadSummary.studySuggestion?.suggestedStudyHoursPerDay}
