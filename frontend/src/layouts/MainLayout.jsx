@@ -15,6 +15,15 @@ const MENU_ITEMS = [
     ),
   },
   {
+    label: "Study Assistant",
+    path: ROUTE_PATHS.studyAssistant,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" />
+      </svg>
+    ),
+  },
+  {
     label: "Tasks",
     path: ROUTE_PATHS.tasks,
     icon: (
@@ -63,6 +72,7 @@ const MENU_ITEMS = [
 
 const PAGE_TITLES = {
   [ROUTE_PATHS.dashboard]: "Dashboard Overview",
+  [ROUTE_PATHS.studyAssistant]: "Lecture & Study Assistant",
   [ROUTE_PATHS.tasks]: "Task Management",
   [ROUTE_PATHS.myModules]: "My Modules",
   [ROUTE_PATHS.myTimetable]: "My Timetable",
@@ -103,13 +113,21 @@ const MainLayout = () => {
         <div className="sidebar-head">
           <NavLink
             to={ROUTE_PATHS.home}
-            className="icon-btn sidebar-home-link"
+            className="icon-btn sidebar-home-link home-button-fancy"
             onClick={closeMobileMenu}
             aria-label="Go to home page"
             title="Home"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 18v-4h4v4m-9 2h14a1 1 0 0 0 1-1v-8.7a1 1 0 0 0-.32-.73l-7-6.4a1 1 0 0 0-1.36 0l-7 6.4a1 1 0 0 0-.32.73V19a1 1 0 0 0 1 1z" />
+            <svg className="home-button-logo" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                className="home-button-roof"
+                d="M3.8 10.5 12 3.7l8.2 6.8v8.2a1.3 1.3 0 0 1-1.3 1.3H5.1a1.3 1.3 0 0 1-1.3-1.3z"
+              />
+              <path
+                className="home-button-door"
+                d="M9.7 20v-4.6a1 1 0 0 1 1-1h2.6a1 1 0 0 1 1 1V20"
+              />
+              <circle className="home-button-spark" cx="18.1" cy="6.2" r="1.1" />
             </svg>
           </NavLink>
         </div>

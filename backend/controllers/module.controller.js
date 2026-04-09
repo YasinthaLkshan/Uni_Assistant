@@ -18,8 +18,13 @@ export const createModuleController = asyncHandler(async (req, res) => {
   });
 });
 
-export const getAllModulesController = asyncHandler(async (_req, res) => {
-  const modules = await getAllModules();
+export const getAllModulesController = asyncHandler(async (req, res) => {
+  const filters = {};
+  if (req.query.academicYear) filters.academicYear = req.query.academicYear;
+  if (req.query.programme) filters.programme = req.query.programme;
+  if (req.query.semester) filters.semester = req.query.semester;
+
+  const modules = await getAllModules(filters);
 
   res.status(200).json({
     success: true,

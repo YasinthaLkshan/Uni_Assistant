@@ -105,6 +105,26 @@ const DashboardPage = () => {
 	const [showLoadingShell, setShowLoadingShell] = useState(true);
 	const [error, setError] = useState("");
 
+	const todaysPlan = [
+		{
+			label: "Focus Time",
+			value: summary.workloadSummary.studySuggestion?.suggestedStudyHoursPerDay || "1 hour/day",
+			note: "Recommended for today",
+		},
+		{
+			label: "Priority Task",
+			value: summary.smartRecommendation.title || "No priority task yet",
+			note: summary.smartRecommendation.daysLeft !== null && summary.smartRecommendation.daysLeft !== undefined
+				? `${summary.smartRecommendation.daysLeft} day(s) remaining`
+				: "Add tasks for smart recommendations",
+		},
+		{
+			label: "Urgent Load",
+			value: `${summary.workloadSummary.breakdown.urgentTasks || 0} urgent task(s)`,
+			note: `${summary.workloadSummary.breakdown.totalTasks ?? summary.upcomingTasksCount} total active task(s)`,
+		},
+	];
+
 	const loadDashboardSummary = useCallback(async () => {
 		try {
 			setError("");
@@ -140,7 +160,7 @@ const DashboardPage = () => {
 
 	if (showLoadingShell) {
 		return (
-			<section className={`dashboard dashboard-page dashboard-premium loading-shell ${loading ? "is-entering" : "is-leaving"}`.trim()}>
+			<section className={`dashboard dashboard-page dashboard-premium dashboard-student-clean loading-shell ${loading ? "is-entering" : "is-leaving"}`.trim()}>
 				<GlassCard className="dashboard-loading-header section-entrance">
 					<div className="dashboard-loading-copy">
 						<span className="skeleton-block skeleton-eyebrow" />
@@ -176,7 +196,7 @@ const DashboardPage = () => {
 
 	if (error) {
 		return (
-			<section className="dashboard-page dashboard-premium">
+			<section className="dashboard-page dashboard-premium dashboard-student-clean">
 				<EmptyStateCard
 					title="Unable to load dashboard"
 					description={error}
@@ -191,14 +211,21 @@ const DashboardPage = () => {
 	}
 
 	return (
-		<section className="dashboard dashboard-page dashboard-premium">
+		<section className="dashboard dashboard-page dashboard-premium dashboard-student-clean">
 			<GlassCard className="section-entrance dashboard-welcome-card" style={{ animationDelay: "40ms" }}>
 				<PageHeader
 					eyebrow="Welcome Back"
-					title={`Hello, ${user?.name || "Student"}`}
-					subtitle="Here is your academic pulse for today. Stay focused and ahead."
+					title={(
+						<>
+							Hello, <span className="dashboard-name-highlight">{user?.name || "Student"}</span>
+						</>
+					)}
+					subtitle="Your daily plan is ready. Stay focused with simple, clear priorities."
 					rightContent={
 						<div className="dashboard-head-actions">
+							<Link to={ROUTE_PATHS.fcscInforms} className="ui-btn is-ghost">
+								FCSC Informs
+							</Link>
 							<Link to={ROUTE_PATHS.gpaCalculator} className="ui-btn is-ghost">
 								Open GPA Calculator
 							</Link>
@@ -221,13 +248,30 @@ const DashboardPage = () => {
 				</div>
 			</GlassCard>
 
+			<GlassCard as="section" className="section-entrance dashboard-plan-card" style={{ animationDelay: "60ms" }}>
+				<SectionTitle
+					eyebrow="Today's Plan"
+					title="A simple roadmap for your study day"
+					className="dashboard-plan-head"
+				/>
+				<div className="dashboard-plan-list">
+					{todaysPlan.map((item) => (
+						<article key={item.label} className="dashboard-plan-item">
+							<p className="dashboard-plan-label">{item.label}</p>
+							<h4 className="dashboard-plan-value">{item.value}</h4>
+							<p className="dashboard-plan-note">{item.note}</p>
+						</article>
+					))}
+				</div>
+			</GlassCard>
+
 			<div className="dashboard-grid">
 				<WorkloadCard
 					className="section-entrance summary-card"
 					style={{ animationDelay: "80ms" }}
 					workloadScore={summary.workloadSummary.workloadScore}
 					workloadLevel={summary.workloadSummary.workloadLevel}
-					totalTasks={summary.workloadSummary.breakdown.totalTasks || summary.upcomingTasksCount}
+					totalTasks={summary.workloadSummary.breakdown.totalTasks ?? summary.upcomingTasksCount}
 					urgentTasks={summary.workloadSummary.breakdown.urgentTasks}
 					examsNear={summary.workloadSummary.breakdown.examsNear}
 					studySuggestion={summary.workloadSummary.studySuggestion?.suggestedStudyHoursPerDay}

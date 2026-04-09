@@ -40,7 +40,7 @@ const buildWorkloadSummary = (enhancedAnalysis) => {
     breakdown: {
       totalTasks: metrics.totalEvents,
       urgentTasks: metrics.criticalEvents + metrics.highUrgencyEvents,
-      examsNear: metrics.criticalEvents,
+      examsNear: metrics.examsNear ?? metrics.criticalEvents,
     },
     analysis: {
       intensity: workloadAnalysis.intensity,
