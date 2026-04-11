@@ -31,6 +31,7 @@ import LecturerChangeRequestsPage from "../pages/lecturer/LecturerChangeRequests
 import LecturerNoticesPage from "../pages/lecturer/LecturerNoticesPage";
 import LecturerAnnouncementsPage from "../pages/lecturer/LecturerAnnouncementsPage";
 import LecturerContactAdminPage from "../pages/lecturer/LecturerContactAdminPage";
+import LecturerFeedbackPage from "../pages/lecturer/LecturerFeedbackPage";
 import LecturerMessagesPage from "../pages/lecturer/LecturerMessagesPage";
 import LoginPage from "../pages/LoginPage";
 import StudyAssistantPage from "../pages/StudyAssistantPage";
@@ -41,6 +42,7 @@ import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
 import RegisterPage from "../pages/RegisterPage";
 import StudentAnnouncementsPage from "../pages/StudentAnnouncementsPage";
+import StudentFeedbackPage from "../pages/StudentFeedbackPage";
 import StudentMessagesPage from "../pages/StudentMessagesPage";
 import TasksPage from "../pages/TasksPage";
 import AdminProtectedRoute from "./AdminProtectedRoute";
@@ -92,6 +94,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.lecturerAnnouncements} element={<LecturerAnnouncementsPage />} />
             <Route path={ROUTE_PATHS.lecturerContactAdmin} element={<LecturerContactAdminPage />} />
             <Route path={ROUTE_PATHS.lecturerMessages} element={<LecturerMessagesPage />} />
+            <Route path={ROUTE_PATHS.lecturerFeedback} element={<LecturerFeedbackPage />} />
           </Route>
         </Route>
 
@@ -108,6 +111,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
             <Route path={ROUTE_PATHS.studentAnnouncements} element={<StudentAnnouncementsPage />} />
             <Route path={ROUTE_PATHS.studentMessages} element={<StudentMessagesPage />} />
+            <Route path={ROUTE_PATHS.studentFeedback} element={<StudentFeedbackPage />} />
           </Route>
         </Route>
 

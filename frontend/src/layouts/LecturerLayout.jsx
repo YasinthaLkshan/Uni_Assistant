@@ -68,6 +68,15 @@ const LECTURER_MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Student Feedback",
+    path: ROUTE_PATHS.lecturerFeedback,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
@@ -78,6 +87,7 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.lecturerMessages]: "Student Messages",
   [ROUTE_PATHS.lecturerContactAdmin]: "Contact Admin",
   [ROUTE_PATHS.lecturerNotices]: "Notices",
+  [ROUTE_PATHS.lecturerFeedback]: "Student Feedback",
 };
 
 const LecturerLayout = () => {
