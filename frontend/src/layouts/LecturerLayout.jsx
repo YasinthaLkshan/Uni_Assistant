@@ -77,6 +77,15 @@ const LECTURER_MENU_ITEMS = [
       </svg>
     ),
   },
+  {
+    label: "Performance Insights",
+    path: ROUTE_PATHS.lecturerPerformance,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 13h2v8H3v-8zm4-5h2v13H7V8zm4-4h2v17h-2V4zm4 7h2v10h-2V11zm4-4h2v14h-2V7z" />
+      </svg>
+    ),
+  },
 ];
 
 const PAGE_TITLES = {
@@ -88,6 +97,7 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.lecturerContactAdmin]: "Contact Admin",
   [ROUTE_PATHS.lecturerNotices]: "Notices",
   [ROUTE_PATHS.lecturerFeedback]: "Student Feedback",
+  [ROUTE_PATHS.lecturerPerformance]: "Performance Insights",
 };
 
 const LecturerLayout = () => {

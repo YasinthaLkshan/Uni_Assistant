@@ -40,5 +40,6 @@ export const ROUTE_PATHS = {
   lecturerContactAdmin: "/lecturer/contact-admin",
   lecturerMessages: "/lecturer/messages",
   lecturerFeedback: "/lecturer/feedback",
+  lecturerPerformance: "/lecturer/performance",
   studentFeedback: "/feedback",
 };

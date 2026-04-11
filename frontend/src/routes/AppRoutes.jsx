@@ -33,6 +33,7 @@ import LecturerAnnouncementsPage from "../pages/lecturer/LecturerAnnouncementsPa
 import LecturerContactAdminPage from "../pages/lecturer/LecturerContactAdminPage";
 import LecturerFeedbackPage from "../pages/lecturer/LecturerFeedbackPage";
 import LecturerMessagesPage from "../pages/lecturer/LecturerMessagesPage";
+import LecturerPerformancePage from "../pages/lecturer/LecturerPerformancePage";
 import LoginPage from "../pages/LoginPage";
 import StudyAssistantPage from "../pages/StudyAssistantPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
@@ -95,6 +96,7 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.lecturerContactAdmin} element={<LecturerContactAdminPage />} />
             <Route path={ROUTE_PATHS.lecturerMessages} element={<LecturerMessagesPage />} />
             <Route path={ROUTE_PATHS.lecturerFeedback} element={<LecturerFeedbackPage />} />
+            <Route path={ROUTE_PATHS.lecturerPerformance} element={<LecturerPerformancePage />} />
           </Route>
         </Route>
 
