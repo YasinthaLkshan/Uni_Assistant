@@ -13,6 +13,11 @@ const formatDate = (dateStr) => {
   });
 };
 
+const SUBJECT_MIN = 3;
+const SUBJECT_MAX = 200;
+const CONTENT_MIN = 10;
+const CONTENT_MAX = 3000;
+
 const EMPTY_FORM = {
   receiverId: "",
   subject: "",
@@ -69,8 +74,40 @@ const LecturerContactAdminPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.receiverId || !form.subject.trim() || !form.content.trim()) {
-      setError("All fields are required");
+    if (!form.receiverId) {
+      setError("Please select an admin recipient");
+      return;
+    }
+    if (!admins.some((a) => a._id === form.receiverId)) {
+      setError("Selected recipient is not a valid admin");
+      return;
+    }
+
+    const subject = form.subject.trim();
+    if (!subject) {
+      setError("Subject is required");
+      return;
+    }
+    if (subject.length < SUBJECT_MIN) {
+      setError(`Subject must be at least ${SUBJECT_MIN} characters`);
+      return;
+    }
+    if (subject.length > SUBJECT_MAX) {
+      setError(`Subject must be at most ${SUBJECT_MAX} characters`);
+      return;
+    }
+
+    const content = form.content.trim();
+    if (!content) {
+      setError("Message is required");
+      return;
+    }
+    if (content.length < CONTENT_MIN) {
+      setError(`Message must be at least ${CONTENT_MIN} characters (currently ${content.length})`);
+      return;
+    }
+    if (content.length > CONTENT_MAX) {
+      setError(`Message must be at most ${CONTENT_MAX} characters`);
       return;
     }
 
@@ -80,8 +117,8 @@ const LecturerContactAdminPage = () => {
       setSuccess("");
       await api.post("/lecturer/messages", {
         receiverId: form.receiverId,
-        subject: form.subject.trim(),
-        content: form.content.trim(),
+        subject,
+        content,
       });
       setSuccess("Message sent to admin");
       resetForm();
@@ -121,9 +158,13 @@ const LecturerContactAdminPage = () => {
               value={form.subject}
               onChange={handleInputChange}
               placeholder="Message subject"
-              maxLength={200}
+              minLength={SUBJECT_MIN}
+              maxLength={SUBJECT_MAX}
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              {form.subject.trim().length} / {SUBJECT_MAX} characters (min {SUBJECT_MIN})
+            </small>
           </label>
 
           <label className="admin-form-span-full">
@@ -133,10 +174,14 @@ const LecturerContactAdminPage = () => {
               value={form.content}
               onChange={handleInputChange}
               rows={4}
-              placeholder="Write your message here..."
-              maxLength={3000}
+              placeholder="Write your message here (minimum 10 characters)..."
+              minLength={CONTENT_MIN}
+              maxLength={CONTENT_MAX}
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              {form.content.trim().length} / {CONTENT_MAX} characters (min {CONTENT_MIN})
+            </small>
           </label>
 
           <div className="admin-form-actions admin-form-span-full">

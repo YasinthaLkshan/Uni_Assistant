@@ -258,6 +258,22 @@ const InsightsTab = ({ dashboard }) => {
 // ─── Mark Attendance Tab ──────────────────────────────────────────────────────
 
 const DAY_ORDER = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const DAY_OF_WEEK_FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const ymd = (date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const attendanceMinDate = () => {
+  const d = new Date();
+  d.setDate(d.getDate() - 90);
+  return ymd(d);
+};
+
+const attendanceMaxDate = () => ymd(new Date());
 
 const MarkAttendanceTab = () => {
   const [sessions, setSessions] = useState([]);
@@ -288,8 +304,35 @@ const MarkAttendanceTab = () => {
     fetchSessions();
   }, []);
 
+  const selectedSession = sessions.find((s) => s._id === selectedEntry) || null;
+
+  const dayMismatch = (() => {
+    if (!selectedSession || !selectedDate) return null;
+    const picked = DAY_OF_WEEK_FULL[new Date(`${selectedDate}T00:00:00`).getDay()];
+    if (picked !== selectedSession.dayOfWeek) {
+      return `Selected date is a ${picked}, but this session normally runs on ${selectedSession.dayOfWeek}`;
+    }
+    return null;
+  })();
+
   const loadStudents = async () => {
-    if (!selectedEntry || !selectedDate) return;
+    if (!selectedEntry) {
+      setLoadingErr("Please select a session");
+      return;
+    }
+    if (!selectedDate) {
+      setLoadingErr("Please pick a date");
+      return;
+    }
+    if (selectedDate > attendanceMaxDate()) {
+      setLoadingErr("Cannot mark attendance for a future date");
+      return;
+    }
+    if (selectedDate < attendanceMinDate()) {
+      setLoadingErr("Date is too far in the past (90 day limit)");
+      return;
+    }
+
     try {
       setLoadingStudents(true);
       setLoadingErr("");
@@ -318,7 +361,29 @@ const MarkAttendanceTab = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedEntry || !selectedDate || students.length === 0) return;
+    if (!selectedEntry) {
+      setSaveErr("Please select a session");
+      return;
+    }
+    if (!selectedDate) {
+      setSaveErr("Please pick a date");
+      return;
+    }
+    if (selectedDate > attendanceMaxDate()) {
+      setSaveErr("Cannot save attendance for a future date");
+      return;
+    }
+    if (students.length === 0) {
+      setSaveErr("No students loaded");
+      return;
+    }
+    const allowed = new Set(["Present", "Late", "Absent"]);
+    const invalid = students.find((s) => !allowed.has(s.status));
+    if (invalid) {
+      setSaveErr(`Invalid status "${invalid.status}" for ${invalid.firstName || invalid._id}`);
+      return;
+    }
+
     try {
       setSaving(true);
       setSaveErr("");
@@ -380,6 +445,8 @@ const MarkAttendanceTab = () => {
             <input
               type="date"
               value={selectedDate}
+              min={attendanceMinDate()}
+              max={attendanceMaxDate()}
               onChange={(e) => { setSelectedDate(e.target.value); setStudents([]); }}
               style={{
                 background: "rgba(255,255,255,0.06)",
@@ -390,6 +457,14 @@ const MarkAttendanceTab = () => {
                 fontSize: "0.88rem",
               }}
             />
+            <small style={{ color: "#64748b", fontSize: "0.72rem" }}>
+              Today or earlier · within the last 90 days
+            </small>
+            {dayMismatch ? (
+              <small style={{ color: "#b45309", fontSize: "0.75rem" }}>
+                ⚠ {dayMismatch}
+              </small>
+            ) : null}
           </label>
 
           <button

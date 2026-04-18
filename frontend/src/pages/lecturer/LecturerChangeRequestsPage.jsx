@@ -15,6 +15,34 @@ const formatDate = (dateStr) => {
   return `${y}-${m}-${day}`;
 };
 
+const toYMD = (date) => {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+};
+
+const todayYMD = () => toYMD(new Date());
+
+const tomorrowYMD = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return toYMD(d);
+};
+
+const maxDateYMD = () => {
+  const d = new Date();
+  d.setMonth(d.getMonth() + 6);
+  return toYMD(d);
+};
+
+const TIME_RANGE_RE = /^([01]\d|2[0-3]):([0-5]\d)\s*-\s*([01]\d|2[0-3]):([0-5]\d)$/;
+
+const DAY_OF_WEEK = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+const REASON_MIN = 10;
+const REASON_MAX = 1000;
+
 const STATUS_STYLES = {
   pending: { background: "rgba(251,191,36,0.15)", color: "#fbbf24" },
   approved: { background: "rgba(16,185,129,0.15)", color: "#34d399" },
@@ -78,16 +106,64 @@ const LecturerChangeRequestsPage = () => {
       setError("Please select a timetable entry");
       return;
     }
+
     if (!form.proposedDate) {
       setError("Proposed date is required");
       return;
     }
-    if (!form.proposedTime) {
+    const minDate = tomorrowYMD();
+    const maxDate = maxDateYMD();
+    if (form.proposedDate < minDate) {
+      setError("Proposed date must be tomorrow or later (admin needs time to review)");
+      return;
+    }
+    if (form.proposedDate > maxDate) {
+      setError("Proposed date cannot be more than 6 months from today");
+      return;
+    }
+    const proposedDayName = DAY_OF_WEEK[new Date(`${form.proposedDate}T00:00:00`).getDay()];
+    if (selectedEntry && proposedDayName === selectedEntry.dayOfWeek) {
+      setError(`Proposed date falls on ${proposedDayName}, the same day as the current slot — choose a different date`);
+      return;
+    }
+
+    const timeText = form.proposedTime.trim();
+    if (!timeText) {
       setError("Proposed time is required");
       return;
     }
-    if (!form.reason.trim()) {
+    const match = timeText.match(TIME_RANGE_RE);
+    if (!match) {
+      setError("Proposed time must be in format HH:MM - HH:MM (e.g. 09:00 - 11:00)");
+      return;
+    }
+    const [, sh, sm, eh, em] = match;
+    const startMinutes = Number(sh) * 60 + Number(sm);
+    const endMinutes = Number(eh) * 60 + Number(em);
+    if (endMinutes <= startMinutes) {
+      setError("End time must be after start time");
+      return;
+    }
+    if (endMinutes - startMinutes < 30) {
+      setError("Session must be at least 30 minutes long");
+      return;
+    }
+    if (startMinutes < 7 * 60 || endMinutes > 21 * 60) {
+      setError("Time must be between 07:00 and 21:00");
+      return;
+    }
+
+    const reason = form.reason.trim();
+    if (!reason) {
       setError("Reason is required");
+      return;
+    }
+    if (reason.length < REASON_MIN) {
+      setError(`Reason must be at least ${REASON_MIN} characters (currently ${reason.length})`);
+      return;
+    }
+    if (reason.length > REASON_MAX) {
+      setError(`Reason must be at most ${REASON_MAX} characters`);
       return;
     }
 
@@ -99,8 +175,8 @@ const LecturerChangeRequestsPage = () => {
       await fileChangeRequest({
         timetableEntryId: form.timetableEntryId,
         proposedDate: form.proposedDate,
-        proposedTime: form.proposedTime.trim(),
-        reason: form.reason.trim(),
+        proposedTime: timeText,
+        reason,
       });
 
       setSuccess("Change request submitted successfully");
@@ -155,8 +231,13 @@ const LecturerChangeRequestsPage = () => {
               name="proposedDate"
               value={form.proposedDate}
               onChange={handleInputChange}
+              min={tomorrowYMD()}
+              max={maxDateYMD()}
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              Earliest: tomorrow · Latest: 6 months out
+            </small>
           </label>
 
           <label>
@@ -166,9 +247,14 @@ const LecturerChangeRequestsPage = () => {
               name="proposedTime"
               value={form.proposedTime}
               onChange={handleInputChange}
-              placeholder="e.g. 09:00 - 11:00"
+              placeholder="09:00 - 11:00"
+              pattern="^([01]\d|2[0-3]):([0-5]\d)\s*-\s*([01]\d|2[0-3]):([0-5]\d)$"
+              title="Format HH:MM - HH:MM between 07:00 and 21:00"
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              24h format, between 07:00 and 21:00, minimum 30 minutes
+            </small>
           </label>
 
           <label className="admin-form-span-full">
@@ -178,9 +264,17 @@ const LecturerChangeRequestsPage = () => {
               value={form.reason}
               onChange={handleInputChange}
               rows={3}
-              placeholder="Explain why you need to change this timetable entry"
+              minLength={REASON_MIN}
+              maxLength={REASON_MAX}
+              placeholder="Explain why you need to change this timetable entry (minimum 10 characters)"
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              {form.reason.trim().length} / {REASON_MAX} characters
+              {form.reason.trim().length > 0 && form.reason.trim().length < REASON_MIN
+                ? ` — need ${REASON_MIN - form.reason.trim().length} more`
+                : ""}
+            </small>
           </label>
 
           <div className="admin-form-actions admin-form-span-full">

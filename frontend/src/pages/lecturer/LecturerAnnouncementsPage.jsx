@@ -19,6 +19,12 @@ const formatDate = (dateStr) => {
   });
 };
 
+const TITLE_MIN = 3;
+const TITLE_MAX = 200;
+const CONTENT_MIN = 10;
+const CONTENT_MAX = 2000;
+const PRIORITY_VALUES = ["normal", "important", "urgent"];
+
 const EMPTY_FORM = {
   moduleCode: "",
   title: "",
@@ -84,8 +90,45 @@ const LecturerAnnouncementsPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!form.moduleCode || !form.title.trim() || !form.content.trim()) {
-      setError("All fields are required");
+    if (!form.moduleCode) {
+      setError("Please select a module");
+      return;
+    }
+    if (!modules.some((m) => m.code === form.moduleCode)) {
+      setError("Selected module is not assigned to you");
+      return;
+    }
+
+    const title = form.title.trim();
+    if (!title) {
+      setError("Title is required");
+      return;
+    }
+    if (title.length < TITLE_MIN) {
+      setError(`Title must be at least ${TITLE_MIN} characters`);
+      return;
+    }
+    if (title.length > TITLE_MAX) {
+      setError(`Title must be at most ${TITLE_MAX} characters`);
+      return;
+    }
+
+    const content = form.content.trim();
+    if (!content) {
+      setError("Content is required");
+      return;
+    }
+    if (content.length < CONTENT_MIN) {
+      setError(`Content must be at least ${CONTENT_MIN} characters (currently ${content.length})`);
+      return;
+    }
+    if (content.length > CONTENT_MAX) {
+      setError(`Content must be at most ${CONTENT_MAX} characters`);
+      return;
+    }
+
+    if (!PRIORITY_VALUES.includes(form.priority)) {
+      setError("Invalid priority");
       return;
     }
 
@@ -95,8 +138,8 @@ const LecturerAnnouncementsPage = () => {
       setSuccess("");
       await api.post("/lecturer/announcements", {
         moduleCode: form.moduleCode,
-        title: form.title.trim(),
-        content: form.content.trim(),
+        title,
+        content,
         priority: form.priority,
       });
       setSuccess("Announcement posted successfully");
@@ -158,9 +201,13 @@ const LecturerAnnouncementsPage = () => {
               value={form.title}
               onChange={handleInputChange}
               placeholder="Announcement title"
-              maxLength={200}
+              minLength={TITLE_MIN}
+              maxLength={TITLE_MAX}
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              {form.title.trim().length} / {TITLE_MAX} characters (min {TITLE_MIN})
+            </small>
           </label>
 
           <label className="admin-form-span-full">
@@ -170,10 +217,14 @@ const LecturerAnnouncementsPage = () => {
               value={form.content}
               onChange={handleInputChange}
               rows={4}
-              placeholder="Write your announcement here..."
-              maxLength={2000}
+              placeholder="Write your announcement here (minimum 10 characters)..."
+              minLength={CONTENT_MIN}
+              maxLength={CONTENT_MAX}
               required
             />
+            <small style={{ color: "#64748b", fontSize: "0.75rem" }}>
+              {form.content.trim().length} / {CONTENT_MAX} characters (min {CONTENT_MIN})
+            </small>
           </label>
 
           <div className="admin-form-actions admin-form-span-full">
