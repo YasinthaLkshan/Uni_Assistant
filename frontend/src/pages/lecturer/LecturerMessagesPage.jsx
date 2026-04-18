@@ -13,6 +13,9 @@ const formatDate = (dateStr) => {
   });
 };
 
+const REPLY_MIN = 2;
+const REPLY_MAX = 3000;
+
 const LecturerMessagesPage = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -56,13 +59,29 @@ const LecturerMessagesPage = () => {
   const handleReply = async (e) => {
     e.preventDefault();
 
-    if (!replyForm.content.trim()) {
+    const content = replyForm.content.trim();
+    if (!content) {
       setError("Reply content is required");
+      return;
+    }
+    if (content.length < REPLY_MIN) {
+      setError(`Reply must be at least ${REPLY_MIN} characters`);
+      return;
+    }
+    if (content.length > REPLY_MAX) {
+      setError(`Reply must be at most ${REPLY_MAX} characters`);
       return;
     }
 
     const originalMsg = messages.find((m) => m._id === replyForm.messageId);
-    if (!originalMsg) return;
+    if (!originalMsg) {
+      setError("Original message not found — refresh and try again");
+      return;
+    }
+    if (!originalMsg.sender?._id) {
+      setError("Cannot determine the original sender");
+      return;
+    }
 
     try {
       setReplying(true);
@@ -71,7 +90,7 @@ const LecturerMessagesPage = () => {
       await api.post("/lecturer/messages", {
         receiverId: originalMsg.sender._id,
         subject: `Re: ${originalMsg.subject}`,
-        content: replyForm.content.trim(),
+        content,
         parentMessage: originalMsg._id,
       });
       setSuccess("Reply sent");
@@ -191,12 +210,19 @@ const LecturerMessagesPage = () => {
                       onChange={(e) => setReplyForm((prev) => ({ ...prev, content: e.target.value }))}
                       rows={3}
                       placeholder="Type your reply..."
+                      minLength={REPLY_MIN}
+                      maxLength={REPLY_MAX}
                       style={{ width: "100%", marginBottom: "0.4rem" }}
                       required
                     />
-                    <button type="submit" className="primary-btn" disabled={replying} style={{ fontSize: "0.8rem", padding: "0.35rem 0.8rem" }}>
-                      {replying ? "Sending..." : "Send Reply"}
-                    </button>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.4rem" }}>
+                      <small style={{ color: "#64748b", fontSize: "0.72rem" }}>
+                        {replyForm.content.trim().length} / {REPLY_MAX}
+                      </small>
+                      <button type="submit" className="primary-btn" disabled={replying} style={{ fontSize: "0.8rem", padding: "0.35rem 0.8rem" }}>
+                        {replying ? "Sending..." : "Send Reply"}
+                      </button>
+                    </div>
                   </form>
                 ) : null}
               </article>
