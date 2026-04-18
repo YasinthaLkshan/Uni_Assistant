@@ -11,7 +11,9 @@ import adminAcademicRoutes from "./routes/adminAcademicRoutes.js";
 import adminLecturerRoutes from "./routes/adminLecturerRoutes.js";
 import adminMessageRoutes from "./routes/adminMessageRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
+import feedbackRoutes from "./routes/feedbackRoutes.js";
 import lecturerRoutes from "./routes/lecturerRoutes.js";
+import performanceInsightsRoutes from "./routes/performanceInsightsRoutes.js";
 import moduleRoutes from "./routes/moduleRoutes.js";
 import programmeRoutes from "./routes/programmeRoutes.js";
 import recommendationRoutes from "./routes/recommendationRoutes.js";
@@ -86,6 +88,8 @@ app.use("/api/lecturer", lecturerRoutes);
 app.use("/api/admin/lecturers", adminLecturerRoutes);
 app.use("/api/admin/messages", adminMessageRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/feedback", feedbackRoutes);
+app.use("/api/performance", performanceInsightsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
