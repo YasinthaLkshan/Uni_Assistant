@@ -300,6 +300,7 @@ const TasksPage = () => {
                   name="deadline"
                   value={form.deadline}
                   onChange={handleInputChange}
+                  min={toDateTimeLocal(new Date())}
                   required
                 />
                 {fieldErrors.deadline ? <p className="tm-field-error">{fieldErrors.deadline}</p> : null}

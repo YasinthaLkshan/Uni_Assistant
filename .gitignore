@@ -1,1 +1,3 @@
 frontend/dist
+config.bat
+node_modules
