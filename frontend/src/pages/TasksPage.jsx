@@ -121,6 +121,7 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
+      description: "",
     };
 
     if (!form.title.trim()) {
