@@ -316,6 +316,7 @@ const TasksPage = () => {
                 rows={4}
                 placeholder="Add context, notes, or preparation checklist"
               />
+              {fieldErrors.description ? <p className="tm-field-error">{fieldErrors.description}</p> : null}
             </label>
 
             <div className="tm-actions">
