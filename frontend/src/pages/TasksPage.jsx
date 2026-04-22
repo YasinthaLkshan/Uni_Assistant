@@ -149,6 +149,10 @@ const TasksPage = () => {
       }
     }
 
+    if (form.description && form.description.trim().length > 1200) {
+      nextErrors.description = "Description cannot exceed 1200 characters.";
+    }
+
     setFieldErrors(nextErrors);
 
     const hasErrors = Object.values(nextErrors).some(Boolean);
