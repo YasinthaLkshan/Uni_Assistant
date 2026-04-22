@@ -126,6 +126,10 @@ const TasksPage = () => {
 
     if (!form.title.trim()) {
       nextErrors.title = "Please enter a task title.";
+    } else if (form.title.trim().length < 2) {
+      nextErrors.title = "Title must be at least 2 characters long.";
+    } else if (form.title.trim().length > 160) {
+      nextErrors.title = "Title cannot exceed 160 characters.";
     }
 
     if (!form.type) {
