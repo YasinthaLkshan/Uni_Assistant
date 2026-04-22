@@ -112,6 +112,7 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
+      description: "",
     });
   };
 
@@ -193,6 +194,7 @@ const TasksPage = () => {
       title: "",
       type: "",
       deadline: "",
+      description: "",
     });
     setActiveTaskId(task._id);
     setForm({
