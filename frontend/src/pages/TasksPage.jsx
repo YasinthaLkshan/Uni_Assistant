@@ -61,6 +61,7 @@ const TasksPage = () => {
     title: "",
     type: "",
     deadline: "",
+    description: "",
   });
 
   const isEditMode = Boolean(activeTaskId);
