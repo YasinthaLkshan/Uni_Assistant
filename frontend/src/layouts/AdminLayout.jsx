@@ -42,6 +42,24 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
+    label: "Change Requests",
+    path: ROUTE_PATHS.adminChangeRequests,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 3a2 2 0 1 1 0 4 2 2 0 0 1 0-4zm4 12H8v-1c0-1.33 2.67-2 4-2s4 .67 4 2v1z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Messages",
+    path: ROUTE_PATHS.adminMessages,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+      </svg>
+    ),
+  },
+  {
     label: "FCSC Informs",
     path: ROUTE_PATHS.adminFcscInforms,
     icon: (
@@ -59,6 +77,8 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.adminTimetable]: "Timetable",
   [ROUTE_PATHS.adminAcademicEvents]: "Academic Events",
   [ROUTE_PATHS.adminFcscInforms]: "FCSC Informs",
+  [ROUTE_PATHS.adminChangeRequests]: "Change Requests",
+  [ROUTE_PATHS.adminMessages]: "Messages",
 };
 
 const AdminLayout = () => {

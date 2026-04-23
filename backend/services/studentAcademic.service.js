@@ -13,7 +13,7 @@ const DAY_ORDER = {
   Saturday: 6,
 };
 
-const resolveStudentScope = async (user) => {
+export const resolveStudentScope = async (user) => {
   const profile = await StudentProfile.findOne({
     $or: [{ user: user._id }, { studentId: user.studentId }],
   })
@@ -37,7 +37,7 @@ const resolveStudentScope = async (user) => {
   };
 };
 
-const scopeQuery = (scope, includeGroup = true) => {
+export const scopeQuery = (scope, includeGroup = true) => {
   const query = {
     faculty: scope.faculty,
     $or: [{ academicYear: scope.academicYear }, { year: scope.academicYear }],

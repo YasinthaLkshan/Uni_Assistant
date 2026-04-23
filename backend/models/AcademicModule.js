@@ -44,10 +44,9 @@ const academicModuleSchema = new mongoose.Schema(
       default: 3,
     },
     lecturer: {
-      type: String,
-      trim: true,
-      maxlength: 120,
-      default: "",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
     },
     faculty: {
       type: String,
