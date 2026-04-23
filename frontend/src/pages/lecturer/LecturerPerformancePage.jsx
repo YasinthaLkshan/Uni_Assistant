@@ -431,9 +431,9 @@ const MarkAttendanceTab = () => {
                 fontSize: "0.88rem",
               }}
             >
-              <option value="">Select a session...</option>
+              <option value="" style={{ color: "#0f172a", background: "#ffffff" }}>Select a session...</option>
               {sessions.map((s) => (
-                <option key={s._id} value={s._id}>
+                <option key={s._id} value={s._id} style={{ color: "#0f172a", background: "#ffffff" }}>
                   {s.moduleCode} — {s.dayOfWeek} {s.startTime}–{s.endTime} ({s.activityType}) Grp {s.groupNumber}
                 </option>
               ))}
