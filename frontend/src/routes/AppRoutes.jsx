@@ -10,9 +10,8 @@ import LecturerLoginPage from "../pages/LecturerLoginPage";
 import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPage";
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
-import AdminLecturersPage from "../pages/admin/AdminLecturersPage";
 import AdminChangeRequestsPage from "../pages/admin/AdminChangeRequestsPage";
-import AdminHolidaysPage from "../pages/admin/AdminHolidaysPage";
+import AdminMessagesPage from "../pages/admin/AdminMessagesPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import AdminStudentProfilesPage from "../pages/admin/AdminStudentProfilesPage";
@@ -22,7 +21,6 @@ import AdminPresentationsPage from "../pages/admin/AdminPresentationsPage";
 import AdminVivaPage from "../pages/admin/AdminVivaPage";
 import AdminLabTestsPage from "../pages/admin/AdminLabTestsPage";
 import AdminExamsPage from "../pages/admin/AdminExamsPage";
-import AdminVivaReviewPage from "../pages/admin/AdminVivaReviewPage";
 import DashboardPage from "../pages/DashboardPage";
 import FcscDashboardPage from "../pages/FcscDashboardPage";
 import FcscInformsPage from "../pages/FcscInformsPage";
@@ -124,21 +122,10 @@ const AppRoutes = () => {
               element={<AdminFcscInformsPage />}
             />
             <Route
-              path={ROUTE_PATHS.adminLecturers}
-              element={<AdminLecturersPage />}
-            />
-            <Route
-              path={ROUTE_PATHS.adminHolidays}
-              element={<AdminHolidaysPage />}
-            />
-            <Route
               path={ROUTE_PATHS.adminChangeRequests}
               element={<AdminChangeRequestsPage />}
             />
-            <Route
-              path={ROUTE_PATHS.adminVivaReview}
-              element={<AdminVivaReviewPage />}
-            />
+            <Route path={ROUTE_PATHS.adminMessages} element={<AdminMessagesPage />} />
           </Route>
         </Route>
 
