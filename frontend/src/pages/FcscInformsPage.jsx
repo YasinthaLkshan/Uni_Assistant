@@ -1,21 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { exportFcscApprovedEventsPdf } from "../utils/fcscInformsPdf";
-
-const isApprovedEventExpired = (eventDate) => {
-  if (!eventDate) {
-    return false;
-  }
-
-  const parsedDate = new Date(eventDate);
-  if (Number.isNaN(parsedDate.getTime())) {
-    return false;
-  }
-
-  parsedDate.setHours(23, 59, 59, 999);
-  return parsedDate.getTime() < Date.now();
-};
-
 const FcscInformsPage = () => {
   const [approvedEvents, setApprovedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,24 +11,9 @@ const FcscInformsPage = () => {
   const loadApprovedEvents = () => {
     const approved = localStorage.getItem("fcsc_approved_events");
     if (approved) {
-      const parsedApproved = JSON.parse(approved);
-      const activeApproved = parsedApproved.filter((evt) => !isApprovedEventExpired(evt.date));
-
-      if (activeApproved.length !== parsedApproved.length) {
-        localStorage.setItem("fcsc_approved_events", JSON.stringify(activeApproved));
-      }
-
-      setApprovedEvents(activeApproved);
+      setApprovedEvents(JSON.parse(approved));
     }
     setLoading(false);
-  };
-
-  const handleDownloadPdf = () => {
-    if (!approvedEvents.length) {
-      return;
-    }
-
-    exportFcscApprovedEventsPdf({ events: approvedEvents });
   };
 
   if (loading) {
@@ -59,28 +28,10 @@ const FcscInformsPage = () => {
     <section className="fcsc-informs-page">
       <div className="fcsc-informs-container">
         <div className="fcsc-informs-header">
-          <div className="fcsc-informs-header-top">
-            <span className="fcsc-informs-eyebrow">Community Noticeboard</span>
-            <span className="fcsc-informs-count-chip">{approvedEvents.length} Approved</span>
-          </div>
-
-          <h1 className="fcsc-informs-title">
-            FCSC <span>Approved Events</span>
-          </h1>
+          <h1 className="fcsc-informs-title">FCSC Approved Events</h1>
           <p className="fcsc-informs-subtitle">
             View all approved FCSC events and announcements
           </p>
-
-          <div className="fcsc-informs-header-actions">
-            <button
-              type="button"
-              className="fcsc-informs-download-btn"
-              onClick={handleDownloadPdf}
-              disabled={!approvedEvents.length}
-            >
-              Download PDF
-            </button>
-          </div>
         </div>
 
         {approvedEvents.length === 0 ? (

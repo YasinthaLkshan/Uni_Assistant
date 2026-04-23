@@ -54,46 +54,13 @@ const formatDate = (value) => {
   return parsed.toLocaleDateString();
 };
 
-const getEventTypeTone = (value) => {
-  const normalized = String(value || "").toLowerCase();
-
-  if (normalized.includes("exam") || normalized.includes("quiz") || normalized.includes("test")) {
-    return "exam";
-  }
-
-  if (normalized.includes("assignment") || normalized.includes("submission")) {
-    return "assignment";
-  }
-
-  if (normalized.includes("practical") || normalized.includes("lab")) {
-    return "practical";
-  }
-
-  if (normalized.includes("project") || normalized.includes("presentation")) {
-    return "project";
-  }
-
-  return "general";
-};
-
 const MyAcademicEventsPage = () => {
   const [events, setEvents] = useState([]);
   const [scope, setScope] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Filter out past events - only show future/upcoming events
-  const upcomingEvents = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return events.filter((event) => {
-      const eventDate = new Date(event.eventDate);
-      eventDate.setHours(0, 0, 0, 0);
-      return eventDate >= today;
-    });
-  }, [events]);
-
-  const upcomingCount = useMemo(() => upcomingEvents.filter((event) => getUpcomingCategory(event.eventDate)).length, [upcomingEvents]);
+  const upcomingCount = useMemo(() => events.filter((event) => getUpcomingCategory(event.eventDate)).length, [events]);
 
   useEffect(() => {
     const loadEvents = async () => {
@@ -114,15 +81,15 @@ const MyAcademicEventsPage = () => {
   }, []);
 
   return (
-    <section className="dashboard student-academic-page student-events-clean">
-      <GlassCard className="section-entrance ae-hero-card">
+    <section className="dashboard student-academic-page">
+      <GlassCard className="section-entrance">
         <p className="eyebrow">Academic</p>
         <h1 className="dashboard-title">My Academic Events</h1>
         <p>Track assessments and important academic milestones for your group.</p>
       </GlassCard>
 
       {scope ? (
-        <GlassCard className="ui-section ae-scope-card section-entrance" style={{ animationDelay: "60ms" }}>
+        <GlassCard className="ui-section section-entrance" style={{ animationDelay: "60ms" }}>
           <SectionTitle
             eyebrow="Your Scope"
             rightContent={<StatusBadge level="low" label={`Semester ${scope.semester} • Group ${scope.groupNumber}`} />}
@@ -132,7 +99,7 @@ const MyAcademicEventsPage = () => {
 
       {error ? <p className="form-error section-entrance">{error}</p> : null}
 
-      <GlassCard className="ui-section ae-timeline-card section-entrance" style={{ animationDelay: "120ms" }}>
+      <GlassCard className="ui-section section-entrance" style={{ animationDelay: "120ms" }}>
         <SectionTitle
           eyebrow="Event Timeline"
           rightContent={<StatusBadge level={upcomingCount ? "warning" : "success"} label={`${upcomingCount} Upcoming`} />}
@@ -147,31 +114,20 @@ const MyAcademicEventsPage = () => {
           />
         ) : null}
 
-        {!loading && events.length && !upcomingEvents.length ? (
-          <EmptyStateCard
-            title="No upcoming events"
-            description="All your academic events have already passed."
-          />
-        ) : null}
-
-        {!loading && upcomingEvents.length ? (
+        {!loading && events.length ? (
           <div className="student-grid-cards">
-            {upcomingEvents.map((event) => {
+            {events.map((event) => {
               const upcomingCategory = getUpcomingCategory(event.eventDate);
-              const eventTypeTone = getEventTypeTone(event.eventType);
               return (
                 <article
                   key={event._id}
-                  className={`student-academic-card ae-type-${eventTypeTone} ${upcomingCategory?.cardClass || ""}`.trim()}
+                  className={`student-academic-card ${upcomingCategory?.cardClass || ""}`.trim()}
                 >
                   <div className="student-card-head">
                     <h3>{event.title}</h3>
                     {upcomingCategory ? <StatusBadge level={upcomingCategory.level} label={upcomingCategory.label} /> : null}
                   </div>
-                  <p className="student-academic-meta">
-                    <span className={`ae-type-pill ae-type-${eventTypeTone}`}>{event.eventType}</span>
-                    <span>{formatDate(event.eventDate)}</span>
-                  </p>
+                  <p className="student-academic-meta">{event.eventType} • {formatDate(event.eventDate)}</p>
                   <p className="student-academic-meta">{event.moduleCode} {event.moduleName ? `- ${event.moduleName}` : ""}</p>
                   <p className="student-academic-meta">{event.startTime || "--:--"}{event.endTime ? ` - ${event.endTime}` : ""}</p>
                   {event.description ? <p className="student-academic-note">{event.description}</p> : null}

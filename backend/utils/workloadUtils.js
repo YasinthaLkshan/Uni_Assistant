@@ -1,11 +1,6 @@
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 const HOUR_IN_MS = 60 * 60 * 1000;
 
-const isExamLikeType = (value) => {
-  const normalized = String(value || "").toLowerCase().trim();
-  return normalized.includes("exam") || normalized.includes("test") || normalized.includes("viva");
-};
-
 const isValidDate = (value) => {
   const date = new Date(value);
   return !Number.isNaN(date.getTime());
@@ -43,7 +38,7 @@ const isUrgentTask = (task, now) => {
   return task?.urgencyLevel === "High" || daysLeft <= 2;
 };
 
-const isExamWithin7Days = (task, now) => {
+const isExamWithin5Days = (task, now) => {
   if (!isUpcomingTask(task, now)) {
     return false;
   }
@@ -51,7 +46,7 @@ const isExamWithin7Days = (task, now) => {
   const deadline = new Date(task.deadline);
   const daysLeft = (deadline.getTime() - now.getTime()) / DAY_IN_MS;
 
-  return task?.type === "exam" && daysLeft <= 7;
+  return task?.type === "exam" && daysLeft <= 5;
 };
 
 // Calculate days until deadline
@@ -89,28 +84,20 @@ const getTaskComplexityScore = (task) => {
 export const calculateWorkloadScore = (tasks = []) => {
   const now = new Date();
 
-  const upcomingTasks = tasks.filter((task) => {
-    if (!isUpcomingTask(task, now)) {
-      return false;
-    }
-
-    const deadline = new Date(task.deadline);
-    const daysLeft = (deadline.getTime() - now.getTime()) / DAY_IN_MS;
-    return daysLeft <= 7;
-  }).length;
+  const upcomingTasks = tasks.filter((task) => isUpcomingTask(task, now)).length;
   const urgentTasks = tasks.filter((task) => isUrgentTask(task, now)).length;
-  const examsWithin7Days = tasks.filter((task) => isExamWithin7Days(task, now)).length;
+  const examsWithin5Days = tasks.filter((task) => isExamWithin5Days(task, now)).length;
 
-  const score = upcomingTasks * 2 + urgentTasks * 3 + examsWithin7Days * 5;
+  const score = upcomingTasks * 2 + urgentTasks * 3 + examsWithin5Days * 5;
 
   return {
     score,
     breakdown: {
       upcomingTasks,
       urgentTasks,
-      examsWithin7Days,
+      examsWithin5Days,
     },
-    formula: "(upcomingTasks * 2) + (urgentTasks * 3) + (examsWithin7Days * 5)",
+    formula: "(upcomingTasks * 2) + (urgentTasks * 3) + (examsWithin5Days * 5)",
   };
 };
 
@@ -119,34 +106,21 @@ export const calculateEnhancedWorkloadScore = (tasksWithDetails = []) => {
   const now = new Date();
   let totalScore = 0;
   let totalComplexity = 0;
-  let totalUpcomingEvents = 0;
-  let examsNear = 0;
   const eventsByUrgency = { critical: [], high: [], medium: [], low: [] };
 
   tasksWithDetails.forEach((taskDetail) => {
     const task = taskDetail.task;
-    const eventType = taskDetail?.academicEvent?.eventType;
-    const isExamLikeTask = isExamLikeType(task?.type) || isExamLikeType(eventType);
     
     // Double check: Skip if not upcoming
     if (!isUpcomingTask(task, now)) return;
 
     const daysLeft = getDaysUntilDeadline(task.deadline);
     
-    // Restrict calculations to the requested 7-day window.
-    if (daysLeft <= 0 || daysLeft > 7) return;
-
-    totalUpcomingEvents += 1;
-
-    if (isExamLikeTask) {
-      examsNear += 1;
-    }
+    // Triple check: Skip if daysLeft is negative or zero
+    if (daysLeft <= 0) return;
 
     const urgencyMultiplier = getUrgencyMultiplier(daysLeft);
-    const complexity = getTaskComplexityScore({
-      ...task,
-      type: isExamLikeTask ? "exam" : task?.type,
-    });
+    const complexity = getTaskComplexityScore(task);
     
     // Enhanced score calculation
     let taskScore = complexity * urgencyMultiplier;
@@ -185,12 +159,11 @@ export const calculateEnhancedWorkloadScore = (tasksWithDetails = []) => {
     score: Math.round(totalScore * 10) / 10,
     complexity: Math.round(totalComplexity * 10) / 10,
     breakdown: {
-      totalEvents: totalUpcomingEvents,
+      totalEvents: tasksWithDetails.length,
       criticalEvents: eventsByUrgency.critical.length,
       highUrgencyEvents: eventsByUrgency.high.length,
       mediumUrgencyEvents: eventsByUrgency.medium.length,
       lowUrgencyEvents: eventsByUrgency.low.length,
-      examsNear,
     },
     eventsByUrgency,
   };

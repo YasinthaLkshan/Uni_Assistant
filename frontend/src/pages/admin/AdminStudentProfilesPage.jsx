@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 import { PageHeader, SectionTitle, GlassCard } from "../../components";
-import AdminAcademicEntityPage from "./AdminAcademicEntityPage";
 import { listStudentProfiles } from "../../services/studentProfileService";
 
 const AdminStudentProfilesPage = () => {

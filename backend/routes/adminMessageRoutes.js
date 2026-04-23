@@ -1,29 +1,19 @@
 import { Router } from "express";
 
-import {
-  getMyEventsController,
-  getMyModulesController,
-  getMyTimetableController,
-} from "../controllers/studentAcademic.controller.js";
-import { protect } from "../middleware/auth.middleware.js";
-import studentMiddleware from "../middleware/student.middleware.js";
-import asyncHandler from "../utils/asyncHandler.js";
 import Message from "../models/Message.js";
 import User from "../models/User.js";
-import Announcement from "../models/Announcement.js";
+import { protect } from "../middleware/auth.middleware.js";
+import adminMiddleware from "../middleware/admin.middleware.js";
+import asyncHandler from "../utils/asyncHandler.js";
 import AppError from "../utils/appError.js";
 
 const router = Router();
 
-router.use(protect, studentMiddleware);
+router.use(protect, adminMiddleware);
 
-router.get("/my-modules", getMyModulesController);
-router.get("/my-timetable", getMyTimetableController);
-router.get("/my-events", getMyEventsController);
-
-// Student messages
+// Get all messages for admin
 router.get(
-  "/messages",
+  "/",
   asyncHandler(async (req, res) => {
     const messages = await Message.find({
       $or: [{ sender: req.user._id }, { receiver: req.user._id }],
@@ -36,8 +26,9 @@ router.get(
   })
 );
 
+// Send message (admin reply)
 router.post(
-  "/messages",
+  "/",
   asyncHandler(async (req, res) => {
     const { receiverId, subject, content, parentMessage } = req.body;
 
@@ -51,7 +42,7 @@ router.post(
     const message = await Message.create({
       sender: req.user._id,
       receiver: receiverId,
-      senderRole: "student",
+      senderRole: "admin",
       receiverRole: receiver.role,
       subject: subject.trim(),
       content: content.trim(),
@@ -62,8 +53,9 @@ router.post(
   })
 );
 
+// Mark message as read
 router.put(
-  "/messages/:id/read",
+  "/:id/read",
   asyncHandler(async (req, res) => {
     const msg = await Message.findOne({ _id: req.params.id, receiver: req.user._id });
     if (!msg) throw new AppError("Message not found", 404);
@@ -72,31 +64,6 @@ router.put(
     await msg.save();
 
     res.status(200).json({ success: true, message: "Marked as read" });
-  })
-);
-
-// Get lecturers list (for messaging)
-router.get(
-  "/lecturers",
-  asyncHandler(async (_req, res) => {
-    const lecturers = await User.find({ role: "lecturer" })
-      .select("name email department")
-      .sort({ name: 1 });
-
-    res.status(200).json({ success: true, data: lecturers });
-  })
-);
-
-// Get announcements for student
-router.get(
-  "/announcements",
-  asyncHandler(async (_req, res) => {
-    const announcements = await Announcement.find({})
-      .populate("lecturer", "name")
-      .sort({ createdAt: -1 })
-      .limit(50);
-
-    res.status(200).json({ success: true, data: announcements });
   })
 );
 

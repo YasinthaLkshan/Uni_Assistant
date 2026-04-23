@@ -108,7 +108,7 @@ export const generateWorkloadReportForUser = async (userId) => {
     workloadLevel: levelResult.level,
     totalTasks: scoreResult.breakdown.upcomingTasks,
     urgentTasks: scoreResult.breakdown.urgentTasks,
-    examsNear: scoreResult.breakdown.examsWithin7Days,
+    examsNear: scoreResult.breakdown.examsWithin5Days,
     calculatedAt: new Date(),
   });
 
@@ -151,7 +151,7 @@ export const generateWorkloadReportForUser = async (userId) => {
       upcomingTasks: scoreResult.breakdown.upcomingTasks,
       urgentTasks: scoreResult.breakdown.urgentTasks,
       examsWithin2Days,
-      examsWithin7Days: scoreResult.breakdown.examsWithin7Days,
+      examsWithin5Days: scoreResult.breakdown.examsWithin5Days,
       workloadScore: scoreResult.score,
       workloadLevel: levelResult.level,
     },
@@ -165,7 +165,6 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
   }
 
   const now = new Date();
-  const sevenDaysFromNow = new Date(now.getTime() + 7 * DAY_IN_MS);
 
   // Get user's academic scope (semester, group, faculty)
   const studentProfile = await StudentProfile.findOne({ user: userId }).lean();
@@ -178,7 +177,7 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
   const activeTasks = await Task.find({
     user: userId,
     status: { $ne: "Completed" },
-    deadline: { $gt: now, $lte: sevenDaysFromNow },
+    deadline: { $gt: now },
   })
     .populate("academicEvent", "title eventType weightPercentage eventDate")
     .populate("module", "lectureHoursPerWeek tutorialHoursPerWeek labHoursPerWeek")
@@ -191,7 +190,23 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
     academicEvents = await AcademicEvent.find({
       semester: studentProfile.semester,
       groupNumber: studentProfile.groupNumber,
-      eventDate: { $gt: now, $lte: sevenDaysFromNow },
+      eventDate: { $gt: now },
+      eventType: {
+        $in: [
+          "Exam",
+          "Assignment", 
+          "Presentation",
+          "Viva",
+          "Lab Test",
+          "Spot Test",
+          "Seminar",
+          "exam",
+          "assignment",
+          "presentation",
+          "lab test",
+          "spot test"
+        ],
+      },
     })
       .sort({ eventDate: 1 })
       .lean();
@@ -207,16 +222,7 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
   }));
 
   // Convert academic events to task-like objects for scoring
-  const linkedAcademicEventIds = new Set(
-    activeTasks
-      .map((task) => (task?.academicEvent && typeof task.academicEvent === "object" ? task.academicEvent._id : null))
-      .filter(Boolean)
-      .map((eventId) => String(eventId))
-  );
-
-  const academicEventsAsItems = academicEvents
-    .filter((event) => !linkedAcademicEventIds.has(String(event._id)))
-    .map((event) => {
+  const academicEventsAsItems = academicEvents.map((event) => {
     // Create event data structure with weight for scoring
     const eventData = {
       weightPercentage: event.weightPercentage || 0,
@@ -224,22 +230,34 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
       eventType: event.eventType,
     };
     
-      return {
-        task: {
-          _id: event._id,
-          title: event.title,
-          type: mapEventTypeToTaskType(event.eventType),
-          deadline: event.eventDate,
-          urgencyLevel: getEventUrgency(event.eventType, event.weightPercentage),
-          status: "Not Started",
-        },
-        academicEvent: eventData,
-        moduleData: null,
-      };
-    });
+    return {
+      task: {
+        _id: event._id,
+        title: event.title,
+        type: mapEventTypeToTaskType(event.eventType),
+        deadline: event.eventDate,
+        urgencyLevel: getEventUrgency(event.eventType, event.weightPercentage),
+        status: "Not Started",
+      },
+      academicEvent: eventData,
+      moduleData: null,
+    };
+  });
 
   // Combine both tasks and academic events
-  const uniqueItems = [...tasksWithDetails, ...academicEventsAsItems];
+  const allItems = [...tasksWithDetails, ...academicEventsAsItems];
+
+  // Remove duplicates (if an academic event already has a corresponding task)
+  const uniqueItems = [];
+  const seenTitles = new Set();
+
+  allItems.forEach((item) => {
+    const title = item.task.title.toLowerCase().trim();
+    if (!seenTitles.has(title)) {
+      seenTitles.add(title);
+      uniqueItems.push(item);
+    }
+  });
 
   // Calculate enhanced score with combined items
   const enchancedScoreResult = calculateEnhancedWorkloadScore(uniqueItems);
@@ -247,7 +265,7 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
   const enhancedSuggestion = getEnhancedStudySuggestion(enchancedScoreResult.eventsByUrgency);
 
   console.log(`Workload calculation: Score=${enchancedScoreResult.score}, Level=${enhancedLevelResult.level}, Total Items=${uniqueItems.length}`);
-  console.log(`Event breakdown: Critical=${enchancedScoreResult.breakdown.criticalEvents}, High=${enchancedScoreResult.breakdown.highUrgencyEvents}, Medium=${enchancedScoreResult.breakdown.mediumUrgencyEvents}, Low=${enchancedScoreResult.breakdown.lowUrgencyEvents}, ExamsNear=${enchancedScoreResult.breakdown.examsNear}`);
+  console.log(`Event breakdown: Critical=${enchancedScoreResult.breakdown.criticalEvents}, High=${enchancedScoreResult.breakdown.highUrgencyEvents}, Medium=${enchancedScoreResult.breakdown.mediumUrgencyEvents}, Low=${enchancedScoreResult.breakdown.lowUrgencyEvents}`);
 
   // Get the most urgent event for recommendation
   let mostUrgentEvent = null;
@@ -298,7 +316,6 @@ export const generateEnhancedWorkloadReportForUser = async (userId) => {
       highUrgencyEvents: enchancedScoreResult.breakdown.highUrgencyEvents,
       mediumUrgencyEvents: enchancedScoreResult.breakdown.mediumUrgencyEvents,
       lowUrgencyEvents: enchancedScoreResult.breakdown.lowUrgencyEvents,
-      examsNear: enchancedScoreResult.breakdown.examsNear,
       workloadScore: enchancedScoreResult.score,
       complexity: enchancedScoreResult.complexity,
     },

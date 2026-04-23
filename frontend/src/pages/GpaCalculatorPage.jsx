@@ -76,33 +76,9 @@ const sharedSemesterModules = {
 };
 
 const courseSemesterModules = {
-  SE: {
-    ...sharedSemesterModules,
-    Y3S1: [
-      { name: "AF", credits: 4 },
-      { name: "SA", credits: 4 },
-      { name: "DS", credits: 4 },
-      { name: "SEP", credits: 4 },
-      { name: "QM", credits: 4 },
-    ],
-  },
-  DS: {
-    ...sharedSemesterModules,
-    Y3S1: [
-      { name: "PAF", credits: 4 },
-      { name: "DWBI", credits: 4 },
-      { name: "DSDD", credits: 4 },
-    ],
-  },
-  IT: {
-    ...sharedSemesterModules,
-    Y3S1: [
-      { name: "PAF", credits: 4 },
-      { name: "DS", credits: 4 },
-      { name: "NDM", credits: 4 },
-      { name: "ITPM", credits: 4 },
-    ],
-  },
+  SE: sharedSemesterModules,
+  DS: sharedSemesterModules,
+  IT: sharedSemesterModules,
 };
 
 const semesterOptions = [
@@ -110,7 +86,6 @@ const semesterOptions = [
   { label: "1st Year - 2nd Semester", value: "Y1S2" },
   { label: "2nd Year - 1st Semester", value: "Y2S1" },
   { label: "2nd Year - 2nd Semester", value: "Y2S2" },
-  { label: "3rd Year - 1st Semester", value: "Y3S1" },
 ];
 
 const createEmptyCourse = () => ({
@@ -302,7 +277,7 @@ const GpaCalculatorPage = () => {
   };
 
   return (
-    <section className="modern-gpa-wrapper gpa-calc-clean">
+    <section className="modern-gpa-wrapper">
       <header className="modern-gpa-header">
         <h1>Calculate GPA</h1>
         <Link to={ROUTE_PATHS.gpaHistory} className="history-link-btn">
@@ -317,11 +292,11 @@ const GpaCalculatorPage = () => {
       <div className="dashboard-grid-custom">
         
         {/* Left Column: Inputs */}
-        <div className="gpa-main-column">
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           
           {/* General Selectors */}
-          <div className="premium-glass-card gpa-selectors-card">
-            <div className="modern-input-group compact">
+          <div className="premium-glass-card" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.2rem", padding: "1.5rem" }}>
+            <div className="modern-input-group" style={{ marginBottom: 0 }}>
               <label className="modern-label" htmlFor="course-select">Program / Course</label>
               <select
                 id="course-select"
@@ -339,7 +314,7 @@ const GpaCalculatorPage = () => {
               </select>
             </div>
             
-            <div className="modern-input-group compact">
+            <div className="modern-input-group" style={{ marginBottom: 0 }}>
               <label className="modern-label" htmlFor="semester-select">Academic Semester</label>
               <select
                 id="semester-select"
@@ -361,16 +336,16 @@ const GpaCalculatorPage = () => {
 
           {/* Module List */}
           <div className="premium-glass-card">
-            <div className="gpa-modules-intro">
-              <h2 className="gpa-modules-title">Your Modules</h2>
-              <p className="gpa-modules-subtitle">Enter module name, credits, and expected grade to calculate.</p>
+            <div style={{ marginBottom: "1.5rem" }}>
+              <h2 style={{ fontSize: "1.4rem", fontWeight: "700", margin: 0, color: "#1e293b" }}>Your Modules</h2>
+              <p style={{ color: "#64748b", margin: "0.2rem 0 0", fontSize: "0.9rem" }}>Enter module name, credits, and expected grade to calculate.</p>
             </div>
 
             <div>
               {courses.map((course) => (
                 <div key={course.id} className="course-row-card">
                   <div>
-                    <label className="modern-label compact-label" htmlFor={`cname-${course.id}`}>Module Name</label>
+                    <label className="modern-label" style={{ fontSize: "0.75rem" }} htmlFor={`cname-${course.id}`}>Module Name</label>
                     <input
                       id={`cname-${course.id}`}
                       type="text"
@@ -381,7 +356,7 @@ const GpaCalculatorPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="modern-label compact-label" htmlFor={`ccred-${course.id}`}>Credits</label>
+                    <label className="modern-label" style={{ fontSize: "0.75rem" }} htmlFor={`ccred-${course.id}`}>Credits</label>
                     <input
                       id={`ccred-${course.id}`}
                       type="number"
@@ -393,7 +368,7 @@ const GpaCalculatorPage = () => {
                     />
                   </div>
                   <div>
-                    <label className="modern-label compact-label" htmlFor={`cgrade-${course.id}`}>Grade</label>
+                    <label className="modern-label" style={{ fontSize: "0.75rem" }} htmlFor={`cgrade-${course.id}`}>Grade</label>
                     <select
                       id={`cgrade-${course.id}`}
                       className="modern-select"
@@ -447,11 +422,11 @@ const GpaCalculatorPage = () => {
         </div>
 
         {/* Right Column: Result & Chat */}
-        <div className="gpa-side-column">
+        <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           
           {/* Live GPA Display */}
           <div className="gpa-display-wrapper">
-            <h2 className="gpa-display-title">
+            <h2 style={{ fontSize: "1.2rem", fontWeight: "700", color: "#334155", margin: 0 }}>
               {selectedSemesterLabel ? `Result: ${selectedSemesterLabel}` : "Estimated GPA"}
             </h2>
             
@@ -500,10 +475,10 @@ const GpaCalculatorPage = () => {
                 </div>
               ))}
               {isChatThinking && (
-                <div className="ai-message bot ai-typing-indicator">
-                  <span className="ai-typing-dot"></span>
-                  <span className="ai-typing-dot"></span>
-                  <span className="ai-typing-dot"></span>
+                <div className="ai-message bot" style={{ display: "flex", gap: "5px", width: "fit-content" }}>
+                  <span style={{ width: "6px", height: "6px", background: "#94a3b8", borderRadius: "50%", animation: "pulse 1s infinite" }}></span>
+                  <span style={{ width: "6px", height: "6px", background: "#94a3b8", borderRadius: "50%", animation: "pulse 1s infinite 0.2s" }}></span>
+                  <span style={{ width: "6px", height: "6px", background: "#94a3b8", borderRadius: "50%", animation: "pulse 1s infinite 0.4s" }}></span>
                 </div>
               )}
             </div>

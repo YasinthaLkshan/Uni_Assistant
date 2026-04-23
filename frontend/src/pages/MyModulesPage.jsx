@@ -29,15 +29,15 @@ const MyModulesPage = () => {
   }, []);
 
   return (
-    <section className="dashboard student-academic-page student-modules-clean">
-      <GlassCard className="section-entrance mm-hero-card">
+    <section className="dashboard student-academic-page">
+      <GlassCard className="section-entrance">
         <p className="eyebrow">Academic</p>
         <h1 className="dashboard-title">My Modules</h1>
         <p>Modules assigned to your semester and academic group are listed below.</p>
       </GlassCard>
 
       {scope ? (
-        <GlassCard className="ui-section section-entrance mm-scope-card" style={{ animationDelay: "60ms" }}>
+        <GlassCard className="ui-section section-entrance" style={{ animationDelay: "60ms" }}>
           <SectionTitle
             eyebrow="Your Scope"
             rightContent={<StatusBadge level="low" label={`Semester ${scope.semester} • Group ${scope.groupNumber}`} />}
@@ -47,7 +47,7 @@ const MyModulesPage = () => {
 
       {error ? <p className="form-error section-entrance">{error}</p> : null}
 
-      <GlassCard className="ui-section section-entrance mm-catalog-card" style={{ animationDelay: "120ms" }}>
+      <GlassCard className="ui-section section-entrance" style={{ animationDelay: "120ms" }}>
         <SectionTitle
           eyebrow="Module Catalog"
           rightContent={<StatusBadge level="success" label={`${modules.length} Modules`} />}
@@ -63,9 +63,9 @@ const MyModulesPage = () => {
         ) : null}
 
         {!loading && modules.length ? (
-          <div className="student-grid-cards mm-grid">
+          <div className="student-grid-cards">
             {modules.map((module) => (
-              <article key={module._id} className="student-academic-card mm-module-card">
+              <article key={module._id} className="student-academic-card">
                 <h3>{module.moduleName}</h3>
                 <p
                   className="student-academic-code"

@@ -87,8 +87,8 @@ const LoginPage = () => {
             >
               <defs>
                 <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#8ea1ff" />
-                  <stop offset="100%" stopColor="#b08dff" />
+                  <stop offset="0%" stopColor="#6366f1" />
+                  <stop offset="100%" stopColor="#8b5cf6" />
                 </linearGradient>
               </defs>
               <path

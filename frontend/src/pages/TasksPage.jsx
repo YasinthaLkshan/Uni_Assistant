@@ -39,12 +39,6 @@ const toDateTimeLocal = (value) => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
 
-const getCurrentDateTimeLocal = () => {
-  const now = new Date();
-  now.setSeconds(0, 0);
-  return toDateTimeLocal(now);
-};
-
 const getUrgencyBadgeClass = (urgency) => {
   if (urgency === "High") {
     return "danger";
@@ -72,7 +66,6 @@ const TasksPage = () => {
   });
 
   const isEditMode = Boolean(activeTaskId);
-  const minDeadlineDateTime = getCurrentDateTimeLocal();
 
   const sortedTasks = useMemo(
     () => [...tasks].sort((a, b) => new Date(a.deadline) - new Date(b.deadline)),
@@ -261,8 +254,8 @@ const TasksPage = () => {
   };
 
   return (
-    <section className="dashboard tasks-page tasks-student-clean">
-      <GlassCard className="section-entrance tm-hero-card">
+    <section className="dashboard tasks-page">
+      <GlassCard className="section-entrance">
         <p className="eyebrow">Task Management</p>
         <h1 className="dashboard-title">Plan and Track Your Workload</h1>
         <p>Add, update, and organize tasks with clear urgency signals and clean focus.</p>
@@ -322,7 +315,6 @@ const TasksPage = () => {
                   name="deadline"
                   value={form.deadline}
                   onChange={handleInputChange}
-                  min={minDeadlineDateTime}
                   required
                 />
                 {fieldErrors.deadline ? <p className="tm-field-error">{fieldErrors.deadline}</p> : null}
@@ -381,8 +373,8 @@ const TasksPage = () => {
                 <article key={task._id} className="tm-card">
                   <div className="tm-card-top">
                     <div>
-                      <h3 className="tm-card-title">{task.title}</h3>
-                      <p className="tm-card-type">{task.type}</p>
+                      <h3>{task.title}</h3>
+                      <p>{task.type}</p>
                     </div>
                     <StatusBadge
                       level={getUrgencyBadgeClass(task.urgencyLevel)}
@@ -391,11 +383,7 @@ const TasksPage = () => {
                   </div>
 
                   <p className="tm-meta">
-                    <span className="tm-meta-label">Deadline</span>
-                    <span className="tm-meta-value">{new Date(task.deadline).toLocaleString()}</span>
-                    <span className="tm-meta-divider" aria-hidden="true">|</span>
-                    <span className="tm-meta-label">Priority</span>
-                    <span className="tm-meta-value">{task.priority}</span>
+                    Deadline: {new Date(task.deadline).toLocaleString()} | Priority: {task.priority}
                   </p>
                   {task.description ? <p className="tm-desc">{task.description}</p> : null}
 

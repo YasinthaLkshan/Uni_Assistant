@@ -58,7 +58,6 @@ const validateWeightPercentage = (value) => {
 };
 
 const AdminAcademicEventsPage = () => {
-  const todayDate = new Date().toISOString().slice(0, 10);
   const [records, setRecords] = useState([]);
   const [filters, setFilters] = useState({ semester: "", groupNumber: "", moduleCode: "", eventType: "" });
   const [form, setForm] = useState(EMPTY_FORM);
@@ -173,11 +172,6 @@ const AdminAcademicEventsPage = () => {
       return;
     }
 
-    if (form.eventDate && form.eventDate < todayDate) {
-      setError("Event date cannot be in the past");
-      return;
-    }
-
     const weightValue = Number(form.weightPercentage || 0);
     if (weightValue > 100) {
       setError("Weight Percentage cannot exceed 100");
@@ -252,11 +246,11 @@ const AdminAcademicEventsPage = () => {
   };
 
   return (
-    <section className="admin-page-grid section-entrance admin-events-clean">
-      <article className="admin-glass-card admin-module-card admin-events-card">
+    <section className="admin-page-grid section-entrance">
+      <article className="admin-glass-card admin-module-card">
         <p className="eyebrow">Admin Module</p>
-        <h2 className="admin-events-hero-title">Academic Events Management</h2>
-        <p className="admin-events-lead">Manage IT Year 3 academic events with strong filtering and clear scheduling details.</p>
+        <h2>Academic Events Management</h2>
+        <p>Manage IT Year 3 academic events with strong filtering and clear scheduling details.</p>
         <p className="admin-scope-note">Scope: IT Faculty • Year 3 • Semester 1/2 • Groups 1/2/3</p>
 
         <h3 className="admin-subsection-title">Filters</h3>
@@ -362,7 +356,7 @@ const AdminAcademicEventsPage = () => {
 
           <label>
             Event Date
-            <input type="date" name="eventDate" value={form.eventDate} onChange={handleInputChange} min={todayDate} required />
+            <input type="date" name="eventDate" value={form.eventDate} onChange={handleInputChange} required />
           </label>
 
           <label>
