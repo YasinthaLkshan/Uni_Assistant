@@ -235,11 +235,11 @@ const AdminTimetablePage = () => {
   };
 
   return (
-    <section className="admin-page-grid section-entrance">
-      <article className="admin-glass-card admin-module-card">
+    <section className="admin-page-grid section-entrance admin-timetable-clean">
+      <article className="admin-glass-card admin-module-card admin-timetable-card">
         <p className="eyebrow">Admin Module</p>
-        <h2>Timetable Management</h2>
-        <p>Plan weekly timetable entries for each semester and group.</p>
+        <h2 className="admin-timetable-hero-title">Timetable Management</h2>
+        <p className="admin-timetable-lead">Plan weekly timetable entries for each semester and group.</p>
         <p className="admin-scope-note">Scope: IT Faculty • Year 3 • Semester 1/2 • Groups 1/2/3</p>
 
         <h3 className="admin-subsection-title">Filters</h3>

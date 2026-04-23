@@ -42,6 +42,15 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
+    label: "Viva Review",
+    path: ROUTE_PATHS.adminVivaReview,
+    icon: (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+      </svg>
+    ),
+  },
+  {
     label: "Change Requests",
     path: ROUTE_PATHS.adminChangeRequests,
     icon: (
@@ -51,11 +60,11 @@ const ADMIN_MENU_ITEMS = [
     ),
   },
   {
-    label: "Messages",
-    path: ROUTE_PATHS.adminMessages,
+    label: "Holidays",
+    path: ROUTE_PATHS.adminHolidays,
     icon: (
       <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1a2 2 0 0 0 2 2v1.93zm6.9-2.54A1.99 1.99 0 0 0 16 16h-1v-3a1 1 0 0 0-1-1H8v-2h2a1 1 0 0 0 1-1V7h2a2 2 0 0 0 2-2v-.41a7.98 7.98 0 0 1 2.9 12.8z" />
       </svg>
     ),
   },
@@ -77,8 +86,10 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.adminTimetable]: "Timetable",
   [ROUTE_PATHS.adminAcademicEvents]: "Academic Events",
   [ROUTE_PATHS.adminFcscInforms]: "FCSC Informs",
+  [ROUTE_PATHS.adminLecturers]: "Lecturers",
+  [ROUTE_PATHS.adminHolidays]: "Holidays",
   [ROUTE_PATHS.adminChangeRequests]: "Change Requests",
-  [ROUTE_PATHS.adminMessages]: "Messages",
+  [ROUTE_PATHS.adminVivaReview]: "Viva Review",
 };
 
 const AdminLayout = () => {
@@ -161,7 +172,7 @@ const AdminLayout = () => {
           </header>
         )}
 
-        <main className="admin-main-content">
+        <main className={`admin-main-content ${isDashboard ? "" : "admin-main-content-no-header"}`.trim()}>
           <Outlet />
         </main>
       </div>

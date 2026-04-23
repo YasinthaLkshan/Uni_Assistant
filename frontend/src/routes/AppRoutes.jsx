@@ -10,8 +10,9 @@ import LecturerLoginPage from "../pages/LecturerLoginPage";
 import AdminDashboardOverviewPage from "../pages/admin/AdminDashboardOverviewPage";
 import AdminAcademicEventsPage from "../pages/admin/AdminAcademicEventsPage";
 import AdminFcscInformsPage from "../pages/admin/AdminFcscInformsPage";
+import AdminLecturersPage from "../pages/admin/AdminLecturersPage";
 import AdminChangeRequestsPage from "../pages/admin/AdminChangeRequestsPage";
-import AdminMessagesPage from "../pages/admin/AdminMessagesPage";
+import AdminHolidaysPage from "../pages/admin/AdminHolidaysPage";
 import AdminModulesPage from "../pages/admin/AdminModulesPage";
 import AdminTimetablePage from "../pages/admin/AdminTimetablePage";
 import AdminStudentProfilesPage from "../pages/admin/AdminStudentProfilesPage";
@@ -21,19 +22,23 @@ import AdminPresentationsPage from "../pages/admin/AdminPresentationsPage";
 import AdminVivaPage from "../pages/admin/AdminVivaPage";
 import AdminLabTestsPage from "../pages/admin/AdminLabTestsPage";
 import AdminExamsPage from "../pages/admin/AdminExamsPage";
+import AdminVivaReviewPage from "../pages/admin/AdminVivaReviewPage";
 import DashboardPage from "../pages/DashboardPage";
 import FcscDashboardPage from "../pages/FcscDashboardPage";
 import FcscInformsPage from "../pages/FcscInformsPage";
 import HomePage from "../pages/HomePage";
 import LecturerDashboardPage from "../pages/lecturer/LecturerDashboardPage";
+import LecturerEventsPage from "../pages/lecturer/LecturerEventsPage";
+import LecturerModulesPage from "../pages/lecturer/LecturerModulesPage";
+import LecturerStudentsPage from "../pages/lecturer/LecturerStudentsPage";
 import LecturerTimetablePage from "../pages/lecturer/LecturerTimetablePage";
+import LecturerMaterialUploadsPage from "../pages/lecturer/LecturerMaterialUploadsPage";
+import LecturerExamSubmissionPage from "../pages/lecturer/LecturerExamSubmissionPage";
 import LecturerChangeRequestsPage from "../pages/lecturer/LecturerChangeRequestsPage";
-import LecturerNoticesPage from "../pages/lecturer/LecturerNoticesPage";
-import LecturerAnnouncementsPage from "../pages/lecturer/LecturerAnnouncementsPage";
-import LecturerContactAdminPage from "../pages/lecturer/LecturerContactAdminPage";
-import LecturerFeedbackPage from "../pages/lecturer/LecturerFeedbackPage";
-import LecturerMessagesPage from "../pages/lecturer/LecturerMessagesPage";
-import LecturerPerformancePage from "../pages/lecturer/LecturerPerformancePage";
+import LecturerCourseworkUploadPage from "../pages/lecturer/LecturerCourseworkUploadPage";
+import LecturerExamSchedulePage from "../pages/lecturer/LecturerExamSchedulePage";
+import LecturerSchedulePage from "../pages/lecturer/LecturerSchedulePage";
+import LecturerVivaPage from "../pages/lecturer/LecturerVivaPage";
 import LoginPage from "../pages/LoginPage";
 import StudyAssistantPage from "../pages/StudyAssistantPage";
 import GpaCalculatorPage from "../pages/GpaCalculatorPage";
@@ -43,9 +48,6 @@ import MyAcademicEventsPage from "../pages/MyAcademicEventsPage";
 import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
 import RegisterPage from "../pages/RegisterPage";
-import StudentAnnouncementsPage from "../pages/StudentAnnouncementsPage";
-import StudentFeedbackPage from "../pages/StudentFeedbackPage";
-import StudentMessagesPage from "../pages/StudentMessagesPage";
 import TasksPage from "../pages/TasksPage";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import LecturerProtectedRoute from "./LecturerProtectedRoute";
@@ -71,33 +73,83 @@ const AppRoutes = () => {
         <Route element={<AdminProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route path={ROUTE_PATHS.adminDashboard} element={<AdminDashboardOverviewPage />} />
-            <Route path={ROUTE_PATHS.adminStudentProfiles} element={<AdminStudentProfilesPage />} />
-            <Route path={ROUTE_PATHS.adminStudentGroups} element={<AdminStudentGroupsPage />} />
-            <Route path={ROUTE_PATHS.adminModules} element={<AdminModulesPage />} />
-            <Route path={ROUTE_PATHS.adminTimetable} element={<AdminTimetablePage />} />
-            <Route path={ROUTE_PATHS.adminAcademicEvents} element={<AdminAcademicEventsPage />} />
-            <Route path={ROUTE_PATHS.adminAssignments} element={<AdminAssignmentsPage />} />
-            <Route path={ROUTE_PATHS.adminPresentations} element={<AdminPresentationsPage />} />
-            <Route path={ROUTE_PATHS.adminViva} element={<AdminVivaPage />} />
-            <Route path={ROUTE_PATHS.adminLabTests} element={<AdminLabTestsPage />} />
-            <Route path={ROUTE_PATHS.adminExams} element={<AdminExamsPage />} />
-            <Route path={ROUTE_PATHS.adminFcscInforms} element={<AdminFcscInformsPage />} />
-            <Route path={ROUTE_PATHS.adminChangeRequests} element={<AdminChangeRequestsPage />} />
-            <Route path={ROUTE_PATHS.adminMessages} element={<AdminMessagesPage />} />
+            <Route
+              path={ROUTE_PATHS.adminStudentProfiles}
+              element={<AdminStudentProfilesPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminStudentGroups}
+              element={<AdminStudentGroupsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminModules}
+              element={<AdminModulesPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminTimetable}
+              element={<AdminTimetablePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminAcademicEvents}
+              element={<AdminAcademicEventsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminAssignments}
+              element={<AdminAssignmentsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminPresentations}
+              element={<AdminPresentationsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminViva}
+              element={<AdminVivaPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminLabTests}
+              element={<AdminLabTestsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminExams}
+              element={<AdminExamsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminFcscInforms}
+              element={<AdminFcscInformsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminLecturers}
+              element={<AdminLecturersPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminHolidays}
+              element={<AdminHolidaysPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminChangeRequests}
+              element={<AdminChangeRequestsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminVivaReview}
+              element={<AdminVivaReviewPage />}
+            />
           </Route>
         </Route>
 
         <Route element={<LecturerProtectedRoute />}>
           <Route element={<LecturerLayout />}>
             <Route path={ROUTE_PATHS.lecturerDashboard} element={<LecturerDashboardPage />} />
+            <Route path={ROUTE_PATHS.lecturerModules} element={<LecturerModulesPage />} />
             <Route path={ROUTE_PATHS.lecturerTimetable} element={<LecturerTimetablePage />} />
+            <Route path={ROUTE_PATHS.lecturerEvents} element={<LecturerEventsPage />} />
+            <Route path={ROUTE_PATHS.lecturerStudents} element={<LecturerStudentsPage />} />
+            <Route path={ROUTE_PATHS.lecturerMaterials} element={<LecturerMaterialUploadsPage />} />
+            <Route path={ROUTE_PATHS.lecturerExamSubmission} element={<LecturerExamSubmissionPage />} />
+            <Route path={ROUTE_PATHS.lecturerCoursework} element={<LecturerCourseworkUploadPage />} />
+            <Route path={ROUTE_PATHS.lecturerSchedule} element={<LecturerSchedulePage />} />
             <Route path={ROUTE_PATHS.lecturerChangeRequests} element={<LecturerChangeRequestsPage />} />
-            <Route path={ROUTE_PATHS.lecturerNotices} element={<LecturerNoticesPage />} />
-            <Route path={ROUTE_PATHS.lecturerAnnouncements} element={<LecturerAnnouncementsPage />} />
-            <Route path={ROUTE_PATHS.lecturerContactAdmin} element={<LecturerContactAdminPage />} />
-            <Route path={ROUTE_PATHS.lecturerMessages} element={<LecturerMessagesPage />} />
-            <Route path={ROUTE_PATHS.lecturerFeedback} element={<LecturerFeedbackPage />} />
-            <Route path={ROUTE_PATHS.lecturerPerformance} element={<LecturerPerformancePage />} />
+            <Route path={ROUTE_PATHS.lecturerExamSchedule} element={<LecturerExamSchedulePage />} />
+            <Route path={ROUTE_PATHS.lecturerVivas} element={<LecturerVivaPage />} />
           </Route>
         </Route>
 
@@ -113,9 +165,6 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
             <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
             <Route path={ROUTE_PATHS.gpaTrendHistory} element={<GpaTrendPage />} />
-            <Route path={ROUTE_PATHS.studentAnnouncements} element={<StudentAnnouncementsPage />} />
-            <Route path={ROUTE_PATHS.studentMessages} element={<StudentMessagesPage />} />
-            <Route path={ROUTE_PATHS.studentFeedback} element={<StudentFeedbackPage />} />
           </Route>
         </Route>
 

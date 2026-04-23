@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import api from "../../services/api";
+import { getMyTimetable } from "../../services/lecturerService";
 import { extractApiErrorMessage } from "../../utils/error";
 
 const LecturerTimetablePage = () => {
@@ -12,8 +12,8 @@ const LecturerTimetablePage = () => {
     const fetchTimetable = async () => {
       try {
         setLoading(true);
-        const { data } = await api.get("/lecturer/my-timetable");
-        setEntries(data.data || []);
+        const response = await getMyTimetable();
+        setEntries(response.data || []);
       } catch (err) {
         setError(extractApiErrorMessage(err));
       } finally {
@@ -27,7 +27,7 @@ const LecturerTimetablePage = () => {
   return (
     <section className="admin-page-grid section-entrance">
       <article className="admin-glass-card admin-module-card">
-        <p className="eyebrow">Lecturer</p>
+        <p className="eyebrow">Lecturer Module</p>
         <h2>My Timetable</h2>
         <p>Weekly timetable for your assigned modules.</p>
 

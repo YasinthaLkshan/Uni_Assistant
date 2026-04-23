@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-import { Logo } from "../components";
 import { useAuth } from "../hooks/useAuth";
 import { ROUTE_PATHS } from "../routes/routePaths";
 import { extractApiErrorMessage } from "../utils/error";
@@ -71,17 +70,37 @@ const LecturerLoginPage = () => {
   };
 
   return (
-    <section className="auth-page admin-login-page page-fade-in">
-      <div className="login-bg-container">
-        <div className="login-bg-overlay" />
+    <section className="modern-login-page">
+      <div className="modern-login-bg">
+        <div className="celestial-gradient" />
+        <div className="geometric-lines" />
       </div>
 
-      <div className="login-content-wrapper">
-        <article className="auth-panel admin-login-card glass-card section-entrance">
-          <div className="login-header">
-            <Logo variant="center" />
-            <h1 className="login-title">Lecturer Portal</h1>
-            <p className="admin-login-subtitle">Access your modules, events, and student management</p>
+      <div className="modern-login-container">
+        <div className="modern-login-card">
+          <div className="modern-login-header">
+            <svg
+              className="modern-cloud-icon"
+              viewBox="0 0 120 120"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="lecturerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#8ea1ff" />
+                  <stop offset="100%" stopColor="#b08dff" />
+                </linearGradient>
+              </defs>
+              <path
+                d="M60 22L26 40l34 18 27-14v22h7V40L60 22zm-17.5 37.5V72c0 9.5 13.2 16.5 17.5 16.5S77.5 81.5 77.5 72V59.5L60 69l-17.5-9.5z"
+                fill="url(#lecturerGradient)"
+                opacity="0.9"
+              />
+              <circle cx="60" cy="60" r="55" fill="none" stroke="url(#lecturerGradient)" strokeWidth="1" opacity="0.3" />
+            </svg>
+
+            <h1 className="modern-login-title">LECTURER PORTAL</h1>
+            <p className="modern-login-subtitle">Access your modules, events, and student management</p>
           </div>
 
           <form className="auth-form" onSubmit={handleSubmit}>
@@ -147,9 +166,9 @@ const LecturerLoginPage = () => {
               </div>
             </div>
 
-            {error ? <p className="form-error">{error}</p> : null}
+            {error ? <p className="error-message">{error}</p> : null}
 
-            <button type="submit" disabled={loading} className="primary-btn btn-submit">
+            <button type="submit" disabled={loading} className="submit-btn">
               {loading ? (
                 <>
                   <span className="btn-spinner" aria-hidden="true" />
@@ -161,17 +180,33 @@ const LecturerLoginPage = () => {
             </button>
           </form>
 
-          <div className="login-footer">
-            <p className="switch-auth">
-              Student login? <Link to={ROUTE_PATHS.login}>Go to Student Login</Link>
-            </p>
-            <p className="switch-auth">
-              Admin login? <Link to={ROUTE_PATHS.adminLogin}>Go to Admin Login</Link>
-            </p>
-          </div>
-        </article>
+          <div className="modern-login-footer">
+            <div className="footer-link-group">
+              <p className="footer-primary-text">
+                Student login?{" "}
+                <Link to={ROUTE_PATHS.login} className="footer-link">
+                  Go to Student Login
+                </Link>
+              </p>
+            </div>
 
-        <footer className="login-footer-text">
+            <div className="footer-secondary-links">
+              <Link to={ROUTE_PATHS.adminLogin} className="footer-secondary-link">
+                Admin Portal
+              </Link>
+              <span className="footer-link-divider">·</span>
+              <Link to={ROUTE_PATHS.login} className="footer-secondary-link">
+                Student Portal
+              </Link>
+              <span className="footer-link-divider">·</span>
+              <Link to={ROUTE_PATHS.communityLogin} className="footer-secondary-link">
+                FCSC Login
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        <footer className="modern-login-page-footer">
           <p>© 2024 Uni Assistant. Educational technology for modern universities.</p>
         </footer>
       </div>

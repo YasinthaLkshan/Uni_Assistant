@@ -68,33 +68,6 @@ const MENU_ITEMS = [
       </svg>
     ),
   },
-  {
-    label: "Announcements",
-    path: ROUTE_PATHS.studentAnnouncements,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM7 9h2v2H7V9zm4 0h2v2h-2V9zm4 0h2v2h-2V9z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Messages",
-    path: ROUTE_PATHS.studentMessages,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
-      </svg>
-    ),
-  },
-  {
-    label: "Feedback",
-    path: ROUTE_PATHS.studentFeedback,
-    icon: (
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-      </svg>
-    ),
-  },
 ];
 
 const PAGE_TITLES = {
@@ -105,9 +78,6 @@ const PAGE_TITLES = {
   [ROUTE_PATHS.myTimetable]: "My Timetable",
   [ROUTE_PATHS.myEvents]: "My Academic Events",
   [ROUTE_PATHS.gpaCalculator]: "GPA Calculator",
-  [ROUTE_PATHS.studentAnnouncements]: "Announcements",
-  [ROUTE_PATHS.studentMessages]: "Messages",
-  [ROUTE_PATHS.studentFeedback]: "Lecture Feedback",
 };
 
 const MainLayout = () => {
@@ -136,20 +106,28 @@ const MainLayout = () => {
   }, [displayName]);
 
   return (
-    <div className="app-shell app-grid main-layout main-layout-premium">
+    <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
       <aside
         className={`sidebar main-sidebar ${isMobileMenuOpen ? "is-open" : ""}`}
       >
         <div className="sidebar-head">
           <NavLink
             to={ROUTE_PATHS.home}
-            className="icon-btn sidebar-home-link"
+            className="icon-btn sidebar-home-link home-button-fancy"
             onClick={closeMobileMenu}
             aria-label="Go to home page"
             title="Home"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 18v-4h4v4m-9 2h14a1 1 0 0 0 1-1v-8.7a1 1 0 0 0-.32-.73l-7-6.4a1 1 0 0 0-1.36 0l-7 6.4a1 1 0 0 0-.32.73V19a1 1 0 0 0 1 1z" />
+            <svg className="home-button-logo" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                className="home-button-roof"
+                d="M3.8 10.5 12 3.7l8.2 6.8v8.2a1.3 1.3 0 0 1-1.3 1.3H5.1a1.3 1.3 0 0 1-1.3-1.3z"
+              />
+              <path
+                className="home-button-door"
+                d="M9.7 20v-4.6a1 1 0 0 1 1-1h2.6a1 1 0 0 1 1 1V20"
+              />
+              <circle className="home-button-spark" cx="18.1" cy="6.2" r="1.1" />
             </svg>
           </NavLink>
         </div>
