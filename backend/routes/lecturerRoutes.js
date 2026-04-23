@@ -12,6 +12,14 @@ import {
   markMessageReadController,
   getAdminListController,
 } from "../controllers/lecturer.controller.js";
+import {
+  getFullScheduleController,
+  getModuleScheduleController,
+  getScheduleSummaryController,
+  addSessionsController,
+  removeSessionController,
+  submitScheduleController,
+} from "../controllers/lectureSchedule.controller.js";
 import { protect } from "../middleware/auth.middleware.js";
 import lecturerMiddleware from "../middleware/lecturer.middleware.js";
 
@@ -35,5 +43,13 @@ router.put("/messages/:id/read", markMessageReadController);
 
 // Admin list (for contact admin feature)
 router.get("/admins", getAdminListController);
+
+// Lecture schedule
+router.get("/schedule", getFullScheduleController);
+router.get("/schedule/:moduleId/:group", getModuleScheduleController);
+router.get("/schedule/:moduleId/:group/summary", getScheduleSummaryController);
+router.post("/schedule/:moduleId/:group", addSessionsController);
+router.post("/schedule/:moduleId/:group/submit", submitScheduleController);
+router.delete("/schedule/session/:sessionId", removeSessionController);
 
 export default router;
