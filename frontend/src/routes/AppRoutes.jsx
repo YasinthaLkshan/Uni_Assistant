@@ -52,6 +52,9 @@ import MyAcademicEventsPage from "../pages/MyAcademicEventsPage";
 import MyModulesPage from "../pages/MyModulesPage";
 import MyTimetablePage from "../pages/MyTimetablePage";
 import RegisterPage from "../pages/RegisterPage";
+import StudentAnnouncementsPage from "../pages/StudentAnnouncementsPage";
+import StudentFeedbackPage from "../pages/StudentFeedbackPage";
+import StudentMessagesPage from "../pages/StudentMessagesPage";
 import TasksPage from "../pages/TasksPage";
 import AdminProtectedRoute from "./AdminProtectedRoute";
 import LecturerProtectedRoute from "./LecturerProtectedRoute";
@@ -165,6 +168,9 @@ const AppRoutes = () => {
             <Route path={ROUTE_PATHS.gpaCalculator} element={<GpaCalculatorPage />} />
             <Route path={ROUTE_PATHS.gpaHistory} element={<GpaHistoryPage />} />
             <Route path={ROUTE_PATHS.gpaTrendHistory} element={<GpaTrendPage />} />
+            <Route path={ROUTE_PATHS.studentAnnouncements} element={<StudentAnnouncementsPage />} />
+            <Route path={ROUTE_PATHS.studentMessages} element={<StudentMessagesPage />} />
+            <Route path={ROUTE_PATHS.studentFeedback} element={<StudentFeedbackPage />} />
           </Route>
         </Route>
 
