@@ -1,47 +1,48 @@
 import { useState } from "react";
 
-import { PageHeader, GlassCard } from "../../components";
-
 const AdminStudentGroupsPage = () => {
-  const [records, setRecords] = useState([]);
+  const [records] = useState([]);
 
   return (
-    <section className="dashboard admin-page">
-      <GlassCard className="section-entrance" style={{ animationDelay: "40ms" }}>
-        <PageHeader
-          eyebrow="Management"
-          title="Student Groups"
-          subtitle="Organize students into groups for batch operations and scheduling"
-        />
-      </GlassCard>
+    <section className="admin-page-grid section-entrance">
+      <article className="admin-glass-card admin-module-card">
+        <p className="eyebrow">Management</p>
+        <h2>Student Groups</h2>
+        <p>Organize students into groups for batch operations and scheduling.</p>
 
-      <GlassCard as="section" className="ui-section section-entrance" style={{ animationDelay: "100ms" }}>
-        <div className="admin-form-section">
-          <h3>Create New Group</h3>
-          <form className="admin-form">
-            <div className="form-group">
-              <label>Semester</label>
-              <input type="number" placeholder="Enter semester" />
-            </div>
-            <div className="form-group">
-              <label>Group Number</label>
-              <input type="number" placeholder="Enter group number" />
-            </div>
-            <div className="form-group">
-              <label>Group Name</label>
-              <input type="text" placeholder="Enter group name" />
-            </div>
-            <div className="form-group">
-              <label>Max Students</label>
-              <input type="number" placeholder="Enter max students" />
-            </div>
+        <h3 className="admin-subsection-title">Create New Group</h3>
+
+        <form className="admin-form-grid admin-module-form-grid">
+          <label>
+            Semester
+            <input type="number" name="semester" placeholder="Enter semester" />
+          </label>
+
+          <label>
+            Group Number
+            <input type="number" name="groupNumber" placeholder="Enter group number" />
+          </label>
+
+          <label>
+            Group Name
+            <input type="text" name="groupName" placeholder="Enter group name" />
+          </label>
+
+          <label>
+            Max Students
+            <input type="number" name="maxStudents" placeholder="Enter max students" />
+          </label>
+
+          <div className="admin-form-actions admin-form-span-full">
             <button type="submit" className="primary-btn">Create Group</button>
-          </form>
-        </div>
+            <button type="reset" className="ghost-btn">Clear</button>
+          </div>
+        </form>
 
-        <div className="admin-table-container">
-          <h3>Student Groups</h3>
-          <table className="admin-table">
+        <h3 className="admin-subsection-title">Student Groups ({records.length})</h3>
+
+        <div className="admin-data-table-wrap">
+          <table className="admin-data-table">
             <thead>
               <tr>
                 <th>Semester</th>
@@ -52,13 +53,15 @@ const AdminStudentGroupsPage = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colSpan="5" className="empty-row">No groups found</td>
-              </tr>
+              {records.length === 0 ? (
+                <tr>
+                  <td colSpan="5">No groups found</td>
+                </tr>
+              ) : null}
             </tbody>
           </table>
         </div>
-      </GlassCard>
+      </article>
     </section>
   );
 };

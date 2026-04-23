@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 import ScheduleChangeRequest from "../models/ScheduleChangeRequest.js";
 import TimetableEntry from "../models/TimetableEntry.js";
+import Module from "../models/Module.js";
 import AppError from "../utils/appError.js";
 
 // ─── Lecturer Operations ────────────────────────────────────────────────────
@@ -36,10 +37,16 @@ export const fileChangeRequest = async (lecturerId, payload) => {
     throw new AppError("A pending change request already exists for this entry", 409);
   }
 
+  let moduleId = entry.module;
+  if (!moduleId && entry.moduleCode) {
+    const moduleDoc = await Module.findOne({ moduleCode: entry.moduleCode }).select("_id");
+    if (moduleDoc) moduleId = moduleDoc._id;
+  }
+
   const created = await ScheduleChangeRequest.create({
     lecturer: lecturerId,
     timetableEntry: timetableEntryId,
-    module: entry.module,
+    module: moduleId,
     moduleCode: entry.moduleCode,
     group: entry.groupNumber,
     currentDay: entry.dayOfWeek,
