@@ -1,5 +1,19 @@
 import { useEffect, useState } from "react";
 
+const isApprovedEventExpired = (eventDate) => {
+  if (!eventDate) {
+    return false;
+  }
+
+  const parsedDate = new Date(eventDate);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return false;
+  }
+
+  parsedDate.setHours(23, 59, 59, 999);
+  return parsedDate.getTime() < Date.now();
+};
+
 const AdminFcscInformsPage = () => {
   const [pendingEvents, setPendingEvents] = useState([]);
   const [approvedEvents, setApprovedEvents] = useState([]);
@@ -17,7 +31,14 @@ const AdminFcscInformsPage = () => {
       setPendingEvents(JSON.parse(stored));
     }
     if (approved) {
-      setApprovedEvents(JSON.parse(approved));
+      const parsedApproved = JSON.parse(approved);
+      const activeApproved = parsedApproved.filter((evt) => !isApprovedEventExpired(evt.date));
+
+      if (activeApproved.length !== parsedApproved.length) {
+        localStorage.setItem("fcsc_approved_events", JSON.stringify(activeApproved));
+      }
+
+      setApprovedEvents(activeApproved);
     }
   };
 
@@ -32,8 +53,10 @@ const AdminFcscInformsPage = () => {
 
       // Add to approved
       const updatedApproved = [...approvedEvents, { ...eventToApprove, approvedAt: new Date().toISOString() }];
-      setApprovedEvents(updatedApproved);
-      localStorage.setItem("fcsc_approved_events", JSON.stringify(updatedApproved));
+      const activeApproved = updatedApproved.filter((evt) => !isApprovedEventExpired(evt.date));
+
+      setApprovedEvents(activeApproved);
+      localStorage.setItem("fcsc_approved_events", JSON.stringify(activeApproved));
     }
   };
 

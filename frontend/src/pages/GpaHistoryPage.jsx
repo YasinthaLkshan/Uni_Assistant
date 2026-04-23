@@ -61,11 +61,11 @@ const GpaHistoryPage = () => {
   };
 
   return (
-    <section className="modern-gpa-wrapper">
+    <section className="modern-gpa-wrapper gpa-history-clean">
       <header className="modern-gpa-header">
-        <div>
+        <div className="gpa-history-head-copy">
           <h1>GPA History</h1>
-          <p style={{ color: "#64748b", margin: "0.2rem 0 0" }}>Review your beautifully tracked academic performance.</p>
+          <p className="gpa-history-subtitle">Review your beautifully tracked academic performance.</p>
         </div>
         <Link to={ROUTE_PATHS.gpaCalculator} className="history-link-btn">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "rotate(180deg)" }}>
@@ -77,34 +77,37 @@ const GpaHistoryPage = () => {
       </header>
 
       {hasEntries && stats && (
-        <div className="premium-glass-card" style={{ marginBottom: "2rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
+        <div className="premium-glass-card gpa-history-metrics-card">
+          <div className="gpa-history-metrics-head">
             <div>
               <h2>History Metrics</h2>
               <p className="subtitle">Breakdown of your saved performance</p>
             </div>
             <div className="stats-bar-flex">
-              <div className="glass-stat-item">
+              <div className="glass-stat-item stat-records">
                 Records: <b>{stats.count}</b>
               </div>
-              <div className="glass-stat-item">
-                Best GPA: <b style={{ color: "#10b981" }}>{stats.bestGpa.toFixed(2)}</b>
+              <div className="glass-stat-item stat-best">
+                Best GPA: <b>{stats.bestGpa.toFixed(2)}</b>
               </div>
-              <div className="glass-stat-item">
-                Average GPA: <b style={{ color: "#3b82f6" }}>{stats.averageGpa.toFixed(2)}</b>
+              <div className="glass-stat-item stat-average">
+                Average GPA: <b>{stats.averageGpa.toFixed(2)}</b>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <div className="premium-glass-card">
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", flexWrap: "wrap", gap: "1rem" }}>
+      <div className="premium-glass-card gpa-history-list-card">
+        <div className="gpa-history-actions-head">
           <h2>Saved Calculations</h2>
           {hasEntries && (
             <div className="modern-actions" style={{ marginTop: 0 }}>
-              <Link to={ROUTE_PATHS.gpaTrendHistory}>
-                <button className="btn-add" style={{ background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", color: "white", border: "none" }}>Show trend</button>
+              <Link
+                to={ROUTE_PATHS.gpaTrendHistory}
+                className="btn-add gpa-trend-link-btn"
+              >
+                Show Trend
               </Link>
               <button className="btn-add" onClick={handleDownloadSheet}>Export Sheet</button>
               <button className="btn-reset" onClick={handleClearAll} style={{ color: "#ef4444" }}>Clear History</button>
@@ -122,20 +125,21 @@ const GpaHistoryPage = () => {
             {entries.map((entry) => {
               const createdAt = entry.createdAt ? new Date(entry.createdAt) : null;
               const isExcellent = entry.gpa >= 3.7;
+              const gpaTone = entry.gpa >= 3.7 ? "excellent" : entry.gpa >= 3.0 ? "good" : entry.gpa >= 2.0 ? "average" : "warning";
               
               return (
-                <div key={entry.id} className="modern-history-card">
-                  <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
+                <div key={entry.id} className={`modern-history-card is-${gpaTone}`}>
+                  <div className="gpa-history-item-main">
                     <div className="gpa-badge">
                       <span>{entry.gpa.toFixed(2)}</span>
                     </div>
                     <div className="history-info-group">
-                      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                      <div className="gpa-history-title-row">
                         <h4>{entry.semesterLabel || entry.semesterKey || "Semester"}</h4>
-                        {isExcellent && <span style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10b981", fontSize: "0.7rem", padding: "0.2rem 0.5rem", borderRadius: "100px", fontWeight: "700" }}>DEAN'S LIST</span>}
+                        {isExcellent && <span className="gpa-honors-pill">DEAN'S LIST</span>}
                       </div>
                       <p>{entry.courseLabel && `${entry.courseLabel} • `}{entry.totalCredits} Credits Total</p>
-                      {createdAt && <p style={{ fontSize: "0.75rem", opacity: 0.7, marginTop: "0.2rem" }}>Saved: {createdAt.toLocaleDateString()}</p>}
+                      {createdAt && <p className="gpa-history-date">Saved: {createdAt.toLocaleDateString()}</p>}
                     </div>
                   </div>
                   <button onClick={() => handleRemoveEntry(entry.id)} className="delete-action-btn" title="Delete record">
