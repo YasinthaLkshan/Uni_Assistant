@@ -17,7 +17,7 @@ const scheduleChangeRequestSchema = new mongoose.Schema(
     module: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Module",
-      required: true,
+      default: null,
     },
     moduleCode: {
       type: String,
