@@ -170,37 +170,36 @@ const AdminChangeRequestsPage = () => {
                       </td>
                       <td>
                         {r.status === "pending" ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem", minWidth: "140px" }}>
-                            <textarea
-                              value={remarks[r._id] || ""}
-                              onChange={(e) => handleRemarksChange(r._id, e.target.value)}
-                              placeholder="Remarks (optional)"
-                              rows={2}
-                              style={{ fontSize: "0.8rem", padding: "0.3rem" }}
-                            />
+                          <div className="admin-form-grid" style={{ gridTemplateColumns: "1fr", gap: "0.5rem", marginTop: 0, minWidth: "160px" }}>
+                            <label style={{ gap: "0.3rem" }}>
+                              <textarea
+                                value={remarks[r._id] || ""}
+                                onChange={(e) => handleRemarksChange(r._id, e.target.value)}
+                                placeholder="Remarks (optional)"
+                                rows={2}
+                              />
+                            </label>
                             <div className="admin-row-actions">
                               <button
                                 type="button"
                                 className="primary-btn"
                                 onClick={() => handleApprove(r._id)}
                                 disabled={isProcessing}
-                                style={{ fontSize: "0.78rem", padding: "0.3rem 0.6rem" }}
                               >
                                 {isProcessing ? "..." : "Approve"}
                               </button>
                               <button
                                 type="button"
-                                className="ui-btn is-ghost"
+                                className="ghost-btn"
                                 onClick={() => handleReject(r._id)}
                                 disabled={isProcessing}
-                                style={{ fontSize: "0.78rem", padding: "0.3rem 0.6rem" }}
                               >
                                 {isProcessing ? "..." : "Reject"}
                               </button>
                             </div>
                           </div>
                         ) : (
-                          <span style={{ opacity: 0.5, fontSize: "0.8rem" }}>
+                          <span className="admin-inline-note">
                             {r.reviewedBy?.name ? `by ${r.reviewedBy.name}` : "Reviewed"}
                           </span>
                         )}

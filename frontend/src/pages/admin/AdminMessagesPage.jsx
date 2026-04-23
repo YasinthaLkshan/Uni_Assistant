@@ -86,68 +86,61 @@ const AdminMessagesPage = () => {
       <article className="admin-glass-card admin-module-card">
         <p className="eyebrow">Inbox</p>
         <h2>Messages ({received.length})</h2>
-        <p>Messages from lecturers.</p>
+        <p>Messages received from lecturers. Reply or mark as read once handled.</p>
 
         {error ? <p className="form-error">{error}</p> : null}
         {success ? <p className="admin-action-note">{success}</p> : null}
 
-        {loading ? <p>Loading...</p> : null}
+        <h3 className="admin-subsection-title">Received</h3>
 
-        {!loading && received.length === 0 ? (
-          <p style={{ opacity: 0.6, marginTop: "1rem" }}>No messages received.</p>
-        ) : null}
+        {loading ? <p>Loading...</p> : null}
+        {!loading && received.length === 0 ? <p>No messages received.</p> : null}
 
         {!loading && received.length > 0 ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginTop: "1rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem", marginTop: "0.4rem" }}>
             {received.map((msg) => (
               <article
                 key={msg._id}
                 className="admin-glass-card"
                 style={{
-                  padding: "0.8rem 1rem",
-                  borderLeft: `3px solid ${msg.isRead ? "#94a3b8" : "#3b82f6"}`,
-                  opacity: msg.isRead ? 0.8 : 1,
+                  padding: "0.9rem 1.1rem",
+                  borderLeft: `3px solid ${msg.isRead ? "#94a3b8" : "#5a67d8"}`,
+                  opacity: msg.isRead ? 0.92 : 1,
                 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.75rem" }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
                       {!msg.isRead ? (
-                        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#3b82f6", flexShrink: 0 }} />
+                        <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#5a67d8", flexShrink: 0 }} />
                       ) : null}
-                      <h3 style={{ margin: 0, fontSize: "0.95rem" }}>{msg.subject}</h3>
+                      <h3 style={{ margin: 0, fontSize: "0.98rem" }}>{msg.subject}</h3>
                     </div>
-                    <p style={{ fontSize: "0.78rem", opacity: 0.6, marginTop: "0.15rem" }}>
+                    <p style={{ fontSize: "0.78rem", opacity: 0.65, marginTop: "0.2rem" }}>
                       From: {msg.sender?.name || "Lecturer"} ({msg.sender?.email || ""}) — {msg.senderRole}
                     </p>
                   </div>
-                  <span style={{ fontSize: "0.72rem", opacity: 0.5, whiteSpace: "nowrap" }}>{formatDate(msg.createdAt)}</span>
+                  <span style={{ fontSize: "0.72rem", opacity: 0.55, whiteSpace: "nowrap" }}>{formatDate(msg.createdAt)}</span>
                 </div>
 
-                <p style={{ marginTop: "0.5rem", fontSize: "0.88rem", opacity: 0.85, whiteSpace: "pre-wrap" }}>
+                <p style={{ marginTop: "0.55rem", fontSize: "0.9rem", opacity: 0.88, whiteSpace: "pre-wrap" }}>
                   {msg.content}
                 </p>
 
-                <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+                <div className="admin-row-actions" style={{ marginTop: "0.6rem" }}>
                   {!msg.isRead ? (
                     <button
                       type="button"
+                      className="ghost-btn"
                       onClick={() => handleMarkRead(msg._id)}
-                      style={{
-                        background: "rgba(59,130,246,0.1)",
-                        border: "1px solid rgba(59,130,246,0.3)",
-                        color: "#3b82f6",
-                        borderRadius: "6px",
-                        padding: "0.25rem 0.5rem",
-                        fontSize: "0.75rem",
-                        cursor: "pointer",
-                      }}
+                      style={{ padding: "0.3rem 0.8rem", fontSize: "0.78rem" }}
                     >
                       Mark as Read
                     </button>
                   ) : null}
                   <button
                     type="button"
+                    className="primary-btn"
                     onClick={() =>
                       setReplyForm((prev) =>
                         prev.messageId === msg._id
@@ -155,33 +148,40 @@ const AdminMessagesPage = () => {
                           : { messageId: msg._id, content: "" }
                       )
                     }
-                    style={{
-                      background: "rgba(16,185,129,0.1)",
-                      border: "1px solid rgba(16,185,129,0.3)",
-                      color: "#10b981",
-                      borderRadius: "6px",
-                      padding: "0.25rem 0.5rem",
-                      fontSize: "0.75rem",
-                      cursor: "pointer",
-                    }}
+                    style={{ padding: "0.3rem 0.9rem", fontSize: "0.78rem" }}
                   >
                     {replyForm.messageId === msg._id ? "Cancel" : "Reply"}
                   </button>
                 </div>
 
                 {replyForm.messageId === msg._id ? (
-                  <form onSubmit={handleReply} style={{ marginTop: "0.6rem" }}>
-                    <textarea
-                      value={replyForm.content}
-                      onChange={(e) => setReplyForm((prev) => ({ ...prev, content: e.target.value }))}
-                      rows={3}
-                      placeholder="Type your reply..."
-                      style={{ width: "100%", marginBottom: "0.4rem" }}
-                      required
-                    />
-                    <button type="submit" className="primary-btn" disabled={replying} style={{ fontSize: "0.8rem", padding: "0.35rem 0.8rem" }}>
-                      {replying ? "Sending..." : "Send Reply"}
-                    </button>
+                  <form
+                    onSubmit={handleReply}
+                    className="admin-form-grid admin-module-form-grid"
+                    style={{ marginTop: "0.8rem" }}
+                  >
+                    <label className="admin-form-span-full">
+                      Your reply
+                      <textarea
+                        value={replyForm.content}
+                        onChange={(e) => setReplyForm((prev) => ({ ...prev, content: e.target.value }))}
+                        rows={4}
+                        placeholder="Type your reply..."
+                        required
+                      />
+                    </label>
+                    <div className="admin-form-actions admin-form-span-full">
+                      <button type="submit" className="primary-btn" disabled={replying}>
+                        {replying ? "Sending..." : "Send Reply"}
+                      </button>
+                      <button
+                        type="button"
+                        className="ghost-btn"
+                        onClick={() => setReplyForm({ messageId: null, content: "" })}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </form>
                 ) : null}
               </article>
@@ -195,23 +195,25 @@ const AdminMessagesPage = () => {
           <p className="eyebrow">Sent</p>
           <h2>Sent Replies ({sent.length})</h2>
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginTop: "1rem" }}>
+          <h3 className="admin-subsection-title">Outbox</h3>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginTop: "0.4rem" }}>
             {sent.map((msg) => (
               <article
                 key={msg._id}
                 className="admin-glass-card"
-                style={{ padding: "0.7rem 1rem", borderLeft: "3px solid #94a3b8" }}
+                style={{ padding: "0.8rem 1rem", borderLeft: "3px solid #94a3b8" }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "0.75rem" }}>
                   <div>
-                    <h3 style={{ margin: 0, fontSize: "0.9rem" }}>{msg.subject}</h3>
-                    <p style={{ fontSize: "0.75rem", opacity: 0.6, marginTop: "0.1rem" }}>
+                    <h3 style={{ margin: 0, fontSize: "0.92rem" }}>{msg.subject}</h3>
+                    <p style={{ fontSize: "0.75rem", opacity: 0.65, marginTop: "0.15rem" }}>
                       To: {msg.receiver?.name || "User"}
                     </p>
                   </div>
-                  <span style={{ fontSize: "0.72rem", opacity: 0.5 }}>{formatDate(msg.createdAt)}</span>
+                  <span style={{ fontSize: "0.72rem", opacity: 0.55 }}>{formatDate(msg.createdAt)}</span>
                 </div>
-                <p style={{ marginTop: "0.3rem", fontSize: "0.85rem", opacity: 0.8, whiteSpace: "pre-wrap" }}>
+                <p style={{ marginTop: "0.35rem", fontSize: "0.86rem", opacity: 0.82, whiteSpace: "pre-wrap" }}>
                   {msg.content}
                 </p>
               </article>
