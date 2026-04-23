@@ -103,86 +103,102 @@ const PAGE_TITLES = {
 const LecturerLayout = () => {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const pageTitle = useMemo(() => PAGE_TITLES[pathname] || "Lecturer Panel", [pathname]);
+
+  const displayName = useMemo(() => {
+    const rawName = (user?.name || "Lecturer").trim();
+    if (!rawName) {
+      return "Lecturer";
+    }
+
+    return `${rawName.charAt(0).toUpperCase()}${rawName.slice(1)}`;
+  }, [user?.name]);
+
+  const avatarInitials = useMemo(() => {
+    const parts = displayName.split(" ").filter(Boolean).slice(0, 2);
+    const initials = parts.map((part) => part.charAt(0).toUpperCase()).join("");
+    return initials || "LE";
+  }, [displayName]);
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
 
   return (
-    <div className="admin-shell admin-grid">
+    <div className="app-shell app-grid main-layout main-layout-premium">
       <aside
-        className={`admin-sidebar ${isSidebarCollapsed ? "is-collapsed" : ""} ${
-          isMobileMenuOpen ? "is-open" : ""
-        }`}
+        className={`sidebar main-sidebar ${isMobileMenuOpen ? "is-open" : ""}`}
       >
-        <div className="admin-sidebar-head">
-          <NavLink to={ROUTE_PATHS.lecturerDashboard} className="admin-brand" onClick={closeMobileMenu}>
-            Uni Assistant
-          </NavLink>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-            aria-label="Toggle lecturer sidebar"
+        <div className="sidebar-head">
+          <NavLink
+            to={ROUTE_PATHS.lecturerDashboard}
+            className="icon-btn sidebar-home-link"
+            onClick={closeMobileMenu}
+            aria-label="Go to lecturer dashboard"
+            title="Dashboard"
           >
-            {isSidebarCollapsed ? ">" : "<"}
-          </button>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M10 18v-4h4v4m-9 2h14a1 1 0 0 0 1-1v-8.7a1 1 0 0 0-.32-.73l-7-6.4a1 1 0 0 0-1.36 0l-7 6.4a1 1 0 0 0-.32.73V19a1 1 0 0 0 1 1z" />
+            </svg>
+          </NavLink>
         </div>
 
-        <nav className="admin-sidebar-nav">
+        <nav className="sidebar-nav">
           {LECTURER_MENU_ITEMS.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={closeMobileMenu}
               className={({ isActive }) =>
-                `admin-nav-item ${isActive ? "is-active" : ""}`
+                `nav-link nav-pill nav-item ${isActive ? "active-menu" : ""}`
               }
             >
-              <span className="admin-nav-icon">{item.icon}</span>
-              <span className="admin-nav-label">{item.label}</span>
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <button type="button" className="admin-logout-btn" onClick={logout}>
-          Logout
+        <button type="button" className="ghost-btn sidebar-logout" onClick={logout}>
+          <span>Logout</span>
+          <span className="sidebar-logout-icon" aria-hidden="true">&rarr;</span>
         </button>
       </aside>
 
-      <div className="admin-content-wrap">
-        <header className="admin-header">
+      <div className="layout-content-wrap">
+        <header className="topbar main-header">
           <div className="title-area">
             <button
               type="button"
-              className="icon-btn admin-mobile-trigger"
+              className="icon-btn mobile-nav-trigger"
               onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-              aria-label="Open lecturer navigation"
+              aria-label="Open navigation"
             >
               ≡
             </button>
             <div>
-              <p className="eyebrow">Lecturer Panel</p>
               <h2 className="page-title">{pageTitle}</h2>
             </div>
           </div>
-
-          <section className="admin-profile-chip" aria-label="Lecturer profile">
-            <span className="admin-chip-avatar">
-              {(user?.name || "L").charAt(0).toUpperCase()}
-            </span>
-            <div className="admin-chip-info">
-              <p className="admin-chip-name">{user?.name || "Lecturer"}</p>
-              <p className="admin-chip-meta">Lecturer</p>
-            </div>
-          </section>
+          <div className="dashboard-head-meta">
+            <section className="user-panel" aria-label="User information">
+              <p className="user-name">
+                <span className="user-avatar" aria-hidden="true">{avatarInitials}</span>
+                <span className="user-chip-text">
+                  <strong>{displayName}</strong>
+                  <span className="user-chip-status">
+                    <span className="user-status-dot" aria-hidden="true" />
+                    <span className="user-status-label">Active</span>
+                  </span>
+                </span>
+              </p>
+            </section>
+          </div>
         </header>
 
-        <main className="admin-main-content">
+        <main className="main-content content-shell">
           <Outlet />
         </main>
       </div>
