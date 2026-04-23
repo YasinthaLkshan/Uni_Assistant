@@ -71,18 +71,54 @@ const AppRoutes = () => {
         <Route element={<AdminProtectedRoute />}>
           <Route element={<AdminLayout />}>
             <Route path={ROUTE_PATHS.adminDashboard} element={<AdminDashboardOverviewPage />} />
-            <Route path={ROUTE_PATHS.adminStudentProfiles} element={<AdminStudentProfilesPage />} />
-            <Route path={ROUTE_PATHS.adminStudentGroups} element={<AdminStudentGroupsPage />} />
-            <Route path={ROUTE_PATHS.adminModules} element={<AdminModulesPage />} />
-            <Route path={ROUTE_PATHS.adminTimetable} element={<AdminTimetablePage />} />
-            <Route path={ROUTE_PATHS.adminAcademicEvents} element={<AdminAcademicEventsPage />} />
-            <Route path={ROUTE_PATHS.adminAssignments} element={<AdminAssignmentsPage />} />
-            <Route path={ROUTE_PATHS.adminPresentations} element={<AdminPresentationsPage />} />
-            <Route path={ROUTE_PATHS.adminViva} element={<AdminVivaPage />} />
-            <Route path={ROUTE_PATHS.adminLabTests} element={<AdminLabTestsPage />} />
-            <Route path={ROUTE_PATHS.adminExams} element={<AdminExamsPage />} />
-            <Route path={ROUTE_PATHS.adminFcscInforms} element={<AdminFcscInformsPage />} />
-            <Route path={ROUTE_PATHS.adminChangeRequests} element={<AdminChangeRequestsPage />} />
+            <Route
+              path={ROUTE_PATHS.adminStudentProfiles}
+              element={<AdminStudentProfilesPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminStudentGroups}
+              element={<AdminStudentGroupsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminModules}
+              element={<AdminModulesPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminTimetable}
+              element={<AdminTimetablePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminAcademicEvents}
+              element={<AdminAcademicEventsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminAssignments}
+              element={<AdminAssignmentsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminPresentations}
+              element={<AdminPresentationsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminViva}
+              element={<AdminVivaPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminLabTests}
+              element={<AdminLabTestsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminExams}
+              element={<AdminExamsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminFcscInforms}
+              element={<AdminFcscInformsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.adminChangeRequests}
+              element={<AdminChangeRequestsPage />}
+            />
             <Route path={ROUTE_PATHS.adminMessages} element={<AdminMessagesPage />} />
           </Route>
         </Route>

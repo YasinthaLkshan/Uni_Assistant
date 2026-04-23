@@ -161,7 +161,7 @@ const AdminLayout = () => {
           </header>
         )}
 
-        <main className="admin-main-content">
+        <main className={`admin-main-content ${isDashboard ? "" : "admin-main-content-no-header"}`.trim()}>
           <Outlet />
         </main>
       </div>

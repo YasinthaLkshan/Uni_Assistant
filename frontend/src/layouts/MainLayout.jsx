@@ -136,20 +136,28 @@ const MainLayout = () => {
   }, [displayName]);
 
   return (
-    <div className="app-shell app-grid main-layout main-layout-premium">
+    <div className="app-shell app-grid page-fade-in main-layout main-layout-premium">
       <aside
         className={`sidebar main-sidebar ${isMobileMenuOpen ? "is-open" : ""}`}
       >
         <div className="sidebar-head">
           <NavLink
             to={ROUTE_PATHS.home}
-            className="icon-btn sidebar-home-link"
+            className="icon-btn sidebar-home-link home-button-fancy"
             onClick={closeMobileMenu}
             aria-label="Go to home page"
             title="Home"
           >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M10 18v-4h4v4m-9 2h14a1 1 0 0 0 1-1v-8.7a1 1 0 0 0-.32-.73l-7-6.4a1 1 0 0 0-1.36 0l-7 6.4a1 1 0 0 0-.32.73V19a1 1 0 0 0 1 1z" />
+            <svg className="home-button-logo" viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                className="home-button-roof"
+                d="M3.8 10.5 12 3.7l8.2 6.8v8.2a1.3 1.3 0 0 1-1.3 1.3H5.1a1.3 1.3 0 0 1-1.3-1.3z"
+              />
+              <path
+                className="home-button-door"
+                d="M9.7 20v-4.6a1 1 0 0 1 1-1h2.6a1 1 0 0 1 1 1V20"
+              />
+              <circle className="home-button-spark" cx="18.1" cy="6.2" r="1.1" />
             </svg>
           </NavLink>
         </div>
